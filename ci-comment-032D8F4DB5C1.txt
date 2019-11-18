@@ -1,0 +1,9 @@
+
+# Enter comments on this check-in.  Lines beginning with # are ignored.
+# The check-in comment follows wiki formatting rules.
+#
+# user: ogurreck
+# tags: trunk
+#
+# EDITED     __init__.py
+# EDITED     gui/QBPM_monitor.py

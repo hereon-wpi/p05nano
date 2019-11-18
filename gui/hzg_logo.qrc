@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="hzg_image">
+    <file>hzg_red_size.png</file>
+  </qresource>
+</RCC>
