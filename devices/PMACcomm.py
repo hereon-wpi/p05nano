@@ -57,7 +57,7 @@ class PMACcomm():
         else:
             self.pmac_num = self.ControllerList.get(controller)[0]
             self.pmac_ip =  self.ControllerList.get(controller)[1]
-            self.io = ctypes.windll.LoadLibrary('pcomm32w.dll')
+            self.io = ctypes.windll.LoadLibrary('PComm32W.dll')
             tmp = self.io.OpenPmacDevice(self.pmac_num)
             if tmp != 0:
                 self.io.PmacGetVariableDouble.restype = ctypes.c_double

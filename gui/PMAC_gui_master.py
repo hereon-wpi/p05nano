@@ -24,7 +24,7 @@ class cPMACgui(QtGui.QMainWindow):
             QtUic.loadUi(_path, self)
             self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'gear.png'))
         self.setWindowTitle(name)
-        self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/gear.png'))
+        #self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/gear.png'))
         self.groupBox_PMAC.raise_()
         self.setGeometry(10, 25, 1825, 1110)
         

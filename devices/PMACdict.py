@@ -36,9 +36,9 @@ class PMACdict():
         self.Dict['GraniteSlab_1'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q77', 'CurVariable': 'Q87', \
                                        'lowerLim': 0.0, 'upperLim': 4263.0, 'lowerSoftLim': 0.0, 'upperSoftLim': 4263.0}
         self.Dict['GraniteSlab_2'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q78', 'CurVariable': 'Q88', \
-                                       'lowerLim': 670.0, 'upperLim': 5163.0, 'lowerSoftLim': 670.0, 'upperSoftLim': 5163.0}
+                                       'lowerLim': 670.0, 'upperLim': 5163.0, 'lowerSoftLim': 670.0, 'upperSoftLim': 5000.0}
         self.Dict['GraniteSlab_3'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q79', 'CurVariable': 'Q89', \
-                                       'lowerLim': 1300.0, 'upperLim': 5800.0, 'lowerSoftLim': 1360.0, 'upperSoftLim': 5800.0}
+                                       'lowerLim': 1300.0, 'upperLim': 5800.0, 'lowerSoftLim': 1500.0, 'upperSoftLim': 5600.0}
         self.Dict['GraniteSlab_4'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q71', 'CurVariable': 'Q81', \
                                        'lowerLim': 1900.0, 'upperLim': 6105.0, 'lowerSoftLim': 1900.0, 'upperSoftLim': 6105.0}
         self.Dict['Aperture_x'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=8', 'TargetVariable': 'P73', 'CurVariable': 'P83', \
@@ -102,7 +102,7 @@ class PMACdict():
         self.Dict['OpticsSF1_Rz'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q73', 'CurVariable': 'Q83', \
                                        'lowerLim':-2.5, 'upperLim': 2.5, 'lowerSoftLim':-2.5, 'upperSoftLim': 2.5}
         self.Dict['OpticsStage1_y'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=8', 'TargetVariable': 'P71', 'CurVariable': 'P81', \
-                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 0.0, 'upperSoftLim': 300.0}
+                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 100.0, 'upperSoftLim': 300.0}
         self.Dict['GraniteSlab_1single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=114', 'TargetVariable': 'Q77', 'CurVariable': 'Q87'}
         self.Dict['GraniteSlab_2single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=124', 'TargetVariable': 'Q78', 'CurVariable': 'Q88'}
         self.Dict['GraniteSlab_3single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=134', 'TargetVariable': 'Q79', 'CurVariable': 'Q89'}
@@ -565,177 +565,8 @@ class PMACdict():
     
     def SetRotSpeed(self,speed):
         self.EventSendCommandManual(self.Controller5, 'P97='+str(speed))
-     
-    
-    def InitilizeSliders(self):
-        # Message Box asking if you really want to start for GUI
-        #reply =  QtGui.QMessageBox.question(self, 'Warning!',
-        #   "Do you really want to start initilizing the sliders?", QtGui.QMessageBox.Yes | 
-        #   QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-        ans = raw_input("Do you really want to start initilizing the sliders? Y or N?")
-                    
-        if ans == 'Y' or ans == 'y': #reply == QtGui.QMessageBox.Yes:
-            #Controller 1
-            #self.EventSendCommandManual(self.Controller1, '&2Q70=1', self.parent.label_pmac01_cmdresponse)
-            self.checkInit(self.Controller1)
-            self.EventSendCommandManual(self.Controller1, 'Q70=9')
-            self.checkInit(self.Controller1)
-            #Controller 2
-            self.EventSendCommandManual(self.Controller2, '&2Q70=1')
-            self.checkInit(self.Controller2)
-            #Controller 4
-            self.EventSendCommandManual(self.Controller4, '&2Q70=9')
-            self.checkInit(self.Controller4)
-            #Controller 3
-            self.EventSendCommandManual(self.Controller3, '&2Q70=9')
-            self.checkInit(self.Controller3)
-            #Controller 4
-            self.EventSendCommandManual(self.Controller4, '&2Q70=1')
-            self.checkInit(self.Controller4)
-            #Controller 7
-            self.EventSendCommandManual(self.Controller7, '&2Q70=1')
-            self.checkInit(self.Controller7)
-            self.EventSendCommandManual(self.Controller7, 'Q70=9')
-            self.checkInit(self.Controller7)
-            #Controller 5
-            self.EventSendCommandManual(self.Controller5, '&2Q70=5')
-            self.checkInit(self.Controller5)
-            # Message Box asking if air bearing axis is in right position
-            #reply =  QtGui.QMessageBox.question(self, 'Warning!',
-            #    "Is the rotation stage in position? (Please double-check that the reference lines on the rotation stage are in position.)", QtGui.QMessageBox.Yes | 
-            #   QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-            #if reply == QtGui.QMessageBox.Yes:
-            ans = raw_input("Is the rotation stage in position? (Please double-check that the reference lines on the rotation stage are in position.)")
-            if ans == 'Y' or ans == 'y':
-                #Controller 5
-                self.EventSendCommandManual(self.Controller5, 'Q70=9')
-                self.checkInit(self.Controller5)
-                self.EventSendCommandManual(self.Controller5, 'Q70=1')
-                self.checkInit(self.Controller5)
-                self.EventSendCommandManual(self.Controller5, 'Q70=29')
-                self.checkInit(self.Controller5)
-                #Controller 6
-                self.EventSendCommandManual(self.Controller6, '&2Q70=1')
-                self.checkInit(self.Controller6)
-                #Controller 3
-                self.EventSendCommandManual(self.Controller3, '&2Q70=5')
-                self.checkInit(self.Controller3)
-                self.EventSendCommandManual(self.Controller3, 'Q70=1')
-                self.checkInit(self.Controller3)
-                print "Initialization successfully finished!"
-                #QtGui.QMessageBox.Information(self, 'Finished!')
-            else:
-                print("Initilization aborted!")
-            
-        else:
-            print("Initilization aborted!")
-        
-        print("Program Finished!")
-        return None
-        
-        
-    
-    def InitSliders(self):
-        ans = raw_input("Do you really want to start initilizing the sliders? Y or N?")
-                        
-        if ans == 'Y' or ans == 'y': #reply == QtGui.QMessageBox.Yes:
-            #Controller 1
-            #self.EventSendCommandManual(self.Controller1, '&2Q70=1', self.parent.label_pmac01_cmdresponse)
-            self.checkInit(self.Controller1)
-            self.EventSendCommandManual(self.Controller1, 'Q70=9')
-            self.checkInit(self.Controller1)
-            ans2 = raw_input("Movement done?")
-            
-            if ans2 == 'Y' or ans2 == 'y' or ans2 == 'yes':
-                #Controller 2
-                self.EventSendCommandManual(self.Controller2, '&2Q70=1')
-                self.checkInit(self.Controller2)
-                ans3 = raw_input("Movement done?")
-            
-                if ans3 == 'Y' or ans3 == 'y' or ans3 == 'yes':
-                    #Controller 4
-                    self.EventSendCommandManual(self.Controller4, '&2Q70=9')
-                    self.checkInit(self.Controller4)
-                    
-                    ans4 = raw_input("Movement done?")
-            
-                    if ans4 == 'Y' or ans4 == 'y' or ans4 == 'yes':
-                        #Controller 3
-                        self.EventSendCommandManual(self.Controller3, '&2Q70=9')
-                        self.checkInit(self.Controller3)
-                        
-                        ans5 = raw_input("Movement done?")
-            
-                        if ans5 == 'Y' or ans5 == 'y' or ans5 == 'yes':
-                            #Controller 4
-                            self.EventSendCommandManual(self.Controller4, '&2Q70=1')
-                            self.checkInit(self.Controller4)
-                            
-                            ans6 = raw_input("Movement done?")
-            
-                            if ans6 == 'Y' or ans6 == 'y' or ans6 == 'yes':
-                                #Controller 7
-                                self.EventSendCommandManual(self.Controller7, '&2Q70=1')
-                                self.checkInit(self.Controller7)
-                                
-                                ans7 = raw_input("Movement done?")
-            
-                                if ans7 == 'Y' or ans7 == 'y' or ans7 == 'yes':
-                                    self.EventSendCommandManual(self.Controller7, 'Q70=9')
-                                    self.checkInit(self.Controller7)
-                                    
-                                    ans8 = raw_input("Movement done?")
-            
-                                    if ans8 == 'Y' or ans8 == 'y' or ans8 == 'yes':
-                                        #Controller 5
-                                        self.EventSendCommandManual(self.Controller5, '&2Q70=5')
-                                        self.checkInit(self.Controller5)
-            # Message Box asking if air bearing axis is in right position
-            #reply =  QtGui.QMessageBox.question(self, 'Warning!',
-            #    "Is the rotation stage in position? (Please double-check that the reference lines on the rotation stage are in position.)", QtGui.QMessageBox.Yes | 
-            #   QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-            #if reply == QtGui.QMessageBox.Yes:
-                                        ans9 = raw_input("Movement done?")
-                                        if ans9 == 'Y' or ans9 == 'y':
-                                            ans_rot = raw_input("Is the rotation stage in position? (Please double-check that the reference lines on the rotation stage are in position.)")
-                                            if ans_rot == 'Y' or ans_rot == 'y':
-                                                #Controller 5
-                                                self.EventSendCommandManual(self.Controller5, 'Q70=9')
-                                                self.checkInit(self.Controller5)
-                                                ans9 = raw_input("Movement done?")
-                                                if ans9 == 'Y' or ans9 == 'y':
-                                                    self.EventSendCommandManual(self.Controller5, 'Q70=1')
-                                                    self.checkInit(self.Controller5)
-                                                    ans9 = raw_input("Movement done?")
-                                                    if ans9 == 'Y' or ans9 == 'y':
-                                                        self.EventSendCommandManual(self.Controller5, 'Q70=29')
-                                                        self.checkInit(self.Controller5)
-                                                        ans9 = raw_input("Movement done?")
-                                                        if ans9 == 'Y' or ans9 == 'y':
-                                                            #Controller 6
-                                                            self.EventSendCommandManual(self.Controller6, '&2Q70=1')
-                                                            self.checkInit(self.Controller6)
-                                                            ans9 = raw_input("Movement done?")
-                                                            if ans9 == 'Y' or ans9 == 'y':
-                                                                #Controller 3
-                                                                self.EventSendCommandManual(self.Controller3, '&2Q70=5')
-                                                                self.checkInit(self.Controller3)
-                                                                ans9 = raw_input("Movement done?")
-                                                                if ans9 == 'Y' or ans9 == 'y':
-                                                                    self.EventSendCommandManual(self.Controller3, 'Q70=1')
-                                                                    self.checkInit(self.Controller3)
-                                                                    print "Initialization successfully finished!"
-                                                                #QtGui.QMessageBox.Information(self, 'Finished!')
-                                            else:
-                                                print("Initilization aborted!")
-                    
-            else:
-                print("Initilization aborted!")
-            
-            print("Program Finished!")
-            return None
 
-    
+
     ## function for reading in manually defined parameters, e.g. for initilizing the beamline
     def EventSendCommandManual(self, controllerID, _input):
         if controllerID.IsReady():
@@ -763,13 +594,8 @@ class PMACdict():
     
     
     def checkInitController5(self):
-        busy = True
-        while busy:
-            response = self.Controller5.GetResponse('P80', silent=True)
-            print(response)
-            if response == 1:
-                print("ok")
-                busy = False
+        while self.Controller5.GetResponse('P80', silent=True) != 1:
+            time.sleep(0.1)
         return None
         
     def Exit(self):

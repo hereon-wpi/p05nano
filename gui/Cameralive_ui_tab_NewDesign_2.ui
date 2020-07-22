@@ -14,25 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_main">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>171</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Camera Live view widget</string>
-    </property>
-   </widget>
    <widget class="ImageView" name="imageView">
     <property name="geometry">
      <rect>
@@ -141,10 +122,13 @@
     </item>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>150</y>
       <width>341</width>
       <height>821</height>
      </rect>
@@ -159,7 +143,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <property name="cursor">
@@ -2586,6 +2570,9 @@ border-left-width: 1px;
       <property name="text">
        <string>0</string>
       </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
+      </property>
      </widget>
      <widget class="QLabel" name="label_posy">
       <property name="geometry">
@@ -2661,45 +2648,6 @@ border-left-width: 1px;
       </property>
       <property name="text">
        <string>PixelLink IN / OUT</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="but_CloseShutter2">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>10</y>
-        <width>161</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: solid;
-
-border-bottom-color: #777777; border-bottom-width: 2px;
-
-border-right-color:#777777;
-border-right-width: 2px;
-
-border-top-color:#AAAAAA;
-border-top-width: 1px;
-
-border-left-color:#AAAAAA;
-border-left-width: 1px;
-
-border-radius: 3px;
-padding: 1px;
- background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
-      </property>
-      <property name="text">
-       <string>Close Shutter 2</string>
       </property>
      </widget>
      <widget class="QPushButton" name="but_OpenShutter1">
@@ -2924,15 +2872,15 @@ padding: 1px;
      <attribute name="title">
       <string>Scan</string>
      </attribute>
-     <widget class="QLineEdit" name="io_rotangle">
+     <widget class="QLineEdit" name="io_speed">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>240</y>
-        <width>51</width>
+        <x>230</x>
+        <y>230</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -2968,18 +2916,21 @@ border-left-width: 1px;
                                  stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
       </property>
       <property name="text">
-       <string>180</string>
+       <string>None</string>
+      </property>
+      <property name="maxLength">
+       <number>5</number>
       </property>
      </widget>
-     <widget class="QLineEdit" name="io_an">
+     <widget class="QLineEdit" name="io_smearing">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>300</y>
-        <width>51</width>
+        <x>230</x>
+        <y>260</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3015,99 +2966,17 @@ border-left-width: 1px;
                                  stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
       </property>
       <property name="text">
-       <string>3</string>
+       <string>5</string>
       </property>
-     </widget>
-     <widget class="QLabel" name="label_roixlow_5">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>240</y>
-        <width>101</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Rotation Angle</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="io_rotstartangle">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>250</x>
-        <y>270</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: solid;
-
-border-bottom-color: #777777;
-border-bottom-width: 1px;
-
-border-right-color:#777777;
-border-right-width: 1px;
-
-border-top-color:#AAAAAA;
-border-top-width: 1px;
-
-border-left-color:#AAAAAA;
-border-left-width: 1px;
-
- background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_roixlow_14">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>301</y>
-        <width>181</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Number of Images per step</string>
+      <property name="maxLength">
+       <number>5</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_roixlow_2">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>150</y>
+        <y>140</y>
         <width>131</width>
         <height>21</height>
        </rect>
@@ -3122,12 +2991,15 @@ border-left-width: 1px;
        <string>Center of Rotation</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="io_nop">
+     <widget class="QLineEdit" name="io_noimages">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>120</y>
-        <width>51</width>
+        <x>230</x>
+        <y>320</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3170,7 +3042,7 @@ border-left-width: 1px;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>180</y>
+        <y>170</y>
         <width>131</width>
         <height>21</height>
        </rect>
@@ -3186,11 +3058,14 @@ border-left-width: 1px;
       </property>
      </widget>
      <widget class="QLineEdit" name="io_exptime2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>210</y>
-        <width>51</width>
+        <x>230</x>
+        <y>200</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3225,8 +3100,14 @@ border-left-width: 1px;
                                  stop: 0 #fafafa, stop: 0.4 #f4f4f4,
                                  stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
       </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhPreferNumbers</set>
+      </property>
       <property name="text">
-       <string>1</string>
+       <string>0.05</string>
+      </property>
+      <property name="maxLength">
+       <number>5</number>
       </property>
      </widget>
      <widget class="QLineEdit" name="io_prefix">
@@ -3270,34 +3151,15 @@ border-left-width: 1px;
                                  stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
       </property>
       <property name="text">
-       <string>nano1700_</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_roixlow_6">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>270</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Rotation Angle Start</string>
+       <string>nano2500_TEst</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="io_sampleoutrel">
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>180</y>
-        <width>51</width>
+        <x>230</x>
+        <y>170</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3355,25 +3217,6 @@ border-left-width: 1px;
        <string>Prefix</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_roixlow_4">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>210</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Exposure Time</string>
-      </property>
-     </widget>
      <widget class="QLineEdit" name="io_beamtime">
       <property name="geometry">
        <rect>
@@ -3415,14 +3258,17 @@ border-left-width: 1px;
                                  stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
       </property>
       <property name="text">
-       <string>1100</string>
+       <string>11003456</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_roixlow_9">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>120</y>
+        <y>320</y>
         <width>161</width>
         <height>21</height>
        </rect>
@@ -3434,15 +3280,15 @@ border-left-width: 1px;
        </font>
       </property>
       <property name="text">
-       <string>Number of Projections</string>
+       <string>Number of Images</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="io_cor">
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>150</y>
-        <width>51</width>
+        <x>230</x>
+        <y>140</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3504,7 +3350,7 @@ border-left-width: 1px;
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>440</y>
+        <y>480</y>
         <width>161</width>
         <height>25</height>
        </rect>
@@ -3580,27 +3426,22 @@ padding: 1px;
       </item>
       <item>
        <property name="text">
-        <string>Tomo Integrated</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Standard Scan</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>Take Image Series</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Tomo Flexible</string>
+        <string>Holotomo Step</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Close Shutter</string>
+        <string>Holotomo Fly</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Holotomo Fly Ref</string>
        </property>
       </item>
      </widget>
@@ -3608,7 +3449,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>310</x>
-        <y>216</y>
+        <y>206</y>
         <width>46</width>
         <height>13</height>
        </rect>
@@ -3627,9 +3468,9 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>540</y>
+        <y>630</y>
         <width>256</width>
-        <height>192</height>
+        <height>121</height>
        </rect>
       </property>
      </widget>
@@ -3637,7 +3478,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>500</y>
+        <y>590</y>
         <width>61</width>
         <height>25</height>
        </rect>
@@ -3676,7 +3517,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>110</x>
-        <y>500</y>
+        <y>590</y>
         <width>71</width>
         <height>25</height>
        </rect>
@@ -3715,7 +3556,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>190</x>
-        <y>500</y>
+        <y>590</y>
         <width>41</width>
         <height>21</height>
        </rect>
@@ -3754,7 +3595,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>240</x>
-        <y>500</y>
+        <y>590</y>
         <width>41</width>
         <height>21</height>
        </rect>
@@ -3793,7 +3634,7 @@ padding: 1px;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>330</y>
+        <y>290</y>
         <width>181</width>
         <height>21</height>
        </rect>
@@ -3805,34 +3646,18 @@ padding: 1px;
        </font>
       </property>
       <property name="text">
-       <string>Number of Refs per point</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_roixlow_16">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>360</y>
-        <width>181</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Position of Refs </string>
+       <string>Number of Refs </string>
       </property>
      </widget>
      <widget class="QLineEdit" name="io_noref">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>330</y>
-        <width>51</width>
+        <x>230</x>
+        <y>290</y>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -3871,53 +3696,6 @@ border-left-width: 1px;
        <string>20</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="io_refpos">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>250</x>
-        <y>360</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>11</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border: solid;
-
-border-bottom-color: #777777;
-border-bottom-width: 1px;
-
-border-right-color:#777777;
-border-right-width: 1px;
-
-border-top-color:#AAAAAA;
-border-top-width: 1px;
-
-border-left-color:#AAAAAA;
-border-left-width: 1px;
-
- background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
-      </property>
-      <property name="text">
-       <string>300</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="but_StartScanList">
       <property name="enabled">
        <bool>false</bool>
@@ -3925,7 +3703,7 @@ border-left-width: 1px;
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>750</y>
+        <y>760</y>
         <width>161</width>
         <height>25</height>
        </rect>
@@ -3969,19 +3747,320 @@ padding: 1px;
        <bool>false</bool>
       </property>
      </widget>
-     <zorder>io_rotangle</zorder>
-     <zorder>io_an</zorder>
-     <zorder>label_roixlow_5</zorder>
-     <zorder>io_rotstartangle</zorder>
-     <zorder>label_roixlow_14</zorder>
+     <widget class="QCheckBox" name="checkBox_smearing">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>260</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Smearing</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_speed">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>230</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Speed</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_exptime">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>200</y>
+        <width>121</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Exposure Time</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_CloseShutter">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>410</y>
+        <width>171</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Close Shutter</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_roixlow_11">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>350</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Number of Distances</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="io_nodistances">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>350</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: solid;
+
+border-bottom-color: #777777;
+border-bottom-width: 1px;
+
+border-right-color:#777777;
+border-right-width: 1px;
+
+border-top-color:#AAAAAA;
+border-top-width: 1px;
+
+border-left-color:#AAAAAA;
+border-left-width: 1px;
+
+ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
+      </property>
+      <property name="text">
+       <string>3</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stepsize">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>380</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Stepsize of Distances</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="io_stepsize">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>380</y>
+        <width>71</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: solid;
+
+border-bottom-color: #777777;
+border-bottom-width: 1px;
+
+border-right-color:#777777;
+border-right-width: 1px;
+
+border-top-color:#AAAAAA;
+border-top-width: 1px;
+
+border-left-color:#AAAAAA;
+border-left-width: 1px;
+
+ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_stepsize_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>440</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Expected Scan time:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_scantime">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>440</y>
+        <width>161</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>0 min</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="but_ResetScan">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>520</y>
+        <width>161</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: solid;
+
+border-bottom-color: #777777; border-bottom-width: 2px;
+
+border-right-color:#777777;
+border-right-width: 2px;
+
+border-top-color:#AAAAAA;
+border-top-width: 1px;
+
+border-left-color:#AAAAAA;
+border-left-width: 1px;
+
+border-radius: 3px;
+padding: 1px;
+ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
+      </property>
+      <property name="text">
+       <string>Reset Scan</string>
+      </property>
+     </widget>
+     <zorder>io_speed</zorder>
+     <zorder>io_smearing</zorder>
      <zorder>label_roixlow_2</zorder>
      <zorder>label_roixlow_8</zorder>
      <zorder>io_exptime2</zorder>
      <zorder>io_prefix</zorder>
-     <zorder>label_roixlow_6</zorder>
      <zorder>io_sampleoutrel</zorder>
      <zorder>label_roixlow_3</zorder>
-     <zorder>label_roixlow_4</zorder>
      <zorder>io_beamtime</zorder>
      <zorder>label_roixlow_9</zorder>
      <zorder>io_cor</zorder>
@@ -3989,7 +4068,7 @@ padding: 1px;
      <zorder>but_StartStandardScan</zorder>
      <zorder>label_selectScan</zorder>
      <zorder>cB_Scan</zorder>
-     <zorder>io_nop</zorder>
+     <zorder>io_noimages</zorder>
      <zorder>label_3</zorder>
      <zorder>list_Scan</zorder>
      <zorder>but_AddItem</zorder>
@@ -3997,10 +4076,19 @@ padding: 1px;
      <zorder>but_MoveUp</zorder>
      <zorder>but_MoveDown</zorder>
      <zorder>label_roixlow_15</zorder>
-     <zorder>label_roixlow_16</zorder>
      <zorder>io_noref</zorder>
-     <zorder>io_refpos</zorder>
      <zorder>but_StartScanList</zorder>
+     <zorder>checkBox_smearing</zorder>
+     <zorder>checkBox_speed</zorder>
+     <zorder>checkBox_exptime</zorder>
+     <zorder>checkBox_CloseShutter</zorder>
+     <zorder>label_roixlow_11</zorder>
+     <zorder>io_nodistances</zorder>
+     <zorder>label_stepsize</zorder>
+     <zorder>io_stepsize</zorder>
+     <zorder>label_stepsize_2</zorder>
+     <zorder>label_scantime</zorder>
+     <zorder>but_ResetScan</zorder>
     </widget>
    </widget>
    <widget class="QLabel" name="label_currentpolling">
@@ -4201,17 +4289,135 @@ padding: 1px;
      <string>Current status:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QComboBox" name="cb_Mode">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>930</y>
+      <x>120</x>
+      <y>10</y>
       <width>111</width>
-      <height>61</height>
+      <height>22</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string>TXM Mode</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Holotomo Mode</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="but_CloseShutter2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ButtonText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ButtonText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>120</red>
+          <green>120</green>
+          <blue>120</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ButtonText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>120</red>
+          <green>120</green>
+          <blue>120</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: solid;
+
+border-bottom-color: #777777; border-bottom-width: 2px;
+
+border-right-color:#777777;
+border-right-width: 2px;
+
+border-top-color:#AAAAAA;
+border-top-width: 1px;
+
+border-left-color:#AAAAAA;
+border-left-width: 1px;
+
+border-radius: 3px;
+padding: 1px;
+ background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);</string>
+    </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/hzg_image/hzg_red_size.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>Close Shutter 2</string>
     </property>
    </widget>
   </widget>

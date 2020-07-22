@@ -4,12 +4,12 @@ import p05.tools.misc as misc
 import numpy
 import p05.common.TangoFailsaveComm as tcom
 import p05.tools
-import PIL
+#import PIL
 
 class PCO_nanoCam():
     def __init__(self, tPCO=None, tTrigger=None, imageDir=None, exptime=None):
         if tPCO == None:
-            self.tPCO = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/eh1/pco/edge')
+            self.tPCO = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
         else:
             self.tPCO = tPCO
         
@@ -19,9 +19,9 @@ class PCO_nanoCam():
             self.tTrigger = tTrigger
             
         time.sleep(0.2)
-        if self.tPCO.state() == PyTango.DevState.RUNNING:
-            self.tPCO.command_inout('Stop')
-            while self.tPCO.state() == PyTango.DevState.RUNNING:
+        if self.tPCO.state() == PyTango.DevState.MOVING:
+            self.tPCO.command_inout('StopAcq')
+            while self.tPCO.state() == PyTango.DevState.MOVING:
                 time.sleep(0.1)
     
         if imageDir == None:
@@ -40,12 +40,14 @@ class PCO_nanoCam():
         self.CAM_yhigh = self.tPCO.read_attribute('ROI_y_max').value
         
         self.tPCO.write_attribute('ExposureTime', self.exptime)
-        self.tPCO.write_attribute('FilePostfix', '.bin')
+        self.tPCO.write_attribute('FilePostfix', 'tif')
         # Trigger mode 1 : Internal, 2: External
         self.tPCO.write_attribute('TriggerMode', 2)
         self.tPCO.write_attribute('FilePrefix', 'Image')
+        self.tPCO.write_attribute('FramesPerFile',1)
+        self.tPCO.write_attribute('NbFrames',1)
         self.tPCO.write_attribute('FileDir', self.imageDir)
-        self.tPCO.write_attribute('FileSaving', False)
+        self.tPCO.write_attribute('FileSaving', True)
         self.tTrigger.write_attribute('Voltage', 0)
         time.sleep(0.2)
         self.iImage = 0
@@ -70,16 +72,19 @@ class PCO_nanoCam():
         self.tPCO.write_attribute('Roi_y_max', long(self.CAM_yhigh))
         return None
     
+    def readAttribute(self,attribute):
+        return self.tPCO.read_attribute(attribute)
+
+    def sendcommand(self,command):
+        self.tPCO.command_inout(command)
 
     def startPCOacquisition(self):
         self.tTrigger.write_attribute('Voltage', 0)
-        while self.tPCO.state() == PyTango.DevState.RUNNING:
-            self.tPCO.command_inout('Stop')
-            time.sleep(0.1)
-        self.tPCO.command_inout('StartStandardAcq')
+        if self.tPCO.state() == PyTango.DevState.MOVING:
+            self.tPCO.command_inout('StopAcq')
+        self.tPCO.command_inout('StartAcq')
         self.imageTime = time.time()
         self.iImage = 0
-        time.sleep(3)
         return None
     # end startPCOacquisition
     
@@ -88,34 +93,42 @@ class PCO_nanoCam():
             time.sleep(0.01)        
         self.tPCO.write_attribute('FilePrefix',name)
         
+    def setImgNumber(self,i):
+        while not self.tPCO.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        self.tPCO.write_attribute('FileStartNum',i)
+
     def finishScan(self):
-        self.tPCO.command_inout('Stop')
+        self.tPCO.command_inout('StopAcq')
         return None
 
+    def state(self):
+        return self.tPCO.state()
 
     def acquireImage(self):
-        if not self.tPCO.state() == PyTango.DevState.RUNNING:
-            self.startPCOacquisition()
-        
-        if self.iImage > 100 or time.time() - self.imageTime > 3600:
-            self.tPCO.command_inout('Stop')
-            time.sleep(12)
-            self.tPCO.command_inout('StartStandardAcq')
-            self.imageTime = time.time()
-            self.iImage = 0
-            time.sleep(3)
+        while not self.tPCO.state() == PyTango.DevState.ON:
+            time.sleep(0.005)
+        start = time.clock()
+        self.tPCO.command_inout('StartAcq')
+        while not self.tPCO.state() == PyTango.DevState.MOVING:
+            time.sleep(0.01)
+            print("waiting for running")
+        time.sleep(0.01)
         self.tTrigger.write_attribute('Voltage', 3.5)
-        time.sleep(self.exptime + 0.25)
+        # return pmac position here!
+        time.sleep(0.01)
         self.tTrigger.write_attribute('Voltage', 0)
         self.iImage += 1
-        #self.image= numpy.fromstring(self.tPCO.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()[2:].reshape(2048, 2048)
-        tmp = numpy.fromstring(self.tPCO.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()
-            
-        self.image = (tmp[2:]).reshape(tmp[0], tmp[1])
+
+        # old tango server
+        #tmp = numpy.fromstring(self.tPCO.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()
         
-        return self.image
+        return None
     # end acquireImage
     
+
+
+
     def getCameraInfo(self):
         _s = ''
         _s += 'ExpTime\t= %e\n' % self.tPCO.read_attribute('ExposureTime').value
@@ -222,17 +235,14 @@ class Hamamatsu_nanoCam():
     def __init__(self, tHama=None, tTrigger=None, imageDir=None, exptime=None):
         if tHama == None:
             self.tHama = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-            self.tHama = PyTango.DeviceProxy('//hzgpp07eh4.desy.de:10000/p07/hama/eh4')
         else:
             self.tHama = tHama
-            
         if tTrigger== None:
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
         else:
             self.tTrigger = tTrigger
         
+
         self.CAM_Binning = 1
 
         time.sleep(0.1)
@@ -257,9 +267,18 @@ class Hamamatsu_nanoCam():
         self.CAM_yhigh = self.tHama.read_attribute('SUBARRAY_VSIZE').value + self.tHama.read_attribute('SUBARRAY_VPOS').value
         
         self.tHama.write_attribute('EXPOSURE_TIME', self.exptime)
+        time.sleep(0.2)
         #self.tHama.write_attribute('FilePostfix', '.bin') #!!!!
         self.tHama.write_attribute('TRIGGER_SOURCE', 'EXTERNAL')
+        time.sleep(0.2)
         self.tHama.write_attribute('TRIGGER_ACTIVE', 'EDGE')
+        time.sleep(0.2)
+        self.tHama.write_attribute('OUTPUT_TRIGGER_KIND[0]','TRIGGER READY')
+        time.sleep(0.2)
+        self.tHama.write_attribute('TRIGGER_POLARITY','POSITIVE')
+        time.sleep(0.2)
+        self.tHama.write_attribute('OUTPUT_TRIGGER_POLARITY[0]','POSITIVE')
+        time.sleep(0.2)
         self.tHama.write_attribute('FilePrefix', 'Image')
         self.tHama.write_attribute('FileDirectory', self.imageDir)
         self.tHama.write_attribute('FileRefNumber', 0)
@@ -272,6 +291,8 @@ class Hamamatsu_nanoCam():
         return None
     # end __init__
     
+
+
     def setExptime(self, value):
         try:
             while not self.tHama.state() == PyTango.DevState.ON:
@@ -292,6 +313,15 @@ class Hamamatsu_nanoCam():
         
         return None
 
+    def sendCommand(self,command):
+        self.tHama.command_inout(command)
+
+    def state(self):
+        return self.tHama.state()
+
+    def readAttribute(self,attribute):
+        return self.tHama.read_attribute(attribute)
+
     def getImgNumber(self):
         i = self.tHama.read_attribute('FileRefNumber')
         return i
@@ -302,15 +332,15 @@ class Hamamatsu_nanoCam():
     def acquireImage(self):
         start = time.clock()
         while not self.tHama.state() == PyTango.DevState.ON:
-            time.sleep(0.001)
+            time.sleep(0.005)
         end = time.clock()
 #        print("waiting for on state:" + str(end-start) )
         self.tHama.command_inout('StartAcq')
         while not self.tHama.state() == PyTango.DevState.EXTRACT:
-            time.sleep(0.001) 
+            time.sleep(0.005)
         #self.tTrigger.write_attribute('Voltage', 3.5)
         self.tTrigger.write_attribute('Value', 1) 
-        time.sleep(0.001)
+        time.sleep(0.005)
         #self.tTrigger.write_attribute('Voltage', 0)
         self.tTrigger.write_attribute('Value', 0) 
         self.imageTime = time.time()
@@ -318,6 +348,10 @@ class Hamamatsu_nanoCam():
 #         while not self.tHama.state() == PyTango.DevState.ON:
 #             time.sleep(0.01)
 #         time.sleep(0.01)
+        return None
+
+    def startLive(self):
+        self.tHama.StartVideoAcq()
         return None
 
     
@@ -636,3 +670,103 @@ class Zyla_nanoCam():
         _s += 'Binning\t= 1'
         _s += 'ROI= [0, 2048,0, 20488]\n'
         return _s
+
+class KIT_nanoCam():
+    def __init__(self, tKIT=None, tTrigger=None, imageDir=None, exptime=None):
+        if tKIT == None:
+            self.tKIT = PyTango.DeviceProxy('//hzgpp05ctcam1:10000/p05/hzguca/kit')
+        else:
+            self.tKIT = tKIT
+
+        if tTrigger == None:
+            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/register/eh1.out01')
+        else:
+            self.tTrigger = tTrigger
+
+        time.sleep(0.2)
+
+        if imageDir == None:
+            raise Exception('Cannot set None-type image directory!')
+        else:
+            self.imageDir = imageDir
+
+        if exptime != None:
+            self.exptime = exptime
+        else:
+            self.exptime = float( 1. / 5. *1.0062903)
+
+#        if self.tKIT.state() == PyTango.DevState.STANDBY:
+#            self.tKIT.command_inout('Stop')
+#            time.sleep(0.1)
+#        self.tKIT.write_attribute('exposure_time', self.exptime)
+#        self.tKIT.write_attribute('trigger_source', 2)
+#        self.tKIT.write_attribute('image_file_name_pattern', 'img_%04d.tif')
+#        self.tKIT.write_attribute('image_path', self.imageDir)
+#        self.tKIT.write_attribute('tiffWriteDisk', 1)
+#        self.tKIT.write_attribute('number_of_frames',1)
+#        self.tKIT.command_inout('Start')
+#        while not self.tKIT.state() == PyTango.DevState.STANDBY:
+#            time.sleep(0.01)
+        self.tTrigger.write_attribute('Value', 0)
+        time.sleep(0.2)
+        self.iImage = 0
+        return None
+    # end __init__
+
+    def setKITAttribute(self, attribute, value):
+        try:
+#            if self.tKIT.state() == PyTango.DevState.STANDBY:
+#                self.tKIT.command_inout('Stop')
+#            while not self.tKIT.state() == PyTango.DevState.ON:
+#                time.sleep(0.01)
+            self.tKIT.write_attribute(attribute, value)
+#            self.tKIT.command_inout('Start')
+#            while not self.tKIT.state() == PyTango.DevState.STANDBY:
+#                time.sleep(0.01)
+        except Exception, e:
+            print misc.GetTimeString() + ': KIT server not responding while setting new ExposureTime:\n%s' % e
+        return None
+
+    def setImageName(self,name):
+        imgname = name +'_%04d.tif'
+        print(imgname)
+        self.setKITAttribute('image_file_name_pattern',imgname)
+
+    def setExptime(self,value):
+        if self.tKIT.state() == PyTango.DevState.STANDBY:
+            self.tKIT.command_inout('Stop')
+            while not self.tKIT.state() == PyTango.DevState.ON:
+                time.sleep(0.01)
+        self.exptime = float(float(value)/ 5. *1.0062903)
+        self.setKITAttribute('exposure_time',self.exptime)
+        time.sleep(0.5)
+        self.tKIT.command_inout('Start')
+        while not self.tKIT.state() == PyTango.DevState.STANDBY:
+            time.sleep(0.01)
+
+    def setImgNumber(self,i):
+        self.setKITAttribute('image_counter',i)
+
+    def finishScan(self):
+        self.tKIT.command_inout('Stop')
+        return None
+
+    def acquireImage(self):
+        while self.tKIT.state() == PyTango.DevState.RUNNING:
+            time.sleep(0.01)
+        if self.tKIT.state() == PyTango.DevState.ON:
+            self.tKIT.command_inout('Start')
+            time.sleep(0.01)
+        while not self.tKIT.state() == PyTango.DevState.STANDBY:
+            time.sleep(0.01)
+        self.tKIT.command_inout('Store',1)
+        while not self.tKIT.state() == PyTango.DevState.RUNNING:
+            time.sleep(0.01)
+
+        self.tTrigger.write_attribute('Value', 1)
+        time.sleep(0.01)
+        self.tTrigger.write_attribute('Value', 0)
+        self.iImage += 1
+        return
+    # end acquireImage
+

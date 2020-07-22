@@ -25,7 +25,7 @@ from p05.gui.TANGO_deviceForm import cTANGOdevice
 from p05.gui.PMAC_generic_motors import getPMACmotorList, getPMACmotorGroups
 
 from p05.gui.TANGO_presetGUIs import *
-__all__ += ['NanoTangoGUI', 'BeamlineOpticsGUI', 'NanoGrainMappingGUI', 'MicroCTgui', 'DMMgui','ConeBeamTangoGUI']
+__all__ += ['NanoTangoGUI', 'BeamlineOpticsGUI', 'NanoGrainMappingGUI', 'DMMgui','ConeBeamTangoGUI']
 
 from p05.gui.PCO_LiveImage import PCO_LiveImage
 __all__ += ['PCO_LiveImage']

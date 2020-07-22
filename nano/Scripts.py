@@ -11,19 +11,38 @@ import pickle
 class NanoPositions():
     def __init__(self, sampleOutDist = 0.2, writePosLog = True):
         self.__pmac = dev.PMACdict()
+
         self.__SM = numpy.zeros(6, dtype = object)
-        self.__SM[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha0')
-        self.__SM[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1')
-        self.__SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')
-        self.__SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')
-        self.__SM[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha6')
-        self.__SM[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha7')
+        self.__SM[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha6') #
+        self.__SM[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha7') #
+        self.__SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha9') #
+        self.__SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha10') #
+        self.__SM[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4') # BS x
+        self.__SM[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha5') # BS Z
+
+
+        self.__SM_h = numpy.zeros(9, dtype = object)
+        self.__SM_h[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha12') # xr
+        self.__SM_h[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha0') # xl
+        self.__SM_h[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1') # zt
+        self.__SM_h[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha13') # zb
+        self.__SM_h[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3') # Teil
+
+        self.__SM_h[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.04') #  JJ xr
+        self.__SM_h[6] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.03') # JJ xl
+        self.__SM_h[7] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.01') # JJ zt
+        self.__SM_h[8] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.02') # JJ zb
+
+
+
         #Optics working position
         self.__wp_ok = False
         self.__wp_pos = {}
+        self.__wp_pos_h = {}
         #Optics alignment position
         self.__ap_ok = False
         self.__ap_pos = {}
+        self.__ap_pos_h = {}
         #Sample rotation center
         self.__rc_ok = False
         self.writePosLog = writePosLog
@@ -56,6 +75,41 @@ class NanoPositions():
         return None
     #end __init__
     
+    def SetWorkingPos_h(self,mode="TXM"):
+        sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the working position with the current values? [Yes, no]: ')
+        sys.stdout.flush()
+        tmp = sys.stdin.readline()[:-1]
+        if tmp not in ['yes', 'Y', 'y', 'Yes']:
+            print('Aborting...')
+            return None
+        pw = getpass.getpass('Please confirm with command password: ')
+        if pw != 'HejSchnupsi':
+            print('Wrong password. Aborting...')
+            return None
+        #self.__wp_pos['SF1_x'] = self.__pmac.ReadMotorPos('OpticsSF1_x')
+        #self.__wp_pos['BStop'] = self.__pmac.ReadMotorPos('Aperture_z')
+        self.__wp_pos_h['SM_xr'] = self.__SM_h[0].read_attribute('Position').value
+        self.__wp_pos_h['SM_xl'] = self.__SM_h[1].read_attribute('Position').value
+        self.__wp_pos_h['SM_zt'] = self.__SM_h[2].read_attribute('Position').value
+        self.__wp_pos_h['SM_zb'] = self.__SM_h[3].read_attribute('Position').value
+        self.__wp_pos_h['Teil'] = self.__SM_h[4].read_attribute('Position').value
+        self.__wp_pos_h['JJ_xr'] = self.__SM_h[5].read_attribute('Position').value
+        self.__wp_pos_h['JJ_xl'] = self.__SM_h[6].read_attribute('Position').value
+        self.__wp_pos_h['JJ_zt'] = self.__SM_h[7].read_attribute('Position').value
+        self.__wp_pos_h['JJ_zb'] = self.__SM_h[8].read_attribute('Position').value
+        self.__wp_ok = True
+        try:
+            with eval(self.__fLogStr) as fLog:
+                fLog.write(misc.GetShortTimeString() + ': New Working Pos:\nSM_xr = %e\nSM_xl = %e\nSM_zt = %e\nSM_zb = %e\nTeil = %e\nJJ_xr = %e\nJJ_xl = %e\nJJ_zt = %e\nJJ_zb = %e\n\n' \
+                            %(self.__wp_pos_h['SM_xr'], self.__wp_pos_h['SM_xl'],self.__wp_pos_h['SM_zt'], self.__wp_pos_h['SM_zb'],self.__wp_pos_h['Teil'],self.__wp_pos_h['JJ_xr'], self.__wp_pos_h['JJ_xl'],self.__wp_pos_h['JJ_zt'], self.__wp_pos_h['JJ_zb']))
+        except:
+            pass
+        if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
+            self.WritePosToIni()
+        print misc.GetShortTimeString() + ': Successfully set new working position.'
+        return None
+    #end SetWorkingPos
+
     def SetWorkingPos(self):
         sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the working position with the current values? [Yes, no]: ')
         sys.stdout.flush()
@@ -88,24 +142,75 @@ class NanoPositions():
         return None
     #end SetWorkingPos
     
-    def SaveWorkingPos(self,path):
-        workingPos = self.__wp_pos
+    def SaveWorkingPos(self,path,mode='TXM'):
         timestr = time.strftime("%Y%m%d-%H%M")
-        f = open(path+'\working_pos'+ timestr +'.txt','w')
+        if mode == 'TXM':
+            workingPos = self.__wp_pos
+            f = open(path+'\working_pos_TXM_'+ timestr +'.txt','w')
+        elif mode =='holo':
+            workingPos = self.__wp_pos_h
+            f = open(path+'\working_pos_holo_'+ timestr +'.txt','w')
         f.write(str(workingPos))
         f.close()
         
-    def LoadWorkingPos(self,filename):
-        substring = 'working_pos'
-        self.__wp_ok = True
-        if substring in filename:
-            f = open(filename,'r')
-            data=f.read()
-            f.close()
-            self.__wp_pos = eval(data)
-        else:
-            print ('Warning! Wrong File! Please choose Working Position File.')
+    def LoadWorkingPos(self,filename,mode='TXM'):
+        if mode == 'TXM':
+            substring = 'working_pos_TXM'
+            self.__wp_ok = True
+            if substring in filename:
+                f = open(filename,'r')
+                data=f.read()
+                f.close()
+                self.__wp_pos = eval(data)
+            else:
+                print ('Warning! Wrong File! Please choose Working Position File.')
+        if mode == 'holo':
+            substring = 'working_pos_holo'
+            self.__wp_ok = True
+            if substring in filename:
+                f = open(filename,'r')
+                data=f.read()
+                f.close()
+                self.__wp_pos_h = eval(data)
+            else:
+                print ('Warning! Wrong File! Please choose Working Position File.')
         return None
+
+
+    def SetAlignmentPos_h(self):
+        sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the sample installation position with the current values? [Yes, no]: ')
+        sys.stdout.flush()
+        tmp = sys.stdin.readline()[:-1]
+        if tmp not in ['yes', 'Y', 'y', 'Yes']:
+            print('Aborting...')
+            return None
+        pw = getpass.getpass('Please confirm with command password: ')
+        if pw != 'HejSchnupsi':
+            print('Wrong password. Aborting...')
+            return None
+        #self.__ap_pos['SF1_x'] = self.__pmac.ReadMotorPos('OpticsSF1_x')
+        self.__ap_pos_h['SM_xr'] = self.__SM_h[0].read_attribute('Position').value
+        self.__ap_pos_h['SM_xl'] = self.__SM_h[1].read_attribute('Position').value
+        self.__ap_pos_h['SM_zt'] = self.__SM_h[2].read_attribute('Position').value
+        self.__ap_pos_h['SM_zb'] = self.__SM_h[3].read_attribute('Position').value
+        self.__ap_pos_h['Teil'] = self.__SM_h[4].read_attribute('Position').value
+        self.__ap_pos_h['JJ_xr'] = self.__SM_h[5].read_attribute('Position').value
+        self.__ap_pos_h['JJ_xl'] = self.__SM_h[6].read_attribute('Position').value
+        self.__ap_pos_h['JJ_zt'] = self.__SM_h[7].read_attribute('Position').value
+        self.__ap_pos_h['JJ_zb'] = self.__SM_h[8].read_attribute('Position').value
+
+        self.__ap_ok = True
+        try:
+            with eval(self.__fLogStr) as fLog:
+                fLog.write(misc.GetShortTimeString() + ': New Alignment Pos:\nSM_xr = %e\nSM_xl = %e\nSM_zt = %e\nSM_zb = %e\nTeil = %e\nJJ_xr = %e\nJJ_xl = %e\nJJ_zt = %e\nJJ_zb = %e\n\n' \
+                            %(self.__ap_pos_h['SM_xr'], self.__ap_pos_h['SM_xl'],self.__ap_pos_h['SM_zt'], self.__ap_pos_h['SM_zb'],self.__ap_pos_h['Teil'],self.__wp_pos_h['JJ_xr'], self.__wp_pos_h['JJ_xl'],self.__wp_pos_h['JJ_zt'], self.__wp_pos_h['JJ_zb']))
+        except:
+            pass
+        if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
+            self.WritePosToIni()
+        print misc.GetShortTimeString() + ': Successfully set new installation position.'
+        return None
+    #end SetAlignmentPos
 
     def SetAlignmentPos(self):
         sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the sample installation position with the current values? [Yes, no]: ')
@@ -119,6 +224,7 @@ class NanoPositions():
             print('Wrong password. Aborting...')
             return None
         #self.__ap_pos['SF1_x'] = self.__pmac.ReadMotorPos('OpticsSF1_x')
+
         self.__ap_pos['BStop_x'] = self.__SM[4].read_attribute('Position').value
         self.__ap_pos['BStop_z'] = self.__SM[5].read_attribute('Position').value
         #self.__ap_pos['BStop'] = self.__pmac.ReadMotorPos('Aperture_z') Old BS 
@@ -140,23 +246,38 @@ class NanoPositions():
     #end SetAlignmentPos
     
     
-    def SaveAlignmentPos(self,path):
+    def SaveAlignmentPos(self,path,mode="TXM"):
         timestr = time.strftime("%Y%m%d-%H%M")
-        f = open(path+'\lignment_pos'+ timestr +'.txt','w')
-        f.write(str(self.__ap_pos))
+        if mode == 'TXM':
+            aligmentPos = self.__ap_pos
+            f = open(path+'\lignment_pos_TXM_'+ timestr +'.txt','w')
+        elif mode =='holo':
+            aligmentPos = self.__ap_pos_h
+            f = open(path+'\lignment_pos_holo_'+ timestr +'.txt','w')
+        f.write(str(aligmentPos))
         f.close()
         return None
         
-    def LoadAlignmentPos(self,filename):
+    def LoadAlignmentPos(self,filename,mode="TXM"):
         self.__ap_ok = True
-        substring = 'lignment_pos'
-        if substring in filename:
-            f = open(filename,'r')
-            data=f.read()
-            f.close()
-            self.__ap_pos = eval(data)
-        else:
-            print ('Warning! Wrong File! Please choose Alignment Position File.')
+        if mode == "TXM":
+            substring = 'lignment_pos_TXM'
+            if substring in filename:
+                f = open(filename,'r')
+                data=f.read()
+                f.close()
+                self.__ap_pos = eval(data)
+            else:
+                print ('Warning! Wrong File! Please choose Alignment Position File.')
+        elif mode =="holo":
+            substring = 'lignment_pos_holo'
+            if substring in filename:
+                f = open(filename,'r')
+                data=f.read()
+                f.close()
+                self.__ap_pos_h = eval(data)
+            else:
+                print ('Warning! Wrong File! Please choose Alignment Position File.')
         return None
 
     def SetRotationCenter(self):
@@ -183,7 +304,7 @@ class NanoPositions():
         return None
     #end SetRotationCenter
         
-    def GotoWorkingPos(self):
+    def GotoWorkingPos(self,mode= "TXM"):
         if self.__wp_ok == False:
             print misc.GetShortTimeString() + ': Warning - working position not set! Aborting ...'
             return None
@@ -193,24 +314,42 @@ class NanoPositions():
         if tmp not in ['yes', 'Y', 'y', 'Yes']:
             print('Aborting...')
             return None
-        self.__pmac.Move('OpticsSF1_x', self.__wp_pos['SF1_x'])
-        #self.__pmac.Move('Aperture_z', self.__wp_pos['BStop'])
-        self.__SM[0].write_attribute('Position', self.__wp_pos['SM_xl'])
-        time.sleep(1)
-        self.__SM[1].write_attribute('Position', self.__wp_pos['SM_zt'])
-        time.sleep(1)
-        self.__SM[2].write_attribute('Position', self.__wp_pos['SM_xr'])
-        time.sleep(1)
-        self.__SM[3].write_attribute('Position', self.__wp_pos['SM_zb'])
-        time.sleep(1)
-        self.__SM[4].write_attribute('Position', self.__wp_pos['BStop_x'])
-        time.sleep(1)
-        self.__SM[5].write_attribute('Position', self.__wp_pos['BStop_z'])
+        if mode == "TXM":
+            self.__SM[0].write_attribute('Position', self.__wp_pos['SM_xl'])
+            time.sleep(1)
+            self.__SM[1].write_attribute('Position', self.__wp_pos['SM_zt'])
+            time.sleep(1)
+            self.__SM[2].write_attribute('Position', self.__wp_pos['SM_xr'])
+            time.sleep(1)
+            self.__SM[3].write_attribute('Position', self.__wp_pos['SM_zb'])
+            time.sleep(1)
+            self.__SM[4].write_attribute('Position', self.__wp_pos['BStop_x'])
+            time.sleep(1)
+            self.__SM[5].write_attribute('Position', self.__wp_pos['BStop_z'])
+        elif mode == "holo":
+            self.__SM_h[0].write_attribute('Position', self.__wp_pos_h['SM_xr'])
+            time.sleep(1)
+            self.__SM_h[1].write_attribute('Position', self.__wp_pos_h['SM_xl'])
+            time.sleep(1)
+            self.__SM_h[2].write_attribute('Position', self.__wp_pos_h['SM_zt'])
+            time.sleep(1)
+            self.__SM_h[3].write_attribute('Position', self.__wp_pos_h['SM_zb'])
+            time.sleep(1)
+            self.__SM_h[4].write_attribute('Position', self.__wp_pos_h['Teil'])
+            time.sleep(1)
+            self.__SM_h[5].write_attribute('Position', self.__wp_pos_h['JJ_xr'])
+            time.sleep(1)
+            self.__SM_h[6].write_attribute('Position', self.__wp_pos_h['JJ_xl'])
+            time.sleep(1)
+            self.__SM_h[7].write_attribute('Position', self.__wp_pos_h['JJ_zt'])
+            time.sleep(1)
+            self.__SM_h[8].write_attribute('Position', self.__wp_pos_h['JJ_zb'])
+
         print misc.GetShortTimeString() + ': Successfully moved to working position.'
         return None
     #end GotoWorkingPos
 
-    def GotoAlignmentPos(self):
+    def GotoAlignmentPos(self, mode ="TXM"):
         if self.__ap_ok == False:
             print misc.GetShortTimeString() + ': Warning - alignment position not set! Aborting ...'
             return None
@@ -220,19 +359,38 @@ class NanoPositions():
         if tmp not in ['yes', 'Y', 'y', 'Yes']:
             print('Aborting...')
             return None
-        self.__pmac.Move('OpticsSF1_x', self.__ap_pos['SF1_x'])
-        #self.__pmac.Move('Aperture_z', self.__ap_pos['BStop'])
-        self.__SM[0].write_attribute('Position', self.__ap_pos['SM_xl'])
-        time.sleep(1)
-        self.__SM[1].write_attribute('Position', self.__ap_pos['SM_zt'])
-        time.sleep(1)
-        self.__SM[2].write_attribute('Position', self.__ap_pos['SM_xr'])
-        time.sleep(1)
-        self.__SM[3].write_attribute('Position', self.__ap_pos['SM_zb'])
-        time.sleep(1)
-        self.__SM[4].write_attribute('Position', self.__ap_pos['BStop_x'])
-        time.sleep(1)
-        self.__SM[5].write_attribute('Position', self.__ap_pos['BStop_z'])
+        if mode == "TXM":
+            self.__SM[0].write_attribute('Position', self.__ap_pos['SM_xl'])
+            time.sleep(1)
+            self.__SM[1].write_attribute('Position', self.__ap_pos['SM_zt'])
+            time.sleep(1)
+            self.__SM[2].write_attribute('Position', self.__ap_pos['SM_xr'])
+            time.sleep(1)
+            self.__SM[3].write_attribute('Position', self.__ap_pos['SM_zb'])
+            time.sleep(1)
+            self.__SM[4].write_attribute('Position', self.__ap_pos['BStop_x'])
+            time.sleep(1)
+            self.__SM[5].write_attribute('Position', self.__ap_pos['BStop_z'])
+        elif mode == "holo":
+            self.__SM_h[0].write_attribute('Position', self.__ap_pos_h['SM_xr'])
+            time.sleep(1)
+            self.__SM_h[1].write_attribute('Position', self.__ap_pos_h['SM_xl'])
+            time.sleep(1)
+            self.__SM_h[2].write_attribute('Position', self.__ap_pos_h['SM_zt'])
+            time.sleep(1)
+            self.__SM_h[3].write_attribute('Position', self.__ap_pos_h['SM_zb'])
+            time.sleep(1)
+            self.__SM_h[4].write_attribute('Position', self.__ap_pos_h['Teil'])
+            time.sleep(1)
+            self.__SM_h[5].write_attribute('Position', self.__ap_pos_h['JJ_xr'])
+            time.sleep(1)
+            self.__SM_h[6].write_attribute('Position', self.__ap_pos_h['JJ_xl'])
+            time.sleep(1)
+            self.__SM_h[7].write_attribute('Position', self.__ap_pos_h['JJ_zt'])
+            time.sleep(1)
+            self.__SM_h[8].write_attribute('Position', self.__ap_pos_h['JJ_zb'])
+
+
         print misc.GetShortTimeString() + ': Successfully moved to alignment position.'
         return None
     #end GotoAlignmentPos

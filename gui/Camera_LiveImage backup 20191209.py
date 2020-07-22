@@ -15,75 +15,27 @@ import pylab as plt
 import PIL
 import p05.scripts.Camera_helper as ch
 
-import gc
-import psutil
-gc.enable()
-
 from msilib.schema import CheckBox
 from matplotlib.backend_bases import MouseEvent
 
-
-def PythonMemoryUsage(pid = None, checkpoint = None):
-    listOfProcObjects = []
-    for proc in psutil.process_iter():
-        try:
-            # Fetch process details as dict
-            pinfo = proc.as_dict(attrs=['pid', 'name', 'username'])
-            pinfo['vms'] = proc.memory_info().vms / (1024.0 * 1024.0
-            )
-            # Append dict to list
-            if pinfo['name'] in ['pythonw.exe', 'python.exe']:
-                listOfProcObjects.append(pinfo);
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-
-    # Sort list of dict by key vms i.e. memory usage
-    listOfProcObjects = sorted(listOfProcObjects, key=lambda procObj: procObj['vms'], reverse=True)
-#    for item in listOfProcObjects:
-#        if pid == None:
-#            print('Process {:05}, checkpoint {}: memory usage {:08.2F} MB'.format(item['pid'], checkpoint, item['vms']))
-#        if pid == item['pid']:
-#            print('Process {:05}, checkpoint {}: memory usage {:08.2F} MB'.format(item['pid'], checkpoint, item['vms']))
-    return listOfProcObjects
-
-def get_size(obj, seen=None):
-    """Recursively finds size of objects"""
-    size = sys.getsizeof(obj)
-    if seen is None:
-        seen = set()
-    obj_id = id(obj)
-    if obj_id in seen:
-        return 0
-    # Important mark as seen *before* entering recursion to gracefully handle
-    # self-referential objects
-    seen.add(obj_id)
-    if isinstance(obj, dict):
-        size += sum([get_size(v, seen) for v in obj.values()])
-        size += sum([get_size(k, seen) for k in obj.keys()])
-    elif hasattr(obj, '__dict__'):
-        size += get_size(obj.__dict__, seen)
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
-        size += sum([get_size(i, seen) for i in obj])
-    return size
 
 class cCamera_LiveImage(QtGui.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
         super(cCamera_LiveImage, self).__init__()
         try:
-            QtUic.loadUi('h:/_data/programming_python/p05/gui/Cameralive_ui_tab_NewDesign_2.ui', self)
+            QtUic.loadUi('h:/_data/programming_python/p05/gui/Cameralive_ui_tab_NewDesign.ui', self)
             self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images.jpg'))
         except:
-            _path = misc.GetPath('Cameralive_ui_tab_NewDesign_2.ui')
+            _path = misc.GetPath('Cameralive_ui_tab_NewDesign.ui')
             QtUic.loadUi(_path, self)
             self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'images.jpg'))
         self.setWindowTitle(name)
         #self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images.jpg'))
         self.setGeometry(10, 25, 1500, 965)
-        self.HamaHutch = 'eh2'  # ALSO CHANGE BELOW if HAMA!!!For hama trigger in eh2 or eh1!
-        self.Camera = 'PixelLink' # !!!GUI ONLY STARTS WHEN THIS KAMERA IS ON!!! CHANGE IF NEEDED!
+        self.HamaHutch = 'eh2'  # ALSO CHANGE BELOW!
+        self.Camera = 'PixelLink'
         #self.Camera = 'PCO'
-        self.pid = os.getpid()
-
+        
         self.tBeamShutter = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/shutter/all')
         
         if self.Camera == 'Hamamatsu':
@@ -102,15 +54,15 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.imagesize = (2048, 2048)
             
         if self.Camera == 'PCO':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
+            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1:10000/eh1/pco/edge')
             #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
 
             self.cB_Cameras.setCurrentIndex(1)
             self.command_exptime = 'ExposureTime'
-            self.command_start = 'StartAcq'
-            self.command_stop = 'StopAcq'
-            self.command_image = 'LiveImage'
+            self.command_start = 'StartStandardAcq'
+            self.command_stop = 'Stop'
+            self.command_image = 'Image'
             self.imagesize = (2048, 2048)
             self.tCamera.write_attribute('TriggerMode',1)
             
@@ -137,8 +89,8 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.tCamera.write_attribute('acq_trigger_mode','INTERNAL_TRIGGER')
             self.tCamera.write_attribute('saving_mode','MANUAL')
             self.imagesize = (2160,2560)
-
-
+            
+            
         if self.Camera == 'KIT':
             self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/')
             #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
@@ -151,7 +103,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.tCamera.write_attribute('acq_trigger_mode','INTERNAL_TRIGGER')
             self.tCamera.write_attribute('saving_mode','MANUAL')
             self.imagesize = (2160,2560)
-
+            
         self.exptime = self.tCamera.read_attribute(self.command_exptime).value
         self.label_currentexptime.setText('%i ms' %(self.exptime* 1e3))
             
@@ -171,20 +123,18 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.HistWidget = self.imageView.getHistogramWidget()
         self.HistWidget.setBackground('#eeeeee')
         
-        self.path_scanscripts = 'D:\BeamlineControllPython\programming_python\p05\scanscripts\\'
-        # for some reason, a path in nanoXTM does not work
+    
         self._initialize()
         self.activeUpdate = False
         self.global_delay = 30
         
         
-        self.roi_x1 = 0
+        self.roi_x1 = 1
         self.roi_x2 = self.imagesize[0]
         self.roidx = self.imagesize[0]
-        self.roi_y1 = 0
+        self.roi_y1 = 1
         self.roi_y2 = self.imagesize[1]
         self.roidy = self.imagesize[1]
-        self.roi = (slice(self.roi_y1, self.roi_y2), slice(self.roi_x1, self.roi_x2))
         self.io_roixlow.setText('%i' % self.roi_x1)
         self.io_roixhigh.setText('%i' % self.roi_x2)
         self.io_roiylow.setText('%i' % self.roi_y1)
@@ -193,7 +143,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.histmax = 65000
         self.hist_autorange = True
         self.viewModeXRM = False
-        #self.box1 = None
+        self.box1 = None
         self.PixelLinkIn = None
 
         self.currdir = None
@@ -230,9 +180,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         QtCore.QObject.connect(self.but_SaveWorkingPos, QtCore.SIGNAL('clicked()'), self.clickButtonSaveWorkingPos)
         QtCore.QObject.connect(self.but_MovePixLinkOut, QtCore.SIGNAL('clicked()'), self.clickButtonMovePiXLinkOut)
         QtCore.QObject.connect(self.but_MovePixLinkIn, QtCore.SIGNAL('clicked()'), self.clickButtonMovePiXLinkIn)
-        QtCore.QObject.connect(self.but_OpenShutter1, QtCore.SIGNAL('clicked()'), self.clickButtonOpenShutter1)
-        QtCore.QObject.connect(self.but_OpenShutter2, QtCore.SIGNAL('clicked()'), self.clickButtonOpenShutter2)
-        QtCore.QObject.connect(self.but_CloseShutter2, QtCore.SIGNAL('clicked()'), self.clickButtonCloseShutter2)
+
         
         QtCore.QObject.connect(self.but_StartStandardScan, QtCore.SIGNAL('clicked()'), self.clickButtonStartStandardScan)
         QtCore.QObject.connect(self.cB_Scan, QtCore.SIGNAL('currentIndexChanged(const QString&)'),self.selectScan)
@@ -241,12 +189,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         QtCore.QObject.connect(self.but_MoveUp, QtCore.SIGNAL('clicked()'), self.clickButtonMoveUp)
         QtCore.QObject.connect(self.but_MoveDown, QtCore.SIGNAL('clicked()'), self.clickButtonMoveDown)
         QtCore.QObject.connect(self.but_StartScanList, QtCore.SIGNAL('clicked()'), self.clickButtonStartScanList)
-        QtCore.QObject.connect(self.checkBox_smearing, QtCore.SIGNAL('clicked()'), self.checkBoxSmearing)
-        QtCore.QObject.connect(self.checkBox_exptime, QtCore.SIGNAL('clicked()'), self.checkBoxExptime)
-        QtCore.QObject.connect(self.checkBox_speed, QtCore.SIGNAL('clicked()'), self.checkBoxSpeed)
-        QtCore.QObject.connect(self.io_exptime2,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
-        QtCore.QObject.connect(self.io_speed,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
-        QtCore.QObject.connect(self.io_smearing,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
+        #QtCore.QObject.connect(self.but_Take0180, QtCore.SIGNAL('clicked()'), self.clickButtonTake0180)
         
         self.show()
         return None
@@ -422,7 +365,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         print(self.Camera)
         if self.Camera == 'Hamamatsu':
             #self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
+            self.tCamera = PyTango.DeviceProxy('//hzgpp07eh4.desy.de:10000/p07/hama/eh4')
             #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
             if self.HamaHutch == 'eh1':
                 self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
@@ -433,20 +376,30 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.command_start = 'StartAcq'
             self.command_stop = 'AbortAcq'
             self.command_image = 'IMAGE'
-            self.tCamera.write_attribute('SaveImageFlag', False)
-            self.tCamera.write_attribute('TRIGGER_SOURCE', 'EXTERNAL')
             self.imagesize = (2048, 2048)
             self.rotate = 0
+            self.roi_x1 = 1
+            self.roi_x2 = self.imagesize[0]
+            self.roidx = self.imagesize[0]
+            self.roi_y1 = 1
+            self.roi_y2 = self.imagesize[1]
+            self.roidy = self.imagesize[1]
             print ('ok')
         if self.Camera == 'PCO':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
+            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1:10000/eh1/pco/edge')
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
             self.command_exptime = 'ExposureTime'
-            self.command_start = 'StartAcq'
-            self.command_stop = 'StopAcq'
-            self.command_image = 'LiveImage'
+            self.command_start = 'StartStandardAcq'
+            self.command_stop = 'Stop'
+            self.command_image = 'Image'
             self.tCamera.write_attribute('TriggerMode',1)
             self.imagesize = (2048, 2048)
+            self.roi_x1 = 1
+            self.roi_x2 = self.imagesize[1]
+            self.roidx = self.imagesize[1]
+            self.roi_y1 = 1
+            self.roi_y2 = self.imagesize[0]
+            self.roidy = self.imagesize[0]
             print('Pco')
         if self.Camera == 'PixelLink':
             self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
@@ -456,6 +409,12 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.command_stop = 'AbortAcq'
             self.command_image = 'Image'
             self.imagesize = (2208, 3000)
+            self.roi_x1 = 1
+            self.roi_x2 = self.imagesize[1]
+            self.roidx = self.imagesize[1]
+            self.roi_y1 = 1
+            self.roi_y2 = self.imagesize[0]
+            self.roidy = self.imagesize[0]
             self.rotate = 1
             print ('PixelLink')
             
@@ -469,9 +428,15 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.command_image = 'IMAGE'
             self.tCamera.write_attribute('acq_trigger_mode','INTERNAL_TRIGGER')
             self.tCamera.write_attribute('saving_mode','MANUAL')    
-
+            
             self.imagesize = (2560, 2160)
-
+            self.roi_x1 = 1
+            self.roi_x2 = self.imagesize[1]
+            self.roidx = self.imagesize[1]
+            self.roi_y1 = 1
+            self.roi_y2 = self.imagesize[0]
+            self.roidy = self.imagesize[0]
+        
         if self.Camera == 'KIT':
             self.tCamera = PyTango.DeviceProxy('hzgpp05ctcam1:10000/p05/hzguca/kit')
             #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
@@ -484,14 +449,12 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             self.tCamera.write_attribute('writeInMemory','false')
             self.tCamera.write_attribute('number_of_frames','1')
             self.imagesize = (2560, 2160)
-        self.roi_x1 = 0
-        self.roi_x2 = self.imagesize[0]
-        self.roidx = self.imagesize[0]
-        self.roi_y1 = 0
-        self.roi_y2 = self.imagesize[1]
-        self.roidy = self.imagesize[1]
-        self.roi = (slice(self.roi_y1, self.roi_y2), slice(self.roi_x1, self.roi_x2))
-        self.PollingThread.cameraChanged = True
+            self.roi_x1 = 1
+            self.roi_x2 = self.imagesize[1]
+            self.roidx = self.imagesize[1]
+            self.roi_y1 = 1
+            self.roi_y2 = self.imagesize[0]
+            self.roidy = self.imagesize[0]
     
 
     def clickButtonSetExptime(self):
@@ -551,8 +514,8 @@ class cCamera_LiveImage(QtGui.QMainWindow):
     def clickButtonGetImageData(self):
         try:
             self.exptime = self.tCamera.read_attribute(self.command_exptime).value
-            if self.tCamera == 'PCO_old':
-                tmp = numpy.fromstring(self.tPCO.read_attribute('LiveImage').value[1], dtype=numpy.uint16).byteswap()
+            if self.tCamera == 'PCO':
+                tmp = numpy.fromstring(self.tPCO.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()
             
                 self.image = (tmp[2:]).reshape(tmp[0], tmp[1])
             else: 
@@ -613,8 +576,8 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             
             while not self.tCamera.state() == PyTango.DevState.ON:
                 time.sleep(0.01)
-            if self.Camera == 'PCO_old':
-                tmp = numpy.fromstring(self.tCamera.read_attribute('LiveImage').value[1], dtype=numpy.uint16).byteswap()
+            if self.Camera == 'PCO':
+                tmp = numpy.fromstring(self.tCamera.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()
             
                 self.image = (tmp[2:]).reshape(tmp[0], tmp[1])
             else: 
@@ -630,10 +593,10 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         try:
             roi_x1 = int(self.io_roixlow.text())
             roi_x2 = int(self.io_roixhigh.text())
-            roidx = roi_x2 - roi_x1
+            roidx = roi_x2 - roi_x1 + 1
             roi_y1 = int(self.io_roiylow.text())
             roi_y2 = int(self.io_roiyhigh.text())
-            roidy = roi_y2 - roi_y1
+            roidy = roi_y2 - roi_y1 + 1
         except:
             QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.', buttons=QtGui.QMessageBox.Ok)
         if roidx > self.imagesize[0] or roidy > self.imagesize[1]:
@@ -645,7 +608,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.roi_y1 = roi_y1
         self.roi_y2 = roi_y2
         self.roidy = roidy
-        self.roi = (slice(self.roi_y1, self.roi_y2), slice(self.roi_x1, self.roi_x2))
         self.label_currentroixlow.setText('%i' % self.roi_x1)
         self.label_currentroixhigh.setText('%i' % self.roi_x2)
         self.label_currentroiylow.setText('%i' % self.roi_y1)
@@ -654,13 +616,12 @@ class cCamera_LiveImage(QtGui.QMainWindow):
     # end clickButtonSetRoi
 
     def clickButtonResetRoi(self):
-        self.roi_x1 = 0
+        self.roi_x1 = 1
         self.roi_x2 =self.imagesize[0]
         self.roidx = self.imagesize[0]
-        self.roi_y1 = 0
+        self.roi_y1 = 1
         self.roi_y2 = self.imagesize[1]
         self.roidy = self.imagesize[1]
-        self.roi = (slice(self.roi_y1, self.roi_y2), slice(self.roi_x1, self.roi_x2))
         self.io_roixlow.setText('%i' % self.roi_x1)
         self.io_roixhigh.setText('%i' % self.roi_x2)
         self.io_roiylow.setText('%i' % self.roi_y1)
@@ -676,8 +637,8 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         
     def clickButtonSetHist(self):
         try:
-            histmin = int(self.io_histmin.text())
-            histmax = int(self.io_histmax.text())
+            histmin = float(self.io_histmin.text())
+            histmax = float(self.io_histmax.text())
         except:
             QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert histogram boundaries to numbers.', buttons=QtGui.QMessageBox.Ok)
             return None
@@ -722,14 +683,12 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.roi_y1 = roi_y1
         self.roi_y2 = roi_y2
         self.roidy = roidy
-        self.roi = ((slice(self.roi_y1, self.roi_y2), slice(self.roi_x1, self.roi_x2)))
         self.label_currentroixlow.setText('%i' % self.roi_x1)
         self.label_currentroixhigh.setText('%i' % self.roi_x2)
         self.label_currentroiylow.setText('%i' % self.roi_y1)
         self.label_currentroiyhigh.setText('%i' % self.roi_y2)
         
-        if hasattr(self, 'box1'):
-            self.imageView.getView().removeItem(self.box1)
+        self.imageView.getView().removeItem(self.box1)
         self.rulerx.setPos((0,0))
         self.rulerx.setSize((1,self.roidy))
         self.rulery.setPos((0,0),)
@@ -738,10 +697,10 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.upper_right_corner_y += self.roi_y1
         if self.hist_autorange:
             self.HistWidget.autoHistogramRange()
-            self.imageView.setImage(self.image[self.roi])
+            self.imageView.setImage(self.image[self.roi_x1-1:self.roi_x2, self.roi_y1-1:self.roi_y2])
         elif self.hist_autorange == False:
             self.HistWidget.setHistogramRange(self.histmin, self.histmax)
-            self.imageView.setImage(self.image[self.roi],\
+            self.imageView.setImage(self.image[self.roi_x1-1:self.roi_x2, self.roi_y1-1:self.roi_y2],\
                                     levels = (self.histmin, self.histmax), autoHistogramRange = False)
 
         #end clickButtonRefreshHist
@@ -843,7 +802,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             if self.Camera == 'PixelLink' or self.Camera == 'PCO':
                 self.tTrigger.write_attribute('Voltage', 0)
             if self.Camera == 'Hamamatsu':
-                self.tCamera.write_attribute('SaveImageFlag',False)
                 #self.tCamera.write_attribute('TRIGGER_SOURCE', 'INTERNAL')
                 if self.HamaHutch == 'eh1':
                     self.tTrigger.write_attribute('Voltage', 0)
@@ -876,11 +834,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         try:
             self.flat = self.image
             print(self.flat)
-            self.flat = numpy.rot90(self.flat, (4-self.rotate)%4)
-            if self.viewModeXRM:
-                self.flat = numpy.rot90(self.flat, 2)
-            if self.Camera == 'PixelLink':
-                self.flat = numpy.fliplr(self.flat)
             self.checkBox_Normalize.setEnabled(True)
         except:
             return
@@ -895,10 +848,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
     def clickButtonSetWorkingPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SetWorkingPos()
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SetWorkingPos_h()
+        self.nano.SetWorkingPos()
         #self.PollingThread.restart()
         return None
     
@@ -906,10 +856,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.PixelLinkIn = self.tPixLinkMotorX.read_attribute('Position')
         #if self.activeUpdate:
         #    self.PollingThread.stop()
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SetAlignmentPos()
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SetAlignmentPos_h()
+        self.nano.SetAlignmentPos()
         #self.PollingThread.restart()
         return None
     
@@ -918,7 +865,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.label_PixLinkInOut.setText('PixelLink Out')
         
     def clickButtonMovePiXLinkIn(self):
-        self.PixelLinkIn = 86.4
         self.tPixLinkMotorX.write_attribute('Position', self.PixelLinkIn )
 #         if posin < 0:
 #             print("Warning, In position should be > 0")
@@ -936,10 +882,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
     def clickButtonGotoWorkingPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.GotoWorkingPos(mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.GotoWorkingPos(mode ="holo")
+        self.nano.GotoWorkingPos()
         self.label_workingalignment.setText('Working Position')
         return None
     
@@ -950,31 +893,13 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         #print("closing shutter")
         self.tBeamShutter.command_inout('CloseOpen_BS_2', 0)
         time.sleep(4)
-#        self.tPixLinkMotorX.write_attribute('Position',self.PixelLinkIn)
-#        while self.tPixLinkMotorX.read_attribute('Position')< self.PixelLinkIn:
-#            time.sleep(0.2)
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.GotoAlignmentPos(mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.GotoAlignmentPos(mode ="holo")
+        self.tPixLinkMotorX.write_attribute('Position',self.PixelLinkIn)
+        while self.tPixLinkMotorX.read_attribute('Position')< self.PixelLinkIn:
+            time.sleep(0.2)
+        self.nano.GotoAlignmentPos()
         self.label_workingalignment.setText('Alignment Position')
         return None
     
-    def clickButtonOpenShutter1(self):
-        self.tBeamShutter.command_inout('CloseOpen_BS_1', 1)
-
-    def clickButtonOpenShutter2(self):
-        sys.stdout.write(misc.GetShortTimeString() + ': ATTENTION!!! Are you in working position? Open Shutter 2? [open, no]: ')
-        sys.stdout.flush()
-        tmp = sys.stdin.readline()[:-1]
-        if tmp not in ['open', 'Open']:
-            print('Aborting...')
-            return None
-        self.tBeamShutter.command_inout('CloseOpen_BS_2', 1)
-
-    def clickButtonCloseShutter2(self):
-        self.tBeamShutter.command_inout('CloseOpen_BS_2', 0)
-
     def clickButtonMvrX(self):
         self.pmac.SampleSF_mvrX(float(self.io_mvrx.text()),WaitForMove=False)
         return None
@@ -1005,11 +930,8 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             fname = QtGui.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',directory = self.currdir)
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SaveAlignmentPos(fname, mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SaveAlignmentPos(fname, mode ="holo")
-
+        self.nano.SaveAlignmentPos(fname)
+        
     def clickButtonLoadAlignmentPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
@@ -1020,10 +942,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
                                                       filter = "Text (*.txt)")
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.LoadAlignmentPos(fname, mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.LoadAlignmentPos(fname, mode ="holo")
+        self.nano.LoadAlignmentPos(fname)
     
     def clickButtonSaveWorkingPos(self):
         #if self.activeUpdate:
@@ -1035,10 +954,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         print(fname)
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SaveWorkingPos(fname, mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SaveWorkingPos(fname, mode ="holo")
+        self.nano.SaveWorkingPos(fname)
         
     def clickButtonLoadWorkingPos(self):
         #if self.activeUpdate:
@@ -1051,150 +967,52 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         print(fname)
-        if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.LoadWorkingPos(fname, mode ="TXM")
-        elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.LoadWorkingPos(fname, mode ="holo")
+        self.nano.LoadWorkingPos(fname)
 
     # Buttons Tab 3
 
     def selectScan(self):
         self.Scan = self.cB_Scan.currentText()
         if self.Scan == 'Take Image Series':
-            self.io_speed.setDisabled(True)
-            self.checkBox_speed.setDisabled(True)
-            self.io_smearing.setDisabled(True)
-            self.checkBox_smearing.setDisabled(True)
-            self.io_noimages.setDisabled(False)
-            self.io_noref.setDisabled(False)
-            self.io_nodistances.setDisabled(True)
-            self.io_stepsize.setDisabled(True)
-        if self.Scan == 'Fly Scan':
-            self.io_speed.setDisabled(False)
-            self.checkBox_speed.setDisabled(False)
-            self.io_smearing.setDisabled(False)
-            self.checkBox_smearing.setDisabled(False)
-            self.io_noimages.setDisabled(True)
-            self.io_noref.setDisabled(False)
-            self.io_nodistances.setDisabled(True)
-            self.io_stepsize.setDisabled(True)
-        if self.Scan == 'Holotomo Fly':
-            self.io_speed.setDisabled(False)
-            self.checkBox_speed.setDisabled(False)
-            self.io_smearing.setDisabled(False)
-            self.checkBox_smearing.setDisabled(False)
-            self.io_noimages.setDisabled(True)
-            self.io_noref.setDisabled(False)
-            self.io_nodistances.setDisabled(False)
-            self.io_stepsize.setDisabled(False)
-        if self.Scan == 'Holotomo Step':
-            self.io_speed.setDisabled(True)
-            self.checkBox_speed.setDisabled(True)
-            self.io_smearing.setDisabled(True)
-            self.checkBox_smearing.setDisabled(True)
-            self.io_noimages.setDisabled(False)
-            self.io_noref.setDisabled(False)
-            self.io_nodistances.setDisabled(False)
-            self.io_stepsize.setDisabled(False)
-
-
-    def checkBoxExptime(self):
-        if self.checkBox_exptime.isChecked():
-            self.io_exptime2.setDisabled(False)
-            if self.checkBox_speed.isChecked():
-                self.checkBox_smearing.setChecked(False)
-                self.io_smearing.setDisabled(True)
-        else:
-            self.io_exptime2.setDisabled(True)
-            self.checkBox_smearing.setChecked(True)
-            self.io_smearing.setDisabled(False)
-            self.checkBox_speed.setChecked(True)
-            self.io_speed.setDisabled(False)
-
-    def checkBoxSmearing(self):
-        if self.checkBox_smearing.isChecked():
-            self.io_smearing.setDisabled(False)
-            if self.checkBox_exptime.isChecked():
-                self.checkBox_speed.setChecked(False)
-                self.io_speed.setDisabled(True)
-        else:
-            self.io_smearing.setDisabled(True)
-            self.checkBox_exptime.setChecked(True)
-            self.io_exptime2.setDisabled(False)
-            self.checkBox_speed.setChecked(True)
-            self.io_speed.setDisabled(False)
-
-    def checkBoxSpeed(self):
-        if self.checkBox_speed.isChecked():
-            self.io_speed.setDisabled(False)
-            if self.checkBox_exptime.isChecked():
-                self.checkBox_smearing.setChecked(False)
-                self.io_smearing.setDisabled(True)
-        else:
-            self.io_speed.setDisabled(True)
-            self.checkBox_exptime.setChecked(True)
-            self.io_exptime2.setDisabled(False)
-            self.checkBox_smearing.setChecked(True)
-            self.io_smearing.setDisabled(False)
-
-    def updateParams(self):
-        if self.checkBox_exptime.isChecked():
-            if self.checkBox_speed.isChecked():
-                smearing = float(self.io_speed.text())*float(self.io_exptime2.text())*numpy.pi *2048/2 /180
-                self.io_smearing.setText(str(smearing))
-            elif self.checkBox_smearing.isChecked():
-                speed = float(self.io_smearing.text()) *180./ (numpy.pi *2048/2*float(self.io_exptime2.text()))
-                self.io_speed.setText(str(speed))
-        else:
-             exptime = float(self.io_smearing.text()) *180./ (numpy.pi *2048/2*float(self.io_speed.text()))
-             self.io_exptime2.setText(str(exptime))
-        num_img = int (180. /(float(self.io_speed.text())*(float(self.io_exptime2.text())+0.015 )))
-        self.io_noimages.setText(str(num_img))
-        scantime = (180/float(self.io_speed.text())/60)
-        self.label_scantime.setText('%.2f min' % scantime)
-
-
+            self.io_rotangle.setDisabled(True)
+            self.io_nop.setDisabled(True)
+            self.io_rotstartangle.setDisabled(True)
+            self.io_refpos.setDisabled(True)
+        if self.Scan == 'Standard Scan':
+            self.io_rotangle.setDisabled(False)
+            self.io_nop.setDisabled(False)
+            self.io_rotstartangle.setDisabled(False)
+            self.io_refpos.setDisabled(True)
+    
+    
     def clickButtonStartStandardScan(self):
         if self.activeUpdate:
             self.PollingThread.stop()
         while not self.tCamera.state() == PyTango.DevState.ON:
             time.sleep(0.01) 
-        #self.tCamera.write_attribute('SaveImageFlag',True)
+        self.tCamera.write_attribute('SaveImageFlag',True)
         self.Scan = self.cB_Scan.currentText()
         beamtime = self.io_beamtime.text()
         prefix = self.io_prefix.text()
-        #rotangle = int(self.io_rotangle.text())
-        #nop = int(self.io_nop.text())
-        num_flat = int(self.io_noref.text())
-        exptime = self.io_exptime2.text()
+        rotangle = int(self.io_rotangle.text())
+        nop = int(self.io_nop.text())
+        noref = int(self.io_noref.text())
+        exptime = float(self.io_exptime2.text())
         rotcenter = float(self.io_cor.text())
         sampleout = float(self.io_sampleoutrel.text())
-        num_images = int(self.io_noimages.text())
-        num_dist = self.io_nodistances.text()
-        stepsize = self.io_stepsize.text()
-        speed = self.io_speed.text()
-        smearing = self.io_smearing.text()
-        CS = self.checkBox_CloseShutter.isChecked()
-        if self.Scan == 'Holotomo Fly Ref':
-            os.system('python ' + self.path_scanscripts + '05_Holotomo_Fly_RefInBetween.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
-        if self.Scan == 'Holotomo Step':
-            os.system('python ' + self.path_scanscripts + '04_Holotomo_Step.py %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  num_images, stepsize,num_dist,num_flat,CS))
-        if self.Scan == 'Holotomo Fly':
-            os.system('python ' + self.path_scanscripts + '03_Holotomo_Fly.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
+        integNo = int(self.io_an.text())
+        refpos = int(self.io_refpos.text())
+        scriptname = '..\scripts\Camera_helper.py'
+        if self.Scan == 'Standard Scan':
+            ch.StartScanStandard('..\scripts\Camera_helper.py', beamtime, prefix, nop, exptime, rotcenter, sampleout ,rotangle=rotangle)
+        if self.Scan == 'Tomo, Ref at start and end':
+            ch.StartScan_RefEnd('..\scripts\Camera_helper.py', beamtime, prefix, rotangle, nop, exptime, rotcenter, sampleout)
+        if self.Scan == 'Close Shutter':
+            ch.closeShutter()
         if self.Scan == 'Take Image Series':
-            os.system('python ' + self.path_scanscripts + '02_ImageSeries.py %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime, num_images, num_flat, CS))
-        if self.Scan == 'Fly Scan':
-            os.system('python ' + self.path_scanscripts + '01_standard_flyScan.py %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime, speed, smearing, num_flat, CS))
-
-    def clickButtonResetScan(self):
-        sys.stdout.write(misc.GetShortTimeString() + ': RESET SCAN? [reset, no]: ')
-        sys.stdout.flush()
-        tmp = sys.stdin.readline()[:-1]
-        if tmp not in ['reset', 'Reset']:
-            print('Aborting...')
-            return None
-
-
+            ch.TakeImageSeries(scriptname,beamtime ,prefix ,integNo,exptime,rotcenter,sampleout,noref)
+        if self.Scan == 'Tomo Integrated':
+            ch.StartScanIntegrated(scriptname, beamtime, prefix, rotangle, nop, exptime, rotcenter, sampleout, integNo,noref=noref,refpos=refpos)
     
     
     def clickButtonAddItem(self):
@@ -1248,12 +1066,12 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         pos = event.pos()
         self.io_currentPosX.setText(str(int(pos.x()+self.upper_right_corner_x)))
         self.io_currentPosY.setText(str(int(pos.y()+self.upper_right_corner_y)))
-        currValue = self.image[(int(pos.x()),int(pos.y()))]
+        currValue = self.image[pos.x(),pos.y()]
         print currValue
         self.label_currentvalue.setText(str(currValue))
         self.rulerx.setPos((pos.x(),0))
         self.rulerx.setSize((1,self.roidy))
-        self.rulery.setPos((0,pos.y()))
+        self.rulery.setPos((0,pos.y()),)
         self.rulery.setSize((self.roidx,1))
         #item1 = pyqtgraph.LineROI((0,0),(10,10), width=1,  pen=QtGui.QPen(QtCore.Qt.red, 1), movable=True)
         #self.imageView.getView().addItem(item1)
@@ -1261,7 +1079,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.io_roixhigh.setText('%i' % self.roi_x2)
         self.io_roiylow.setText('%i' % self.roi_y1)
         self.io_roiyhigh.setText('%i' % self.roi_y2)
-
         try:
             self.imageView.getView().removeItem(self.box1)
         except:
@@ -1308,23 +1125,15 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.io_roiyhigh.setText('%i' % roi_y2)
         self.box = pyqtgraph.ROI((roi_x1,roi_y1), size=(roidx,roidy))
         self.imageView.getView().addItem(self.box)
-        if hasattr(self, 'box1'):
+        try:
             self.imageView.getView().removeItem(self.box1)
-            del(self.box1)
-        self.box1 = self.box
-
-#        try:
-#            self.imageView.getView().removeItem(self.box1)
-#            del(self.box1)
-#        finally:
+        finally: 
+            self.box1 = self.box
         
     
     def NewUpdate(self, _data):
-        PythonMemoryUsage(pid = self.pid, checkpoint = 0)
+
         # Rotation of Image
-        if hasattr(self, 'image'):
-            del(self.image)
-            gc.collect()
         if self.Camera == 'Zyla':
             a = _data[0]
             #print(a)
@@ -1335,17 +1144,15 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         else:
             self.exptime = _data[1]
             self.imagesize = _data[2]
-            self.image = _data[0]
-
+            self.image = numpy.rot90(_data[0])
+        for i in range(self.rotate):
+            self.image = numpy.rot90(self.image)
         if self.checkBox_Normalize.isChecked():
             self.image = numpy.float32(self.image)
-            #self.flat = numpy.rot90(self.flat, self.rotate)
+            for i in range(self.rotate):
+                self.flat = numpy.rot90(self.flat)
             self.image = numpy.divide(self.image, self.flat, out=numpy.zeros_like(self.image), where=self.flat!=0)
-        self.image = self.image[self.roi]
-        self.image = numpy.rot90(self.image, self.rotate)
-
-        del(_data)
-        gc.collect()
+        
         if self.Camera == 'PixelLink':
             self.image = numpy.fliplr(self.image)
             #self.image = numpy.rot90(self.image)
@@ -1359,28 +1166,27 @@ class cCamera_LiveImage(QtGui.QMainWindow):
             #self.image = numpy.rot90(self.image, 1)
         if self.viewModeXRM == True:  
             self.image = numpy.rot90(self.image, 2)
-#            if self.checkBox_Normalize.isChecked():
-#                self.flat = numpy.rot90(self.flat, 2)
-
-
+            if self.checkBox_Normalize.isChecked():
+                self.flat = numpy.rot90(self.flat, 2)
+        
+        
         self.label_currentexptime.setText('%i ms' % (1e3 * self.exptime))
         self.imageView.getImageItem().mouseClickEvent = self.click
         self.imageView.getImageItem().mouseDragEvent = self.mouseDrag
-        self.imageView.clear()
         if self.hist_autorange:
             self.HistWidget.autoHistogramRange()
-            self.imageView.setImage(self.image)
+            self.imageView.setImage(self.image[self.roi_x1-1:self.roi_x2, self.roi_y1-1:self.roi_y2])
         elif self.hist_autorange == False:
             self.HistWidget.setHistogramRange(self.histmin, self.histmax)
-            self.imageView.setImage(self.image,\
+            self.imageView.setImage(self.image[self.roi_x1-1:self.roi_x2, self.roi_y1-1:self.roi_y2],\
                                     levels = (self.histmin, self.histmax), autoHistogramRange = False)
         self.label_timeedit.setTime(QtCore.QTime.currentTime())
         
         #print (self.pmac.ReadMotorPos('Sample_Rot'))
-        self.label_posx.setText('%.4f'% self.pmac.ReadMotorPos('Sample_x'))
-        self.label_posy.setText('%.4f'%self.pmac.ReadMotorPos('Sample_y'))
-        self.label_posz.setText('%.4f'%self.pmac.ReadMotorPos('Sample_z'))
-        self.label_posrot.setText('%.4f'%self.pmac.ReadMotorPos('Sample_Rot'))
+        self.label_posx.setText(str(self.pmac.ReadMotorPos('Sample_x')))
+        self.label_posy.setText(str(self.pmac.ReadMotorPos('Sample_y')))
+        self.label_posz.setText(str(self.pmac.ReadMotorPos('Sample_z')))
+        self.label_posrot.setText(str(self.pmac.ReadMotorPos('Sample_Rot')))
         
         
         if self.PixelLinkIn == None:
@@ -1465,19 +1271,17 @@ class UpdateThread(Camerapolling):
     def __init__(self, parentThread, Camera, trigger, cB_Cameras, cur_delay = 0.25):
         Camerapolling.__init__(self, parentThread, Camera, trigger, cB_Cameras, cur_delay = cur_delay)
         self.HamaHutch = 'eh2'
-        self.cameraChanged = True
-        self.pid = os.getpid()
         return None
             
     def updateCamera(self):
 
         while True:
-            #PythonMemoryUsage(pid = self.pid, checkpoint = 0)
             self.CameraName = self.cB_Cameras.currentText()
             if self.running:
-                if self.CameraName == 'Hamamatsu' and self.cameraChanged:
+                
+                if self.CameraName == 'Hamamatsu':
                     #self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-                    self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
+                    self.tCamera = PyTango.DeviceProxy('//hzgpp07eh4.desy.de:10000/p07/hama/eh4')
                     
                     if self.HamaHutch == 'eh1':
                         self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
@@ -1487,25 +1291,22 @@ class UpdateThread(Camerapolling):
                     self.command_start = 'StartAcq'
                     self.command_stop = 'AbortAcq'
                     self.command_image = 'IMAGE'
-                    self.cameraChanged = False
                     #print ('ok')
-                if self.CameraName == 'PCO' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
+                if self.CameraName == 'PCO':
+                    self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1:10000/eh1/pco/edge')
                     self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
                     self.command_exptime = 'ExposureTime'
-                    self.command_start = 'StartAcq'
-                    self.command_stop = 'StopAcq'
-                    self.command_image = 'LiveImage'
-                    self.cameraChanged = False
-                if self.CameraName == 'PixelLink' and self.cameraChanged:
+                    self.command_start = 'StartStandardAcq'
+                    self.command_stop = 'STOP'
+                    self.command_image = 'Image'
+                if self.CameraName == 'PixelLink':
                     self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
                     self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
                     self.command_exptime = 'SHUTTER'
                     self.command_start = 'StartAcq'
                     self.command_stop = 'AbortAcq'
                     self.command_image = 'Image'
-                    self.cameraChanged = False
-                if self.CameraName == 'Zyla' and self.cameraChanged:
+                if self.CameraName == 'Zyla':
                     self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/limaccds/ct09.01')
                     #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
                     self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
@@ -1516,9 +1317,8 @@ class UpdateThread(Camerapolling):
                     self.tCamera.write_attribute('acq_trigger_mode','INTERNAL_TRIGGER')
                     self.tCamera.write_attribute('saving_mode','MANUAL')
                     self.imagesize = (2560, 2160)
-                    self.cameraChanged = False
-
-                if self.CameraName == 'KIT' and self.cameraChanged:
+                    
+                if self.CameraName == 'KIT':
                     self.tCamera = PyTango.DeviceProxy('hzgpp05ctcam1:10000/p05/hzguca/kit')
                     self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
                     self.command_exptime = 'exposure_time'
@@ -1526,22 +1326,23 @@ class UpdateThread(Camerapolling):
                     self.command_stop = 'Stop'
                     self.command_image = 'image'
                     self.tCamera.write_attribute('trigger_source','1')  # 0: auto, 1: software, 2: Hardware
-                    self.tCamera.write_attribute('writeInMemory','false')
+                    self.tCamera.write_attribute('writeInMemory','false')    
                     self.imagesize = (2560, 2160)
-                    self.cameraChanged = False
 
+                
                 #print (self.CameraName)
                 self.t0 = time.time()
                 if self.CameraName =='Zyla':
                     self.tCamera.command_inout('prepareAcq')
                 while not self.tCamera.state() == PyTango.DevState.ON:
-                    time.sleep(0.02)
+                    time.sleep(0.001)
                 self.tCamera.command_inout(self.command_start)
                 
                 if self.CameraName == 'Hamamatsu':
                     while not self.tCamera.state() == PyTango.DevState.EXTRACT:
-                        time.sleep(0.02)
+                        time.sleep(0.001)
                         #print('wait for extract')
+                        
                 if self.CameraName == 'PixelLink' or self.CameraName == 'PCO':
                     self.tTrigger.write_attribute('Voltage', 3.5)
                 if self.CameraName == 'Hamamatsu':
@@ -1558,30 +1359,30 @@ class UpdateThread(Camerapolling):
                     elif self.HamaHutch == 'eh2':
                         self.tTrigger.write_attribute('Value', 0)
                 while not self.tCamera.state() == PyTango.DevState.ON:
-                    time.sleep(0.02)
+                    time.sleep(0.001)
                 self.exptime = self.tCamera.read_attribute(self.command_exptime).value
-                if self.CameraName == 'PCO_old':
-                    tmp = numpy.fromstring(self.tCamera.read_attribute('LiveImage').value[1], dtype=numpy.uint16).byteswap()
+                
+                if self.CameraName == 'PCO':
+                    tmp = numpy.fromstring(self.tCamera.read_attribute('Image').value[1], dtype=numpy.uint16).byteswap()
                     self.image = (tmp[2:]).reshape(tmp[0], tmp[1])
                 elif self.CameraName == 'Zyla':
                     time.sleep(self.exptime+1)
                     a = self.tCamera.read_attribute('saving_next_number')
                     tmp = self.tCamera.command_inout('getImage',a.value)
                     self.image = tmp
-                    del(tmp)
                 else:
                     self.image = self.tCamera.read_attribute(self.command_image).value
                 if self.CameraName == 'Zyla':
                     self.imagesize = (2160,2560)
                 else:          
-                    self.imagesize = self.image.shape #numpy.shape(self.tCamera.read_attribute(self.command_image).value) #(self.tCamera.read_attribute('IMAGE_WIDTH'), self.tCamera.read_attribute('IMAGE_WIDTH'))
+                    self.imagesize = numpy.shape(self.tCamera.read_attribute(self.command_image).value) #(self.tCamera.read_attribute('IMAGE_WIDTH'), self.tCamera.read_attribute('IMAGE_WIDTH'))
                 #time.sleep(max(0, self.cur_delay - (time.time() - self.t0)))
                 self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.image, self.exptime, self.imagesize])
+                
             elif self.running == False:
                 time.sleep(0.1)
             if self.terminate_signal:
                     break
-            #PythonMemoryUsage(pid = self.pid, checkpoint = 1)
         return None
 # class UpdateThread
 
