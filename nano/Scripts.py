@@ -468,35 +468,6 @@ class NanoPositions():
         return None
     #end MvrSampleZ
 
-    def ReadPosFromIni(self):
-        sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to read all positions from file? [Yes, no]: ')
-        sys.stdout.flush()
-        tmp = sys.stdin.readline()[:-1]
-        if tmp not in ['yes', 'Y', 'y', 'Yes']:
-            print('Aborting...')
-            return None
-        pw = getpass.getpass('Please confirm with command password: ')
-        if pw != 'Affendressur':
-            print('Wrong password. Aborting...')
-            return None
-        try:
-            with open(self.__currDir + os.sep + 'nanoPositioning.ini', 'r') as f:
-                tmp = pickle.load(f)
-            self.__pos_sin = tmp[0]
-            self.__ap_pos = tmp[1]
-            self.__wp_pos = tmp[2]
-            self.__ap_ok = True
-            self.__wp_ok = True
-            self.__rc_ok = True
-        except:
-            print misc.GetShortTimeString() + ': Error reading ini file.'
-            self.__ap_ok = False
-            self.__wp_ok = False
-            self.__rc_ok = False
-        #self.__config_data.read()
-        return None
-    #end ReadPosFromIni
-
     def WritePosToIni(self):
         if self.__ap_ok and self.__wp_ok and self.__rc_ok:
             with open(self.__currDir + os.sep + 'nanoPositioning.ini', 'w') as f:

@@ -404,7 +404,6 @@ class PixelLink_nanoCam():
             
         if tTrigger== None:
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.02')
         else:
             self.tTrigger = tTrigger
         
@@ -425,12 +424,7 @@ class PixelLink_nanoCam():
             self.exptime = exptime
         else:
             self.exptime = 0.1
-        
-        #self.CAM_xlow  = self.tPixelLink.read_attribute('SUBARRAY_HPOS').value 
-        #self.CAM_xhigh = self.tPixelLink.read_attribute('SUBARRAY_HSIZE').value + self.tPixelLink.read_attribute('SUBARRAY_HPOS').value
-        #self.CAM_ylow  = self.tPixelLink.read_attribute('SUBARRAY_VPOS').value
-        #self.CAM_yhigh = self.tPixelLink.read_attribute('SUBARRAY_VSIZE').value + self.tPixelLink.read_attribute('SUBARRAY_VPOS').value
-        
+
         print self.exptime
         self.tPixelLink.write_attribute('SHUTTER', 1)
         #self.tPixelLink.write_attribute('FilePostfix', '.bin') #!!!!
@@ -498,16 +492,6 @@ class PixelLink_nanoCam():
         time.sleep(3)
         return None
     
-    def setROI(self,xlow,xhigh,ylow,yhigh):
-        self.CAM_xlow, self.CAM_xhigh = xlow, xhigh
-        self.CAM_ylow, self.CAM_yhigh = ylow, yhigh
-        #self.tPixelLink.write_attribute('SUBARRAY_MODE','ON')
-        #self.tPixelLink.write_attribute('SUBARRAY_HPOS', long(self.CAM_xlow))
-        #self.tPixelLink.write_attribute('SUBARRAY_HSIZE', long(self.CAM_xhigh-self.CAM_xlow))
-        #self.tPixelLink.write_attribute('SUBARRAY_VPOS', long(self.CAM_ylow))
-        #self.tPixelLink.write_attribute('SUBARRAY_VSIZE', long(self.CAM_yhigh-self.CAM_yhigh))
-        return None
-    
     def setImageName(self,name): 
         self.tPixelLink.write_attribute('FilePrefix',name)
     
@@ -533,8 +517,6 @@ class Zyla_nanoCam():
             
         if tTrigger== None:
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')   # Set Trigger here!
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
         else:
             self.tTrigger = tTrigger
         
@@ -562,15 +544,12 @@ class Zyla_nanoCam():
         self.tZyla.write_attribute('saving_index_format', '%05d')
         self.tZyla.write_attribute('saving_mode', 'auto_frame')
         self.tZyla.write_attribute('acq_trigger_mode', 'external_trigger')
-		
-        #self.tZyla.write_attribute('TRIGGER_ACTIVE', 'EDGE')
+
         self.tZyla.write_attribute('saving_prefix', 'Image')
         self.tZyla.write_attribute('saving_directory', self.imageDir)
 		
         self.tZyla.write_attribute('saving_next_number', 1)
-        #self.tZyla.write_attribute('SaveImageFlag', True)
         self.tTrigger.write_attribute('Value', 0)  #!!!!
-        #self.tTrigger.write_attribute('Voltage', 0)  #!!!!
         time.sleep(0.2)
         self.iImage = 0
         
@@ -641,16 +620,6 @@ class Zyla_nanoCam():
         self.imageTime = time.time()
         self.iImage = 0
         time.sleep(3)
-        return None
-    
-    def setROI(self,xlow,xhigh,ylow,yhigh):
-        self.CAM_xlow, self.CAM_xhigh = xlow, xhigh
-        self.CAM_ylow, self.CAM_yhigh = ylow, yhigh
-        self.tZyla.write_attribute('SUBARRAY_MODE','ON')
-        self.tZyla.write_attribute('SUBARRAY_HPOS', long(self.CAM_xlow))
-        self.tZyla.write_attribute('SUBARRAY_HSIZE', long(self.CAM_xhigh-self.CAM_xlow))
-        self.tZyla.write_attribute('SUBARRAY_VPOS', long(self.CAM_ylow))
-        self.tZyla.write_attribute('SUBARRAY_VSIZE', long(self.CAM_yhigh-self.CAM_yhigh))
         return None
     
     def setImageName(self,name):

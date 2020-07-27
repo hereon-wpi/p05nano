@@ -8,12 +8,10 @@ import numpy
 import string
 import copy
 from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam,KIT_nanoCam
-from p05.nano.JJ_slits import JJslits
 from p05.scripts.OptimizePitch import OptimizePitchDCM
 import p05.tools.misc as misc
 import p05.tools
 import p05.common.TangoFailsaveComm as tcom
-from PIL import Image
 #from libtiff import TIFF
 
 class NanoScriptHelper():
@@ -30,10 +28,10 @@ class NanoScriptHelper():
     """
     
     def __init__(self, pmac, currScript, group, beamtime, prefix, exptime= None, \
-                 useKITcamera = False, KITcameraParameters = None, usePCO = False, useSmarAct = True, \
+                 usePCO = False, useSmarAct = True, \
                  useDiode = False, closeShutter = True, useStatusServer = True, \
                  usePCOcamware = False, useEHD = False, useASAP = True, useASAPcomm = False,\
-                 useJenaPiezo = False, DCMdetune = 0.0, useEnviroLog = False, useNGM = False, disableSideBunchReacquisition = True,\
+                 DCMdetune = 0.0, useEnviroLog = False, useNGM = False, disableSideBunchReacquisition = True,\
                  useHamamatsu = False,usePixelLink=False, useZyla = False, useKIT = False, useHamaTrigger = False, logRotPos = False):
         """
         Class initialization:
@@ -81,16 +79,13 @@ class NanoScriptHelper():
         self.exptime = exptime
 
         #Boolean variables:
-        self.useKITcamera = useKITcamera
         self.useKIT = useKIT
         self.useSmarAct = useSmarAct
-        self.useJenaPiezo = useJenaPiezo
         self.usePCO = usePCO
         self.usePCOcamware = usePCOcamware
         self.useEHD = useEHD
         self.useStatusServer = useStatusServer
         self.closeShutter = closeShutter
-        self.KITcameraParameters = KITcameraParameters
         self.useDiode = useDiode
         self.DCMdetune = DCMdetune
         self.useEnviroLog = useEnviroLog
@@ -161,7 +156,6 @@ class NanoScriptHelper():
         ######## initialize TANGO ###############
         #########################################
         self.tPMAC = pmac
-        self.EH1slits = JJslits()
         self.tQBPM = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/i404/exp.02')
         self.tPETRAinfo = PyTango.DeviceProxy('//hzgpp05vme1:10000/PETRA/GLOBALS/keyword')
         self.tPETRAcell4 = PyTango.DeviceProxy('//hzgpp05vme0:10000/PETRA/UNDBPOS/Zelle4')
@@ -193,8 +187,6 @@ class NanoScriptHelper():
             self.SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')
             self.SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')
 #           self.SM[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha2')
-        if self.useJenaPiezo:
-            self.tJenaPiezo = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/jenapiezo')
         if useDiode:
             self.tDiode = PyTango.DeviceProxy('//hzgpp05eh1vme1:10000/p05/adc/eh1.01')
         if self.useEnviroLog:
@@ -238,8 +230,6 @@ class NanoScriptHelper():
                   'UndulatorPos', 'Pitch', 'DCM']
         if self.useSmarAct:
             __list += ['SmarAct ch. 0 (x left)', 'SmarAct ch. 1 (z top)', 'SmarAct ch. 3 (x right)', 'SmarAct ch. 4 (z bottom)']
-        if self.useJenaPiezo:
-            __list += ['JenaPiezo X1', 'JenaPiezo X2', 'JenaPiezo Y1', 'JenaPiezo Y2']
 
         self.fMotorLog.write('#00: Identifier\n#01: Infostring\n#02: Index number I\n#03: Index number II\n#04: Current number\n')
         __ii = 5   # start counter after first block of text
@@ -416,30 +406,7 @@ class NanoScriptHelper():
             if self.useStatusServer:
                 self.StatusServerSendCommand('eraseData')
                 self.StatusServerSendCommand('startCollectData')
-            
-            # For PCO camera class
-            if self.camera not in ['KIT', 'PCOcamware', 'Hamamatsu', 'PixelLink','Zyla','PCO']:
-                self.lastimage = copy.copy(self.currimage)
-                self.currimage = self.camera.acquireImage()
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                self.currimage.tofile(self.sPath + '/%s.raw' %self.curname)
-    
-            elif self.camera == 'PCOcamware':
-                self.tTrigger.write_attribute('Voltage', 5)
-                time.sleep(self.exptime)
-                self.tTrigger.write_attribute('Voltage', 0)
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                
-            elif self.camera == 'KITnikon':
-                tmp = subprocess.Popen('W:/nanoXTM_IMT/NikonController/NikonCMD.exe w:/nanoXTM_IMT/NikonController/Type0007.md3 -p "D:\Pictures" '+ self.KITcameraParameters)
-                tmp.wait()
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                shutil.copy2('D:/Pictures/image.jpg', self.sPath + self.curname + '.jpg')
-                shutil.copy2('D:/Pictures/image.nef', self.sPath + self.curname + '.nef')
-                self.LogWriteCurrentData(self.sIdentifier, 'end')
-                os.remove('D:/Pictures/image.jpg')
-                os.remove('D:/Pictures/image.nef')
-            
+
             elif self.camera == 'Hamamatsu':
                 self.lastimage = copy.copy(self.currimage)
                 
@@ -455,9 +422,6 @@ class NanoScriptHelper():
 
             elif self.camera == 'PCO':
                 self.hamamatsu.acquireImage()
-                #self.image = numpy.float32(im)
-#                im2 = Image.fromarray(self.image.transpose(), mode="F" ) # float32
-#                im2.save(self.sPath + iname +'_%03i' % inum + '.tiff' , "TIFF"  )
 
 
                 if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
@@ -575,95 +539,6 @@ class NanoScriptHelper():
                 out = self.tTriggerOut.read_attribute('Value')
         return None
 
-
-    def SendTriggerHama(self, position, verbose = False, writeLogs = True):
-        """Method to send tigger and write beam parameters to logfile. ---- OLD VERSION"""
-        if verbose:  print('%s: Acquiring image %s'% (misc.GetTimeString(),'bla'))#, self.curname
-       
-        self.reacquire = False
-        if writeLogs:   _logdata = self.GetCurrentDataString(self.sIdentifier, 'start')
-        if self.useStatusServer:
-            self.StatusServerSendCommand('eraseData')
-            self.StatusServerSendCommand('startCollectData')
-        
-        rot_pos =self.tPMAC.ReadMotorPos('Sample_Rot')
-        while rot_pos  <= position:
-            rot_pos =self.tPMAC.ReadMotorPos('Sample_Rot')
-
-
-            
-        # send trigger
-        self.tTrigger.write_attribute('Value', 1) 
-        #self.tTrigger.write_attribute('Voltage', 3.5)
-        #time.sleep(0.010)
-        print(rot_pos)
-        self.tTrigger.write_attribute('Value', 0) 
-        #self.tTrigger.write_attribute('Voltage', 0)
-        
-        
-        if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-
-       
-        if self.useStatusServer and writeLogs:
-            self.BeamLogWriteData(self.StatusServerReadData())
-            self.StatusServerSendCommand('eraseData')
-        
-        if writeLogs:
-            self.fLog.write(_logdata.split('\n')[0]+str(rot_pos)+'\n')  
-            
-            self.LogWriteCurrentData(self.sIdentifier, 'end', logMotors= False)
-            self.iCurr += 1
-            #self.SetCurrentName(self.sIdentifier, iNumber= self.iNumber, iNumber2 = self.iNumber2, currNum = self.iCurr)
-        return None
-        # waiting time to write image
-        #time.sleep(0.1)
-    #end TakeImage
-    
-    
-    def SendTriggerHama_NGM(self, position, verbose = False, writeLogs = True):
-        """Method to send tigger and write beam parameters to logfile."""
-        if verbose:  print('%s: Acquiring image %s'% (misc.GetTimeString(),'bla'))#, self.curname
-       
-        self.reacquire = False
-        if writeLogs:   _logdata = self.GetCurrentDataString(self.sIdentifier, 'start')
-        if self.useStatusServer:
-            self.StatusServerSendCommand('eraseData')
-            self.StatusServerSendCommand('startCollectData')
-        
-        while True:
-            rot_pos = self.rot_Stage_NGM.read_attribute('Position').value  
-            time.sleep(0.002)
-            if rot_pos >= position:
-                break
-            
-        # send trigger
-        self.tTrigger.write_attribute('Value', 1) 
-        #self.tTrigger.write_attribute('Voltage', 3.5)
-        time.sleep(0.01)
-        print(rot_pos)
-        self.tTrigger.write_attribute('Value', 0) 
-        #self.tTrigger.write_attribute('Voltage', 0)
-        
-        
-        if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-
-       
-        if self.useStatusServer and writeLogs:
-            self.BeamLogWriteData(self.StatusServerReadData())
-            self.StatusServerSendCommand('eraseData')
-        
-        if writeLogs:
-            self.fLog.write(_logdata.split('\n')[0]+str(rot_pos)+'\n')  
-            
-            self.LogWriteCurrentData(self.sIdentifier, 'end', logMotors= False)
-            self.iCurr += 1
-            #self.SetCurrentName(self.sIdentifier, iNumber= self.iNumber, iNumber2 = self.iNumber2, currNum = self.iCurr)
-        return None
-        # waiting time to write image
-        #time.sleep(0.1)
-    #end TakeImage
-    
-
     def TakeFlatfieldCorrectedImage(self, pmac, inpos = None, refpos = None, motor = None, verbose = False):
         if verbose:  print('%s: Acquiring image %s'% (misc.GetTimeString(), self.curname))
         if not os.path.exists(self.sPath + os.sep + 'abs'): os.mkdir(self.sPath + os.sep + 'abs')
@@ -732,35 +607,6 @@ class NanoScriptHelper():
         self.hamamatsu.finishScan()
         return None
 
-    def ReadDiode(self, avg = 5):
-        """Method to read the diode current from the self.tDiode device."""
-        tmp = 0
-        num = 1.0 / avg
-        for i1 in xrange(avg):
-            tmp +=  num * abs(self.tDiode.read_attribute('Value').value)
-            time.sleep(0.015)
-        return tmp
-
-
-    def OptimizePitchAndLog(self, Detune = None, DeltaRange = 0.0004, dummy = False):
-        """Method to optimize the pitch (using QBPM 1 for feedback) 
-        and detuning the pitch by delta = 0.0002 degree"""
-        self.fLog.write('%s\t%s\t%04i\t%04i\t%04i\t%s%s%e\n' %(self.__FormattedString('OptimizePitch', 18),\
-                                                 self.__FormattedString('start', 5), -1, -1, -1, self.GetPETRAbeaminfo(), self.GetPETRAcell4(), self.tDCMenergy.read_attribute('Position').value))
-#         self.fLog.write('%s\t%s\t%04i\t%04i\t%04i\t%s%s%e\n' %(self.__FormattedString('OptimizePitch', 18),\
-#                                                  self.__FormattedString('start', 5), -1, -1, -1, self.GetPETRAbeaminfo(), self.GetPETRAcell4(), self.tDCMenergy.read_attribute('Position').value))
-        if not dummy:
-            if Detune == None:
-                Detune = self.DCMdetune
-            OptimizePitchDCM(Detune = Detune, DeltaRange = DeltaRange)
-        self.fLog.write('%s\t%s\t%04i\t%04i\t%04i\t%s%s%e\n' %(self.__FormattedString('OptimizePitch',  18),\
-                                                 self.__FormattedString('end', 5), -1, -1, -1, self.GetPETRAbeaminfo(), self.GetPETRAcell4(), self.tDCMenergy.read_attribute('Position').value))
-#         self.fLog.write('%s\t%s\t%04i\t%04i\t%04i\t%s%s%e\n' %(self.__FormattedString('OptimizePitch',  18),\
-#                                                  self.__FormattedString('end', 5), -1, -1, -1, self.GetPETRAbeaminfo(), self.GetPETRAcell4(), self.tDCMenergy.read_attribute('Position').value))
-        return None
-    #end OptimizePitchNoHarmonicsAndLog
-
-
     def LogWriteCurrentData(self, __identifier, __infostr, logMotors = False):
         """Write standard data in the scan logfile."""
         tmp = self.GetCurrentDataString(__identifier, __infostr)
@@ -818,7 +664,6 @@ class NanoScriptHelper():
         tmp = '%s\t%s\t%04i\t%04i\t%04i\t' %(self.__FormattedString(__identifier, 18), \
                                    self.__FormattedString(__infostr, 5), iNumber, iNumber2, iCurr)
         tmp += self.tPMAC.ReadAllMotorPos()
-        tmp += self.EH1slits.GetPos()
         try:
             tmp += '%e\t%e\t%e\t' %(self.tScintiY.read_attribute('Position').value, self.tLensY.read_attribute('Position').value, self.tCamRot.read_attribute('Position').value)
         except:
@@ -832,12 +677,6 @@ class NanoScriptHelper():
             try:
                 tmp += '%e\t%e\t%e\t%e\t' %(self.SM[0].read_attribute('Position').value, self.SM[1].read_attribute('Position').value, \
                                             self.SM[2].read_attribute('Position').value, self.SM[3].read_attribute('Position').value)
-            except:
-                tmp += '%e\t%e\t%e\t%e\t' %(-1, -1, -1, -1)
-        if self.useJenaPiezo:
-            try:
-                tmp += '%e\t%e\t%e\t%e\t' %(self.tJenaPiezo.read_attribute('PositionX1').value, self.tJenaPiezo.read_attribute('PositionX2').value, \
-                                            self.tJenaPiezo.read_attribute('PositionY1').value, self.tJenaPiezo.read_attribute('PositionY2').value)
             except:
                 tmp += '%e\t%e\t%e\t%e\t' %(-1, -1, -1, -1)
         return tmp + '\n'

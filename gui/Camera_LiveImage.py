@@ -13,7 +13,6 @@ from p05.devices.PMACdict import PMACdict
 import p05.nano
 import pylab as plt
 import PIL
-import p05.scripts.Camera_helper as ch
 
 import gc
 import psutil
@@ -21,50 +20,6 @@ gc.enable()
 
 from msilib.schema import CheckBox
 from matplotlib.backend_bases import MouseEvent
-
-
-def PythonMemoryUsage(pid = None, checkpoint = None):
-    listOfProcObjects = []
-    for proc in psutil.process_iter():
-        try:
-            # Fetch process details as dict
-            pinfo = proc.as_dict(attrs=['pid', 'name', 'username'])
-            pinfo['vms'] = proc.memory_info().vms / (1024.0 * 1024.0
-            )
-            # Append dict to list
-            if pinfo['name'] in ['pythonw.exe', 'python.exe']:
-                listOfProcObjects.append(pinfo);
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-
-    # Sort list of dict by key vms i.e. memory usage
-    listOfProcObjects = sorted(listOfProcObjects, key=lambda procObj: procObj['vms'], reverse=True)
-#    for item in listOfProcObjects:
-#        if pid == None:
-#            print('Process {:05}, checkpoint {}: memory usage {:08.2F} MB'.format(item['pid'], checkpoint, item['vms']))
-#        if pid == item['pid']:
-#            print('Process {:05}, checkpoint {}: memory usage {:08.2F} MB'.format(item['pid'], checkpoint, item['vms']))
-    return listOfProcObjects
-
-def get_size(obj, seen=None):
-    """Recursively finds size of objects"""
-    size = sys.getsizeof(obj)
-    if seen is None:
-        seen = set()
-    obj_id = id(obj)
-    if obj_id in seen:
-        return 0
-    # Important mark as seen *before* entering recursion to gracefully handle
-    # self-referential objects
-    seen.add(obj_id)
-    if isinstance(obj, dict):
-        size += sum([get_size(v, seen) for v in obj.values()])
-        size += sum([get_size(k, seen) for k in obj.keys()])
-    elif hasattr(obj, '__dict__'):
-        size += get_size(obj.__dict__, seen)
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
-        size += sum([get_size(i, seen) for i in obj])
-    return size
 
 class cCamera_LiveImage(QtGui.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
@@ -926,13 +881,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
 #             self.tPixLinkMotorX.write_attribute('Position', 87.15)
 #             self.label_PixLinkInOut.setText('PixelLink In')
     
-    def clickButtonTake0180(self):
-        if self.activeUpdate:
-            self.PollingThread.stop()    
-        #scan.take0180(self.io_beamtime.text(), self.io_prefix.text(),plot= True)
-        ch.alignment_sample_stage('..\scripts\Camera_helper.py', self.io_beamtime.text(), self.io_prefix.text(), int(self.io_rotangle.text()),float(self.io_exptime2.text()), float(self.io_cor.text()), float(self.io_sampleoutrel.text()),float(self.io_rotstartangle.text()),int(self.io_an.text()))
-    
-
     def clickButtonGotoWorkingPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
@@ -1320,7 +1268,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         
     
     def NewUpdate(self, _data):
-        PythonMemoryUsage(pid = self.pid, checkpoint = 0)
         # Rotation of Image
         if hasattr(self, 'image'):
             del(self.image)

@@ -27,23 +27,5 @@ from p05.gui.PMAC_generic_motors import getPMACmotorList, getPMACmotorGroups
 from p05.gui.TANGO_presetGUIs import *
 __all__ += ['NanoTangoGUI', 'BeamlineOpticsGUI', 'NanoGrainMappingGUI', 'DMMgui','ConeBeamTangoGUI']
 
-from p05.gui.PCO_LiveImage import PCO_LiveImage
-__all__ += ['PCO_LiveImage']
-
-from p05.gui.QBPM_monitor import QBPMmonitor
-__all__ += ['QBPMmonitor']
-
-from p05.gui.Counter_monitor import CounterMonitor
-__all__ += ['CounterMonitor']
-
-from p05.gui.EH1_EnvironMonitor import EH1_EnvironMonitor
-__all__ += ['EH1_EnvironMonitor']
-
-from p05.gui.Hama_LiveImage import *
-__all__ += ['Hama_LiveImage']
-
-from p05.gui.PixLink_LiveImage import *
-__all__ += ['PixLink_LiveImage']
-
 from p05.gui.Camera_LiveImage import Camera_LiveImage
 __all__ += ['Camera_LiveImage']

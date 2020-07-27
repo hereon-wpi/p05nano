@@ -10,7 +10,6 @@ pmac = p05.devices.PMACdict()  ################
 currScript = os.path.abspath(__file__)  ################
 from sys import exit  ################
 from sys import argv
-import p05.scripts.Camera_helper as ch
 import p05.tools.misc as misc
 ###########################################################
 #### end initialization ###################################
