@@ -1,6 +1,7 @@
-from PyQt4 import QtCore, QtGui
 import PyTango
 import numpy
+from PyQt4 import QtCore, QtGui
+
 
 class cTANGOdevice(QtCore.QObject):
     def __init__(self, _parent, _xoffset=0, _yoffset=0, alias='unknown', serveraddress=None, \
@@ -104,6 +105,10 @@ class cTANGOdevice(QtCore.QObject):
                 for item in self.TangoCmdList: self.window.cmd_selector.addItem(item)
         return None
 
+    ############
+    ### Olga: controller for a button, not a view thing - move to another file
+    ############
+
     def SetAttribute(self, _index):
         _txt = self.window.io_newvals[_index].text()
         if self.TangoObject.state() == PyTango.DevState.ON:
@@ -112,12 +117,15 @@ class cTANGOdevice(QtCore.QObject):
                 elif self.attformatter[_index] == '%i':    _val = int(float(_txt))
                 elif self.attformatter[_index] == '%s':    _val = str(_txt)
                 self.TangoObject.write_attribute(self.attnames[_index], _val)
-            except Exception, e:
+            except Exception as e:
                 self.window.io_newvals[_index].setText('')
                 if _txt == '': _txt = '<None>'
                 QtGui.QMessageBox.critical(self.parent, 'Error', "The value '%s' could not be written to attribute '%s'. Error code:\n%s" %( _txt, self.attnames[_index], e), buttons = QtGui.QMessageBox.Ok)
         return None
-    
+
+    ############
+    ### Olga: controller for a button, not a view thing - move to another file
+    ############
     def clickButtonSendCmd(self):
         self.cmd = self.TangoObject.command_query(self.cmd_name)
         if self.cmd.in_type in [PyTango.CmdArgType.DevShort, PyTango.CmdArgType.DevLong, PyTango.CmdArgType.DevUShort, \
@@ -186,16 +194,19 @@ class cTANGOdevice(QtCore.QObject):
             self.window.label_status.setText(str(self.state))
             if self.ZMXdevice != None:
                 self.window.label_zmxerr.setText(self.zmxerrorstatus)
-            for i1 in xrange(self.numrows):
+            for i1 in range(self.numrows):
                 if self.attnames[i1] != 'None':
                     try:
                         self.window.num_attributevals[i1].setText(self.attformatter[i1] %self.attvalues[i1])
                     except:
-                        print self.attnames[i1], self.attformatter[i1], self.attvalues[i1]
-                        print self.attformatter[i1] %self.attvalues[i1]
+                        print(self.attnames[i1], self.attformatter[i1], self.attvalues[i1])
+                        print(self.attformatter[i1] % self.attvalues[i1])
             
         return None
 
+    ############
+    ### Olga: used only in TANGO_gui_master -> move to this file
+    ############
     def enable(self, _value):
         if not self.readonly:
             for button in self.window.att_set_buttons:
@@ -256,7 +267,10 @@ class cTANGOdevice(QtCore.QObject):
         self.ChanceAttSelection(4)
         return None
 
-    
+
+############
+### Olga: move above to another file
+############
         
 class cTANGOdeviceForm(QtGui.QWidget):
     def __init__(self, _parent_motor, _parent_widget, _xoffset=0, _yoffset=0, bgcolor='#ECECEC'):
@@ -321,7 +335,7 @@ class cTANGOdeviceForm(QtGui.QWidget):
         self.label_name.setFont(self.parent_widget.stdfontbold)
         
         self.num_attributevals = numpy.zeros(self.parent_motor.numrows, dtype=object)
-        for i1 in xrange(self.parent_motor.numrows):
+        for i1 in range(self.parent_motor.numrows):
             self.num_attributevals[i1] = QtGui.QLabel(self.parent_widget)
             self.num_attributevals[i1].setFont(self.parent_widget.stdfont)
             self.num_attributevals[i1].setObjectName("num_attributeval%1i" % i1)
@@ -331,7 +345,7 @@ class cTANGOdeviceForm(QtGui.QWidget):
         
         if not self.parent_motor.readonly:
             self.io_newvals = numpy.zeros(self.parent_motor.numrows, dtype=object)
-            for i1 in xrange(self.parent_motor.numrows):
+            for i1 in range(self.parent_motor.numrows):
                 self.io_newvals[i1] = QtGui.QLineEdit(self.parent_widget)
                 self.io_newvals[i1].setSizePolicy(self.stdsizePolicy)
                 self.io_newvals[i1].setFont(self.parent_widget.stdfont)
@@ -341,7 +355,7 @@ class cTANGOdeviceForm(QtGui.QWidget):
                 # self.io_newvals[i1].setValidator(_parent_motor.parent.floatValidator)
             
             self.att_set_buttons = numpy.zeros(self.parent_motor.numrows, dtype=object)
-            for i1 in xrange(self.parent_motor.numrows):
+            for i1 in range(self.parent_motor.numrows):
                 self.att_set_buttons[i1] = QtGui.QPushButton(self.parent_widget)
                 self.att_set_buttons[i1].setFont(self.parent_widget.stdfont)
                 self.att_set_buttons[i1].setObjectName("but_setnewtarget%1i" % i1)
@@ -354,7 +368,7 @@ class cTANGOdeviceForm(QtGui.QWidget):
             i0 = 0
         else:
             i0 = 1
-        for i1 in xrange(i0, self.parent_motor.numrows):
+        for i1 in range(i0, self.parent_motor.numrows):
             self.att_select_buttons[i1] = QtGui.QComboBox(self.parent_widget)
             self.att_select_buttons[i1].setStyleSheet(self.combo_style)
             self.att_select_buttons[i1].setInsertPolicy(QtGui.QComboBox.InsertAtBottom)

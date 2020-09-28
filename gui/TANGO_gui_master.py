@@ -1,12 +1,15 @@
-import numpy
-from PyQt4 import uic as QtUic
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+import os
 import sys
 import time
-import os
-from p05.gui.TANGO_deviceForm import cTANGOdevice
+
+import numpy
+from PyQt4 import QtCore
+from PyQt4 import QtGui
+from PyQt4 import uic as QtUic
+
 import p05.tools.misc as misc
+from p05.gui.TANGO_deviceForm import cTANGOdevice
+
 
 class cTANGOgui(QtGui.QMainWindow):
     def __init__(self, parent, devices=[], groups=[], name='TANGO motor GUI', geometry=None):
@@ -14,10 +17,10 @@ class cTANGOgui(QtGui.QMainWindow):
         self.main = parent
         try:
             QtUic.loadUi('h:/_data/programming_python/p05/gui/TANGO_ui.ui', self)
-            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/tango.png'))
+            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/tango.png'))
         except:
             _path = misc.GetPath('TANGO_ui.ui')
-            print _path
+            print(_path)
             QtUic.loadUi(_path, self)
             self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'tango.png'))
         self.setWindowTitle(name)
@@ -82,9 +85,8 @@ class cTANGOgui(QtGui.QMainWindow):
         self.motor_posy = numpy.zeros((len(devices)))
         self.motor_heights = numpy.zeros((len(devices)))
         self.motor_bgcolor = numpy.empty(len(devices), dtype=object)
-        
-        
-        for i1 in xrange(self.devices.size):
+
+        for i1 in range(self.devices.size):
             self.motor_heights[i1] = devices[i1].get('NumAttributes', 4) * 23 + 23
             if devices[i1].get('ShowRelMovementPanel', True) and not devices[i1].get('ReadOnly', False): self.motor_heights[i1] += 26
             if devices[i1].get('ShowCommands', True) and not devices[i1].get('ReadOnly', False): self.motor_heights[i1] += 52
@@ -99,7 +101,7 @@ class cTANGOgui(QtGui.QMainWindow):
         self.tmpgroups = []
         x0, y0 = 5, 30
         imotor = 0
-        for i1 in xrange(len(groups)):
+        for i1 in range(len(groups)):
             group = groups[i1]
             _name = group[0]
             igroup = group[1]
@@ -125,13 +127,13 @@ class cTANGOgui(QtGui.QMainWindow):
                     igroup = group[1] - ngroup
                     y0 += dy + 10
                     newgroup = False
-            
-        self.groups = numpy.r_[[QtGui.QGroupBox() for i1 in xrange(len(self.tmpgroups))]]
+
+        self.groups = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(self.tmpgroups))]]
         self.group_stylesheet = numpy.empty(len(self.tmpgroups), dtype=object)
         
         x0, y0 = 5, 30
         imotor = 0
-        for i1 in xrange(self.groups.size): 
+        for i1 in range(self.groups.size):
             group = self.tmpgroups[i1]
             group[1] = int(group[1])
             self.groups[i1] = (QtGui.QGroupBox(self))
@@ -145,13 +147,15 @@ class cTANGOgui(QtGui.QMainWindow):
             self.groups[i1].setGeometry(QtCore.QRect(x0, y0, 469, dy))
             self.group_stylesheet[i1] = """QGroupBox{background-color:%s}""" % group[2]
             self.groups[i1].setStyleSheet(self.group_stylesheet[i1])
-            self.motor_posy[imotor:imotor + group[1]] = 20 + y0 + numpy.r_[[[self.motor_heights[imotor:imotor + i1].sum() for i1 in xrange(group[1])]]] + numpy.arange(group[1]).astype(numpy.int) * 5
+            self.motor_posy[imotor:imotor + group[1]] = 20 + y0 + numpy.r_[
+                [[self.motor_heights[imotor:imotor + i1].sum() for i1 in range(group[1])]]] + numpy.arange(
+                group[1]).astype(numpy.int) * 5
             self.motor_posx[imotor:imotor + group[1]] = 3 + x0
             self.motor_bgcolor[imotor:imotor + group[1]] = group[2]
             y0 += dy + 10
             imotor += group[1]
-             
-        for i1 in xrange(self.devices.size):
+
+        for i1 in range(self.devices.size):
             dev = devices[i1]
             self.devices[i1] = cTANGOdevice(self, self.motor_posx[i1], self.motor_posy[i1], alias=dev.get('DeviceName'), \
                                             numrows=dev.get('NumAttributes', 4), allowmvr=dev.get('ShowRelMovementPanel', True), \
@@ -163,7 +167,7 @@ class cTANGOgui(QtGui.QMainWindow):
                 motor.enable(False)
         
         self.io_tango_polling.setValidator(self.floatValidator)
-        self.TANGOobjects = numpy.r_[[self.devices[i1].TangoObject for i1 in xrange(self.devices.size)]]
+        self.TANGOobjects = numpy.r_[[self.devices[i1].TangoObject for i1 in range(self.devices.size)]]
         return None
     # end _initialize
 
@@ -222,7 +226,7 @@ class cTANGOgui(QtGui.QMainWindow):
         _vals = data[0]
         _states = data[1]
         _zmx = data[2]
-        for i1 in xrange(self.devices.size):
+        for i1 in range(self.devices.size):
             self.devices[i1].attvalues = _vals[i1]
             self.devices[i1].state = _states[i1]
             if self.devices[i1].ZMXdevice != None:
@@ -286,13 +290,13 @@ class ReadoutThread(TANGOpolling):
                     attlist.append(motor.attnames)
                     attformatter.append(motor.attformatter)
 
-                for i1 in xrange(self.devicesize):
+                for i1 in range(self.devicesize):
                     self.devicestates[i1] = self.devices[i1].TangoObject.state()
-                    for i2 in xrange(len(attlist[i1])):
+                    for i2 in range(len(attlist[i1])):
                         if attlist[i1][i2] != 'None':
                             try:
                                 self.attvalues[i1, i2] = self.devices[i1].TangoObject.read_attribute(str(attlist[i1][i2])).value
-                            except Exception, e:
+                            except Exception as e:
                                 QtGui.QMessageBox.critical(self.parent, 'Error', "TANGO exception. Error code:\n%s" % (e), buttons=QtGui.QMessageBox.Ok)
                                 attlist[i1][i2] = 'None'
                                 self.devices[i1].window.att_select_buttons[i2].setCurrentIndex(0)

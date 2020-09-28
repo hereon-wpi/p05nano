@@ -4,7 +4,10 @@ Created on 06.03.2012
 @author: ogurreck
 '''
 import ctypes
+
 import p05.tools.misc as misc
+
+
 #import numpy
 #import time
 #import string
@@ -39,7 +42,9 @@ class PMACcomm():
                   4: [4, '192.168.10.6', 'Controller 4', 'Optics SpaceFab and pushers for photodiodes'], \
                   5: [5, '192.168.10.7', 'Controller 5', 'Tip/tilt pods and x-translation for\nrotational axis, rotational axis and detector x/z stage'], \
                   6: [6, '192.168.10.8', 'Controller 6', 'Sample SpaceFab'], \
-                  7: [7, '192.168.10.9', 'Controller 7', 'Optics SpaceFab (slider 1)']}
+                  7: [7, '192.168.10.9', 'Controller 7', 'Optics SpaceFab (slider 1)']
+                  #  7: [7, '192.168.10.9', 'Controller 7', 'Optics SpaceFab (slider 1)']
+                  }
 
         self.error = False
         self.connection_active = False

@@ -1,17 +1,18 @@
-import PyTango
-import time
-import os
-import sys
-import subprocess
-import shutil
-import numpy
-import string
 import copy
-from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam,KIT_nanoCam
-from p05.scripts.OptimizePitch import OptimizePitchDCM
+import os
+import shutil
+import sys
+import time
+
+import PyTango
+import numpy
+
 import p05.tools.misc as misc
-import p05.tools
-import p05.common.TangoFailsaveComm as tcom
+from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam, \
+    KIT_nanoCam, Lambda_nanoCam
+from p05.scripts.OptimizePitch import OptimizePitchDCM
+
+
 #from libtiff import TIFF
 
 class NanoScriptHelper():
@@ -30,9 +31,10 @@ class NanoScriptHelper():
     def __init__(self, pmac, currScript, group, beamtime, prefix, exptime= None, \
                  usePCO = False, useSmarAct = True, \
                  useDiode = False, closeShutter = True, useStatusServer = True, \
-                 usePCOcamware = False, useEHD = False, useASAP = True, useASAPcomm = False,\
-                 DCMdetune = 0.0, useEnviroLog = False, useNGM = False, disableSideBunchReacquisition = True,\
-                 useHamamatsu = False,usePixelLink=False, useZyla = False, useKIT = False, useHamaTrigger = False, logRotPos = False):
+                 usePCOcamware = False, useEHD = False, useASAP = True, useASAPcomm = False, \
+                 DCMdetune = 0.0, useEnviroLog = False, useNGM = False, disableSideBunchReacquisition = True, \
+                 useHamamatsu=False, usePixelLink=False, useZyla=False, useKIT=False, useLambda=False,
+                 useHamaTrigger=False, logRotPos=False):
         """
         Class initialization:
         
@@ -57,7 +59,7 @@ class NanoScriptHelper():
             #self.sPath = 'd:/%s/%s/%s/' %(self.sGroup, self.sBeamtime, self.sPrefix)
             self.sPath = 'd:/hzg/' + str(beamtime) + '/%s/' %(self.sPrefix)
 
-        if useZyla or useKIT or usePCO:
+        if useZyla or useKIT or usePCO or useLambda:
             if useASAP:
                 self.sPath_Cam = '/gpfs/current/raw/%s/' %(self.sPrefix)
             elif useASAP == False and useASAPcomm == True:
@@ -93,6 +95,7 @@ class NanoScriptHelper():
         self.useHamamatsu = useHamamatsu
         self.useHamaTrigger = useHamaTrigger
         self.usePixelLink = usePixelLink
+        self.useLambda = useLambda
         self.logRotPos = logRotPos
         self.useZyla = useZyla
         self.useNGM = useNGM
@@ -139,6 +142,12 @@ class NanoScriptHelper():
             self.camera = 'KIT'
             self.hamamatsu = KIT_nanoCam(imageDir = self.sPath_Cam, exptime = self.exptime)
             self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/register/eh1.out01')
+            self.currimage = None
+
+        if self.useLambda:
+            self.camera = 'Lambda'
+            self.hamamatsu = Lambda_nanoCam(imageDir=self.sPath_Cam, exptime=self.exptime)
+            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
             self.currimage = None
 
         if self.usePCO:
@@ -191,7 +200,7 @@ class NanoScriptHelper():
             self.tDiode = PyTango.DeviceProxy('//hzgpp05eh1vme1:10000/p05/adc/eh1.01')
         if self.useEnviroLog:
             self.Environ = numpy.zeros(6, dtype = object)
-            for i1 in xrange(6):
+            for i1 in range(6):
                 self.Environ[i1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/adc/eh1.%02i' %(i1+1))
 
         #########################################
@@ -199,7 +208,7 @@ class NanoScriptHelper():
         #########################################
         if os.path.exists(self.sLogfile):
             print('~~~~~~~~~ !!!! ~~~~~~~~~ Warning: Logfile exists')
-            tmp = raw_input('~~~~~~~~~ !!!! ~~~~~~~~~ Continue? y / n: ')
+            tmp = input('~~~~~~~~~ !!!! ~~~~~~~~~ Continue? y / n: ')
             if tmp not in ['yes', 'Y', 'y']:
                 print('Aborting...')
                 sys.exit()
@@ -241,7 +250,7 @@ class NanoScriptHelper():
                                        self.__FormattedString('#01', 5), self.__FormattedString('#02', 5),\
                                        self.__FormattedString('#03', 5), self.__FormattedString('#04', 5))
         __ii = 5
-        for i1 in xrange(len(__list)):
+        for i1 in range(len(__list)):
             tmp += '#%02i\t\t' %(i1 + 5)
         self.fMotorLog.write(tmp+ '\n')
 
@@ -298,7 +307,7 @@ class NanoScriptHelper():
     def TakeDarkImages(self, num = 10,imgNumber=0):
         self.BeamshutterClose()
         time.sleep(40)
-        for i1 in xrange(num):
+        for i1 in range(num):
             #self.SetCurrentName('dark', iNumber= i1, iNumber2= None, imgNumber=imgNumber+i1)
             self.SetCurrentName('dark', iNumber= i1, iNumber2= None, imgNumber=None)
             self.TakeImage()
@@ -316,7 +325,7 @@ class NanoScriptHelper():
         if currNum != None:
             self.iCurr = currNum    
         if self.useHamaTrigger != True:
-            if self.camera == 'Hamamatsu' or "Zyla" or "PCO":
+            if self.camera == 'Hamamatsu' or "Zyla" or "PCO" or "Lambda":
                 self.hamamatsu.setImageName(_identifier)
                 if imgNumber != None:
                     self.hamamatsu.setImgNumber(imgNumber)
@@ -366,7 +375,7 @@ class NanoScriptHelper():
                 self.tStatusServer.command_inout(_command)
                 break
             except:
-                print misc.GetTimeString() + ': StatusServer not responding while executing command "%s"...' %_command
+                print(misc.GetTimeString() + ': StatusServer not responding while executing command "%s"...' % _command)
                 time.sleep(10)
                 i0 += 1
             if i0 > 5: break
@@ -386,7 +395,7 @@ class NanoScriptHelper():
 #             tmp = string.join(tmp, '\n')+ '\n'
 #                 break
 #             except:
-#                 print misc.GetTimeString() + ': StatusServer not responding while reading data...'
+        #                 print(misc.GetTimeString() + ': StatusServer not responding while reading data...')
 #                 time.sleep(10)
 #                 i0 += 1
 #             if i0 > 5: 
@@ -403,39 +412,42 @@ class NanoScriptHelper():
             tmp_count = self.tPETRAnbCleaning.read_attribute('SweepCounter').value
             self.reacquire = False
             if writeLogs:   _logdata = self.GetCurrentDataString(self.sIdentifier, 'start')
+
+            self.hamamatsu.acquireImage()
+
             if self.useStatusServer:
                 self.StatusServerSendCommand('eraseData')
                 self.StatusServerSendCommand('startCollectData')
-
-            elif self.camera == 'Hamamatsu':
-                self.lastimage = copy.copy(self.currimage)
-                
-                self.currimage = self.hamamatsu.acquireImage()
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                
-            elif self.camera == 'Zyla':
-                self.hamamatsu.acquireImage()
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-            
-            elif self.camera == 'KIT':
-                self.hamamatsu.acquireImage()
-
-            elif self.camera == 'PCO':
-                self.hamamatsu.acquireImage()
-
-
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                        
-            elif self.camera == 'PixelLink':
-                self.lastimage = copy.copy(self.currimage)
-                self.tTrigger.write_attribute('Voltage', 5)
-                time.sleep(self.exptime)
-                self.tTrigger.write_attribute('Voltage', 0)
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
-                
-            elif self.camera == None:
-                time.sleep(self.exptime)
-                if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
+            #
+            # elif self.camera == 'Hamamatsu':
+            #     self.lastimage = copy.copy(self.currimage)
+            #
+            #     self.currimage = self.hamamatsu.acquireImage()
+            #     if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
+            #
+            # elif self.camera == 'Zyla':
+            #     self.hamamatsu.acquireImage()
+            #     if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
+            #
+            # elif self.camera == 'KIT':
+            #     self.hamamatsu.acquireImage()
+            #
+            # elif self.camera == 'PCO':
+            #     self.hamamatsu.acquireImage()
+            #
+            #
+            #     if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
+            #
+            # elif self.camera == 'PixelLink':
+            #     self.lastimage = copy.copy(self.currimage)
+            #     self.tTrigger.write_attribute('Voltage', 5)
+            #     time.sleep(self.exptime)
+            #     self.tTrigger.write_attribute('Voltage', 0)
+            #     if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
+            #
+            # elif self.camera == None:
+            #     time.sleep(self.exptime)
+            #     if self.useStatusServer:    self.StatusServerSendCommand('stopCollectData')
     
             if self.useStatusServer and writeLogs:
                 self.BeamLogWriteData(self.StatusServerReadData())
@@ -484,8 +496,8 @@ class NanoScriptHelper():
             tmp = numpy.fromstring(self.hamamatsu.readAttribute('Image').value[1], dtype=numpy.uint16).byteswap()
             self.image = (tmp[2:]).reshape(tmp[0], tmp[1])
             self.image = numpy.float32(self.image)
-            im2 = Image.fromarray(self.image.transpose(), mode="F" ) # float32
-            im2.save(self.sPath + iname +'_%03i' % inum + '.tiff' , "TIFF" )
+            # im2 = Image.fromarray(self.image.transpose(), mode="F" ) # float32
+            # im2.save(self.sPath + iname +'_%03i' % inum + '.tiff' , "TIFF" )
 
         ##### for Hamamatsu camera #######
         elif self.camera == 'Hamamatsu':
@@ -510,6 +522,11 @@ class NanoScriptHelper():
                 out = self.tTriggerOut.read_attribute('Value')
                 while out.value != 1:
                     out = self.tTriggerOut.read_attribute('Value')
+        elif self.camera == "Lambda":
+            self.tTrigger.write_attribute('Value', 1)
+            rot_pos = self.tPMAC.ReadMotorPos('Sample_Rot')
+            time.sleep(0.005)  # will be 10-13 ms
+            self.tTrigger.write_attribute('Value', 0)
 
         if writeLogs:
             self.fLog.write(_logdata.split('\n')[0]+str(rot_pos)+'\n')
@@ -538,6 +555,23 @@ class NanoScriptHelper():
             while out.value == 0:
                 out = self.tTriggerOut.read_attribute('Value')
         return None
+
+    def SendTrigger(self, writeLogs=True):
+        if writeLogs:   _logdata = self.GetCurrentDataString(self.sIdentifier, 'start')
+        self.hamamatsu.sendTrigger()
+        rot_pos = self.tPMAC.ReadMotorPos('Sample_Rot')
+        self.tTrigger.write_attribute('Value', 0)
+        if writeLogs:
+            self.fLog.write(_logdata.split('\n')[0] + str(rot_pos) + '\n')
+            self.iCurr += 1
+
+    def TakeImageSeries(self, num_images, waitForCamera=False):
+        self.hamamatsu.writeAttribute('TriggerMode', 0)
+        self.hamamatsu.setFrameNumbers(num_images)
+        self.hamamatsu.acquireImage()
+        if waitForCamera:
+            self.hamamatsu.waitForCamera()
+
 
     def TakeFlatfieldCorrectedImage(self, pmac, inpos = None, refpos = None, motor = None, verbose = False):
         if verbose:  print('%s: Acquiring image %s'% (misc.GetTimeString(), self.curname))
@@ -607,6 +641,22 @@ class NanoScriptHelper():
         self.hamamatsu.finishScan()
         return None
 
+    def TakeTomo(self, target_pos):
+        # Changed for Lambda
+        self.tPMAC.Move('Sample_Rot', target_pos, WaitForMove=False)
+        i = -1
+        self.hamamatsu.startLive()
+        time.sleep(0.3)  # was 0.1
+        # nanoScript.TakeOneDummyImage()
+        while self.tPMAC.ReadMotorPos('Sample_Rot') <= target_pos - 1:
+            i = i + 1
+            self.TakeFastImage()
+            time.sleep(self.exptime + 0.01)
+            print(i)
+        time.sleep(0.1)
+        self.hamamatsu.finishScan()
+        return None
+
     def LogWriteCurrentData(self, __identifier, __infostr, logMotors = False):
         """Write standard data in the scan logfile."""
         tmp = self.GetCurrentDataString(__identifier, __infostr)
@@ -643,7 +693,7 @@ class NanoScriptHelper():
         if self.disableSideBunchReacquisition == False:
             tmp += '%04i\t%04i\t' %(self.tPETRAnbCleaning.read_attribute('SweepCounter').value, self.tPETRAnbCleaning.read_attribute('SweepThreshold').value)
         if self.useEnviroLog:
-            for i1 in xrange(6):
+            for i1 in range(6):
                 tmp+= '%e\t' %(self.Environ[i1].read_attribute('Value').value*5*(numpy.mod(i1,2) + 1))
         return tmp + '\n'
     #end

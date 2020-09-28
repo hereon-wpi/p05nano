@@ -1,30 +1,33 @@
-import numpy
-from PyQt4 import uic as QtUic
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+import os
 import sys
 import time
-import os
+
+import numpy
+from PyQt4 import QtCore
+from PyQt4 import QtGui
+from PyQt4 import uic as QtUic
+
 import p05.tools.misc as misc
 from p05.devices.PMACcomm import PMACcomm
 from p05.devices.PMACdict import PMACdict
-from p05.gui.PMAC_motorForm import cPMACmotor
-from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
 from p05.gui.PMAC_generic_motors import getPMACmotorList, getPMACmotorGroups
 from p05.gui.PMAC_generic_motors import getPMACmotorUserList, getPMACmotorUserGroups
+from p05.gui.PMAC_motorForm import cPMACmotor
+from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
+
 
 class cPMACgui(QtGui.QMainWindow):
     def __init__(self, parent = None, blockdirectmovements=True, devices=[], groups=[], name='PMAC motor GUI',user=False):
         super(cPMACgui, self).__init__()
         try:
             QtUic.loadUi('h:/_data/programming_python/p05/gui/PMAC_ui.ui', self)
-            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/gear.png'))
+            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/gear.png'))
         except:
             _path = misc.GetPath('PMAC_ui.ui')
             QtUic.loadUi(_path, self)
             self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'gear.png'))
         self.setWindowTitle(name)
-        #self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/gear.png'))
+        # self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/gear.png'))
         self.groupBox_PMAC.raise_()
         self.setGeometry(10, 25, 1825, 1110)
         
@@ -33,7 +36,7 @@ class cPMACgui(QtGui.QMainWindow):
         
         self.io_pmac_polling.setValidator(self.floatValidator)
         self.controllers = numpy.empty(8, dtype=object)
-        self.controllers[1:8] = [PMACcomm(controller=i1, ioconsole=False, silentmode = True) for i1 in xrange(1, 8)]
+        self.controllers[1:8] = [PMACcomm(controller=i1, ioconsole=False, silentmode=True) for i1 in range(1, 8)]
         self.controllerFaultA = numpy.empty(8, dtype=bool)
         self.controllerFaultA[:] = False
         self.controllerFaultB = numpy.empty(8, dtype=bool)
@@ -175,8 +178,8 @@ class cPMACgui(QtGui.QMainWindow):
         self.pmacdict[-1] = self.pmacdict['GraniteSlab_4']
 
         self.groups = groups
-        self.groups_mvr = numpy.r_[[QtGui.QGroupBox() for i1 in xrange(len(groups) + 1)]]
-        self.groups_pos = numpy.r_[[QtGui.QGroupBox() for i1 in xrange(len(groups) + 1)]]
+        self.groups_mvr = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(groups) + 1)]]
+        self.groups_pos = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(groups) + 1)]]
         self.group_stylesheet = numpy.empty(len(groups), dtype=object)
         self.status_labels = [None, self.label_pmac01_status, self.label_pmac02_status, self.label_pmac03_status, self.label_pmac04_status,
                            self.label_pmac05_status, self.label_pmac06_status, self.label_pmac07_status]
@@ -223,7 +226,7 @@ class cPMACgui(QtGui.QMainWindow):
         x0, y0 = 5, 5
         im = 0
         # initialize normal groups
-        for i1 in xrange(self.groups_pos.size - 1):
+        for i1 in range(self.groups_pos.size - 1):
             group = self.groups[i1]
             dy = 18 + group[1] * 65
             if y0 + dy >= 900: 
@@ -260,8 +263,8 @@ class cPMACgui(QtGui.QMainWindow):
         self.motor_posy[-4:] = 88 + y0 + numpy.arange(4) * 127
         self.motor_posx[-4:] = 20 + x0
         self.motor_bgcolor[-4:] = '#CCEECC'
-            
-        for i1 in xrange(self.motors.size - 4):
+
+        for i1 in range(self.motors.size - 4):
             dev = devices[i1]
             if len(dev) == 7:
                 self.motors[i1] = cPMACmotor(self, self.motor_posx[i1], self.motor_posy[i1], alias=dev[0], \
@@ -295,7 +298,7 @@ class cPMACgui(QtGui.QMainWindow):
     def updatePMACs(self):
         # index = self.tabs.currentIndex()
         self.t0 = time.time()
-        for i1 in xrange(1, 8):
+        for i1 in range(1, 8):
             if self.controllers[i1] != None:
                 tmp = self.controllers[i1].ReadVariable('P80')
                 self.controllerStatus[i1] = tmp
@@ -455,11 +458,11 @@ class cPMACgui(QtGui.QMainWindow):
         index = self.tabs.currentIndex()
         self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airStatus = signal
         t0 = time.time()
-        for i1 in xrange(1, 8):
+        for i1 in range(1, 8):
             self.p89_labels[i1].setText('$' + hex(int(self.p89[i1]))[2:].upper())
             self.p91_labels[i1].setText('$' + hex(int(self.p91[i1]))[2:].upper())
             self.p92_labels[i1].setText('$' + hex(int(self.p92[i1]))[2:].upper())
-        for i1 in xrange(self.motors.size - 4):
+        for i1 in range(self.motors.size - 4):
             self.motors[i1].eventLoopUpdate(index=index, pos=self.isPos[i1], targetpos=self.setPos[i1])
         for i1 in [-4, -3, -2, -1]:
             self.motors[i1].eventLoopUpdate(index=index, pos=self.isPos[i1], targetpos=self.setPos[i1], \
@@ -534,7 +537,7 @@ class UpdateThread(PMACpolling):
         while True:
             if self.running:
                 self.t0 = time.time()
-                for i1 in xrange(1, 8):
+                for i1 in range(1, 8):
                     tmp = self.controllers[i1].ReadVariable('P80')
                     self.p80[i1] = tmp
                     tmp = self.controllers[i1].ReadVariable('P89')
@@ -545,8 +548,8 @@ class UpdateThread(PMACpolling):
                     self.p92[i1] = tmp
                 
                 self.airsignals = self.AirUpdater.GetVarUpdate()
-                    
-                for i1 in xrange(self.motorsize):
+
+                for i1 in range(self.motorsize):
                     motor = self.motors[i1]
                     self.isPos[i1] = self.controllers[motor.controllerID].ReadVariable(motor.isPosVar)
                     self.setPos[i1] = self.controllers[motor.controllerID].ReadVariable(motor.setPosVar)

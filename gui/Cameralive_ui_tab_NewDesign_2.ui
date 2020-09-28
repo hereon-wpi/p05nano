@@ -120,6 +120,11 @@
       <string>Zyla</string>
      </property>
     </item>
+       <item>
+           <property name="text">
+               <string>Lambda</string>
+           </property>
+       </item>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="enabled">
@@ -3444,6 +3449,11 @@ padding: 1px;
         <string>Holotomo Fly Ref</string>
        </property>
       </item>
+         <item>
+             <property name="text">
+                 <string>Fly Scan 360</string>
+             </property>
+         </item>
      </widget>
      <widget class="QLabel" name="label_3">
       <property name="geometry">

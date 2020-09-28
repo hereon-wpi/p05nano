@@ -4,13 +4,16 @@
 print('hallo')
 import sys
 sys.path.append('D:\BeamlineControllPython\programming_python')
-import p05.devices, p05.nano, p05.tools  ################
-import numpy, time, os, PyTango  ################
+
+import sys
+
+sys.path.append('D:\BeamlineControllPython\programming_python')
+import p05.tools  ################
+import numpy, time, os  ################
 pmac = p05.devices.PMACdict()  ################
 currScript = os.path.abspath(__file__)  ################
-from sys import exit  ################
 from sys import argv
-import p05.tools.misc as misc
+
 ###########################################################
 #### end initialization ###################################
 ###########################################################

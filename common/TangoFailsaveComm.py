@@ -1,4 +1,6 @@
-import time, PyTango
+import PyTango
+import time
+
 
 def tSaveCommCommand(tObject, Command, Argument=None, silent = False,
                      deadtime = 300, wait=True, waitforstate='ON'):
@@ -47,7 +49,7 @@ def tSaveCommCommand(tObject, Command, Argument=None, silent = False,
         #except (PyTango.DevFailed, PyTango.DevError, PyTango.CommunicationFailed, PyTango.ConnectionFailed):
             if not silent:
                 print('No communication with %s at ' %(tObject)+ time.strftime('%X', time.localtime()))
-                print 'exec', Command
+                print('exec', Command)
             time.sleep(0.5)
         if time.time() > t0 + deadtime: break
     if time.time() < t0 + deadtime:
@@ -92,7 +94,7 @@ def tSaveCommWriteAttribute(tObject, Attribute, Value, silent = False, deadtime
         #except (PyTango.DevFailed, PyTango.DevError, PyTango.CommunicationFailed, PyTango.ConnectionFailed):
             if not silent:
                 print('No communication with %s at ' %(tObject)+ time.strftime('%X', time.localtime()))
-                print 'write', Attribute, Value
+                print('write', Attribute, Value)
             time.sleep(0.5)
         if time.time() > t0 + deadtime: break
     if time.time() < t0 + deadtime:
@@ -129,7 +131,7 @@ def tSaveCommReadAttribute(tObject, Attribute, silent = False, deadtime = 300):
         #except (PyTango.DevFailed, PyTango.DevError, PyTango.CommunicationFailed, PyTango.ConnectionFailed):
             if not silent:
                 print('No communication with %s at ' %(tObject)+ time.strftime('%X', time.localtime()))
-                print 'read', Attribute
+                print('read', Attribute)
             time.sleep(0.5)
         if time.time() > t0 + deadtime: break
     return attval

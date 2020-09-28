@@ -1,9 +1,12 @@
-import PyTango
 import time
-import p05.tools.misc as misc
+
+import PyTango
 import numpy
+
 import p05.common.TangoFailsaveComm as tcom
-import p05.tools
+import p05.tools.misc as misc
+
+
 #import PIL
 
 class PCO_nanoCam():
@@ -58,8 +61,8 @@ class PCO_nanoCam():
         try:
             self.tPCO.write_attribute('ExposureTime', value)
             self.exptime = value
-        except Exception, e:
-            print misc.GetTimeString() + ': PCO server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': PCO server not responding while setting new ExposureTime:\n%s' % e)
         return None
     # end setExptime
 
@@ -189,8 +192,8 @@ class FLIeh2_nanoCam():
         try:
             self.tFLI.write_attribute('ExposureTime', value)
             self.exptime = value
-        except Exception, e:
-            print misc.GetTimeString() + ': FLI  server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': FLI  server not responding while setting new ExposureTime:\n%s' % e)
         return None
     # end setExptime
 
@@ -206,16 +209,16 @@ class FLIeh2_nanoCam():
         im = numpy.fromstring(self.tFLI.read_attribute('Image').value, dtype=numpy.uint16)[2:].reshape(3056, 3056)
         return im
     # end acquireImage
-    
+
     def setROI(self, xlow, xhigh, ylow, yhigh):
         tmp_x = self.CAM_PixX_FromPos(xlow, xhigh, 3056 / self.CAM_Binning, ylow, yhigh, 3056 / self.CAM_Binning)
         tmp_y = self.CAM_PixY_FromPos(xlow, xhigh, 3056 / self.CAM_Binning, ylow, yhigh, 3056 / self.CAM_Binning)
         self.CAM_xlow, self.CAM_xhigh = min(tmp_x), max(tmp_x)
         self.CAM_ylow, self.CAM_yhigh = min(tmp_y), max(tmp_y)
-        self.tFLI.write_attribute('Roi_ul_x', long(self.CAM_xlow))
-        self.tFLI.write_attribute('Roi_lr_y', long(self.CAM_yhigh - self.CAM_ylow))
-        self.tFLI.write_attribute('Roi_lr_x', long(self.CAM_xhigh - self.CAM_xlow))
-        self.tFLI.write_attribute('Roi_ul_y', long(self.CAM_ylow))
+        self.tFLI.write_attribute('Roi_ul_x', int(self.CAM_xlow))
+        self.tFLI.write_attribute('Roi_lr_y', int(self.CAM_yhigh - self.CAM_ylow))
+        self.tFLI.write_attribute('Roi_lr_x', int(self.CAM_xhigh - self.CAM_xlow))
+        self.tFLI.write_attribute('Roi_ul_y', int(self.CAM_ylow))
         return None
     
     def finishScan(self):
@@ -299,8 +302,8 @@ class Hamamatsu_nanoCam():
                 time.sleep(0.01) 
             self.tHama.write_attribute('EXPOSURE_TIME', value)
             self.exptime = value
-        except Exception, e:
-            print misc.GetTimeString() + ': Hamamatsu server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': Hamamatsu server not responding while setting new ExposureTime:\n%s' % e)
         while not self.tHama.state() == PyTango.DevState.ON:
             time.sleep(0.01) 
         return None
@@ -425,7 +428,7 @@ class PixelLink_nanoCam():
         else:
             self.exptime = 0.1
 
-        print self.exptime
+        print(self.exptime)
         self.tPixelLink.write_attribute('SHUTTER', 1)
         #self.tPixelLink.write_attribute('FilePostfix', '.bin') #!!!!
         #self.tPixelLink.write_attribute('TRIGGER_SOURCE', 'EXTERNAL')
@@ -446,8 +449,8 @@ class PixelLink_nanoCam():
         try:
             self.tPixelLink.write_attribute('SHUTTER', value)
             self.exptime = value
-        except Exception, e:
-            print misc.GetTimeString() + ': PixelLink server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': PixelLink server not responding while setting new ExposureTime:\n%s' % e)
         return None
     # end setExptime
     
@@ -562,8 +565,8 @@ class Zyla_nanoCam():
                 time.sleep(0.01) 
             self.tZyla.write_attribute('acq_expo_time', value)
             self.exptime = value
-        except Exception, e:
-            print misc.GetTimeString() + ': Hamamatsu server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': Hamamatsu server not responding while setting new ExposureTime:\n%s' % e)
         while not self.tZyla.state() == PyTango.DevState.ON:
             time.sleep(0.01) 
         return None
@@ -692,8 +695,8 @@ class KIT_nanoCam():
 #            self.tKIT.command_inout('Start')
 #            while not self.tKIT.state() == PyTango.DevState.STANDBY:
 #                time.sleep(0.01)
-        except Exception, e:
-            print misc.GetTimeString() + ': KIT server not responding while setting new ExposureTime:\n%s' % e
+        except Exception as e:
+            print(misc.GetTimeString() + ': KIT server not responding while setting new ExposureTime:\n%s' % e)
         return None
 
     def setImageName(self,name):
@@ -739,3 +742,165 @@ class KIT_nanoCam():
         return
     # end acquireImage
 
+
+class Lambda_nanoCam():
+    def __init__(self, tDet=None, tTrigger=None, imageDir=None, exptime=None):
+        if tDet == None:
+            self.tDet = PyTango.DeviceProxy('haslambda02:10000/petra3/lambda/01')
+        else:
+            self.tDet = tDet
+        if tTrigger == None:
+            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+        else:
+            self.tTrigger = tTrigger
+
+        self.CAM_Binning = 1
+
+        time.sleep(0.1)
+        # if self.tDet.state() == PyTango.DevState.MOVING:
+        #     self.tDet.command_inout('AbortAcq')
+        #     while self.tDet.state() == PyTango.DevState.EXTRACT:
+        #         time.sleep(0.01)
+
+        if imageDir == None:
+            raise Exception('Cannot set None-type image directory!')
+        else:
+            self.imageDir = imageDir
+
+        if exptime != None:
+            self.exptime = exptime
+        else:
+            self.exptime = 1000
+        print("hallo")
+        # self.CAM_xlow = self.tDet.read_attribute('SUBARRAY_HPOS').value
+        # self.CAM_xhigh = self.tDet.read_attribute('SUBARRAY_HSIZE').value + self.tDet.read_attribute(
+        #     'SUBARRAY_HPOS').value
+        # self.CAM_ylow = self.tDet.read_attribute('SUBARRAY_VPOS').value
+        # self.CAM_yhigh = self.tDet.read_attribute('SUBARRAY_VSIZE').value + self.tDet.read_attribute(
+        #     'SUBARRAY_VPOS').value
+        print(self.exptime)
+        self.tDet.write_attribute('ShutterTime', self.exptime * 1000)
+        time.sleep(0.2)
+        # self.tDet.write_attribute('FilePostfix', '.bin') #!!!!
+        self.tDet.write_attribute('TriggerMode', 0)
+        time.sleep(0.2)
+        self.tDet.write_attribute('FilePrefix', 'Image')
+        time.sleep(0.2)
+        self.tDet.write_attribute('SaveFilePath', self.imageDir)
+        time.sleep(0.2)
+        self.tDet.write_attribute('FileStartNum', 0)
+        time.sleep(0.2)
+        self.tDet.write_attribute('SaveAllImages', True)
+        time.sleep(0.2)
+        self.tDet.write_attribute('OperatingMode', 'TwentyFourBit')
+        time.sleep(0.2)
+        self.tDet.write_attribute('EnergyThreshold', 5500)
+        time.sleep(0.2)
+        self.tDet.write_attribute('FrameNumbers', 1)
+        self.tTrigger.write_attribute('Value', 0)  # !!!!
+        # self.tTrigger.write_attribute('Voltage', 0)  #!!!!
+        time.sleep(0.2)
+        self.iImage = 0
+
+        return None
+
+    # end __init__
+
+    def setExptime(self, value):
+        try:
+            while not self.tDet.state() == PyTango.DevState.ON:
+                time.sleep(0.01)
+            self.tDet.write_attribute('ShutterTime', value)
+            self.exptime = value
+        except Exception as e:
+            print(misc.GetTimeString() + ': Lambda server not responding while setting new ExposureTime:\n%s' % e)
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        return None
+
+    # end setExptime
+
+    def setImgNumber(self, i):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        self.tDet.write_attribute('FileStartNum', int(i))
+        return None
+
+    def setFrameNumbers(self, i):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        self.tDet.write_attribute('FrameNumbers', i)
+        return None
+
+    def sendCommand(self, command):
+        self.tDet.command_inout(command)
+
+    def sendTrigger(self):
+        self.tTrigger.write_attribute('Value', 1)
+        time.sleep(0.005)
+        self.tTrigger.write_attribute('Value', 0)
+
+    def state(self):
+        return self.tDet.state()
+
+    def readAttribute(self, attribute):
+        return self.tDet.read_attribute(attribute)
+
+    def waitForCamera(self):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+
+    def writeAttribute(self, attribute, value):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        return self.tDet.write_attribute(attribute, value)
+
+    def getImgNumber(self):
+        i = self.tDet.read_attribute('FileStartNumber')
+        return i
+
+    def getImage(self):
+        return self.tDet.read_attribute('LiveLastImageData').value
+
+    def acquireImage(self):
+        start = time.clock()
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.005)
+        end = time.clock()
+        #        print("waiting for on state:" + str(end-start) )
+        self.tDet.command_inout('StartAcq')
+        self.tTrigger.write_attribute('Value', 1)
+        time.sleep(0.005)
+        self.tTrigger.write_attribute('Value', 0)
+        self.imageTime = time.time()
+        self.iImage = 0
+        return None
+
+    def startLive(self):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        self.tDet.write_attribute('TriggerMode', 2)
+        self.tDet.write_attribute('FrameNumbers', 10000)
+        self.tDet.command_inout('StartAcq')
+        return None
+
+    def setImageName(self, name):
+        while not self.tDet.state() == PyTango.DevState.ON:
+            time.sleep(0.01)
+        self.tDet.write_attribute('FilePrefix', name)
+
+    def finishScan(self):
+        self.tDet.command_inout('StopAcq')
+        time.sleep(self.exptime + 1)
+        # self.tDet.write_attribute('SaveAllImages',False)
+        # time.sleep(0.2)
+        # self.tDet.write_attribute('FrameNumbers', 1)
+        return None
+
+    def getCameraInfo(self):
+        _s = ''
+        _s += 'ExpTime\t= externally set\n'
+        _s += 'DataType\t= Uint16\n'
+        _s += 'Binning\t= 1'
+        _s += 'ROI= [0, 2048,0, 20488]\n'
+        return _s

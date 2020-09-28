@@ -1,7 +1,8 @@
-import time
 import os
 import sys
-    
+import time
+
+
 def StringFill(_string, _len, fill_front = False, fill_spaces = False):
     """Function to fill the string _string up to length _len
     with dots. If len(_string) > _len, the string is cropped.
@@ -65,23 +66,24 @@ def CheckFilename(fname):
         _fpath = os.path.split(fname)[0]
         if _fpath == '': _fpath = os.getcwd()
         if not os.access(_fpath, os.F_OK):
-            print 'Warning. Path does not exist. Exiting procedure.'
+            print('Warning. Path does not exist. Exiting procedure.')
             return None
         if not os.access(_fpath, os.W_OK):
-            print 'Warning. No writing access for chosen path. Exiting procedure.'
+            print('Warning. No writing access for chosen path. Exiting procedure.')
             return None
         try:
             if os.path.exists(fname):
-                tmp = raw_input('Warning: The specified file\n\t"%s"\nalready exists. Do you want to overwrite the file? (y/n): ' %fname)
+                tmp = input(
+                    'Warning: The specified file\n\t"%s"\nalready exists. Do you want to overwrite the file? (y/n): ' % fname)
                 if tmp in ['y', 'yes', 'Y', 'Yes']:
                     if not os.access(fname, os.W_OK):
-                        print 'Warning: No permission to write file %s. Exiting procedure' %fname
+                        print('Warning: No permission to write file %s. Exiting procedure' % fname)
                         return None
                     os.remove(fname)
                     if os.path.exists(os.path.join(_fpath, _fname.split('.')[0]+'.info')):
                         os.remove(os.path.join(_fpath, _fname.split('.')[0]+'.info'))
                 else:
-                    fname = raw_input('Please select new filename:')
+                    fname = input('Please select new filename:')
             else:
                 break
         except KeyboardInterrupt:
@@ -102,7 +104,7 @@ def GetPath(_file):
                     return possible
             except:
                 #print time.time()- t0
-                print 'Error while searching the directory "%s"' %dirname
+                print('Error while searching the directory "%s"' % dirname)
     return None
     
 

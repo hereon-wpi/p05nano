@@ -1,5 +1,6 @@
-from PyQt4 import QtCore, QtGui
 import numpy
+from PyQt4 import QtCore, QtGui
+
 
 class cPMACair(QtCore.QObject):
     def __init__(self, _parent, xoffset=0, yoffset=0, bgcolor='#ECECEC', controllerID=3):
@@ -23,22 +24,22 @@ class cPMACair(QtCore.QObject):
         return None
     
     def clickButtonAirOn(self):
-        print self.controllerID
+        print(self.controllerID)
         if self.parent.controllers[self.controllerID].IsReady():
-            print 1,0
+            print(1, 0)
             self.parent.controllers[self.controllerID].GetResponse("Q70 = 18", silent = True)
         return None
     
     def clickButtonAirOff(self):
         if self.parent.controllers[self.controllerID].IsReady():
-            print 1,1
+            print(1, 1)
             self.parent.controllers[self.controllerID].GetResponse("Q70 = 17", silent = True)
         #self.parent.controllers[self.controllerID].WriteVariable('Q70', '17')
         return None
     
     
     def GetVarUpdate(self):
-        for i1 in xrange(4):
+        for i1 in range(4):
             self.airvarvalues[i1] = self.parent.controllers[self.controllerID].ReadVariable(self.airvars[i1])
             self.vacvarvalues[i1] = self.parent.controllers[self.controllerID].ReadVariable(self.vacvars[i1])
         return [self.airvarvalues, self.vacvarvalues]

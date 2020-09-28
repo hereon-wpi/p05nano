@@ -80,7 +80,7 @@ def FLIgetImage(FLItango, SetRoi=None, FrameNumber=None, FramePrefix=None, Expos
         if not cmd_ok:
             print('Error: Could not write TANGO command')
             return False
-        print 1
+        print(1)
         cmd_ok = tSave.tSaveCommCommand(FLItango, 'GrabFrame')
         if cmd_ok == None: cmd_ok = True
         if not cmd_ok:

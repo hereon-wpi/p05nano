@@ -1,6 +1,9 @@
-import  numpy, time
-from p05.devices.PMACcomm import PMACcomm
+import numpy
+import time
+
 import p05.tools.misc as misc
+from p05.devices.PMACcomm import PMACcomm
+
 
 class PMACdict():
     def __init__(self, dummy=False):
@@ -38,7 +41,8 @@ class PMACdict():
         self.Dict['GraniteSlab_2'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q78', 'CurVariable': 'Q88', \
                                        'lowerLim': 670.0, 'upperLim': 5163.0, 'lowerSoftLim': 670.0, 'upperSoftLim': 5000.0}
         self.Dict['GraniteSlab_3'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q79', 'CurVariable': 'Q89', \
-                                       'lowerLim': 1300.0, 'upperLim': 5800.0, 'lowerSoftLim': 1500.0, 'upperSoftLim': 5600.0}
+                                      'lowerLim': 1300.0, 'upperLim': 5800.0, 'lowerSoftLim': 1400.0,
+                                      'upperSoftLim': 5600.0}
         self.Dict['GraniteSlab_4'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q71', 'CurVariable': 'Q81', \
                                        'lowerLim': 1900.0, 'upperLim': 6105.0, 'lowerSoftLim': 1900.0, 'upperSoftLim': 6105.0}
         self.Dict['Aperture_x'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=8', 'TargetVariable': 'P73', 'CurVariable': 'P83', \
@@ -72,7 +76,7 @@ class PMACdict():
         self.Dict['SampleStage_Ry'] = {'Controller': self.Controller5, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q78', 'CurVariable': 'Q88', \
                                        'lowerLim':-0.5, 'upperLim': 0.5, 'lowerSoftLim':-0.5, 'upperSoftLim': 0.5}
         self.Dict['Sample_Rot'] = {'Controller': self.Controller5, 'SetCommand':  'Q70=8', 'TargetVariable': 'P72', 'CurVariable': 'P82', \
-                                       'lowerLim':-185.0, 'upperLim': 185.0, 'lowerSoftLim':-180.0, 'upperSoftLim': 180.0}
+                                   'lowerLim': -185.0, 'upperLim': 185.0, 'lowerSoftLim': -185.0, 'upperSoftLim': 185.0}
         self.Dict['Detector_x'] = {'Controller': self.Controller5, 'SetCommand':  'Q70=28', 'TargetVariable': 'P77', 'CurVariable': 'P87', \
                                        'lowerLim':-25.0, 'upperLim': 25.0, 'lowerSoftLim':-25.0, 'upperSoftLim': 25.0}
         self.Dict['Detector_z'] = {'Controller': self.Controller5, 'SetCommand':  'Q70=28', 'TargetVariable': 'P78', 'CurVariable': 'P88', \
@@ -102,7 +106,7 @@ class PMACdict():
         self.Dict['OpticsSF1_Rz'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q73', 'CurVariable': 'Q83', \
                                        'lowerLim':-2.5, 'upperLim': 2.5, 'lowerSoftLim':-2.5, 'upperSoftLim': 2.5}
         self.Dict['OpticsStage1_y'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=8', 'TargetVariable': 'P71', 'CurVariable': 'P81', \
-                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 100.0, 'upperSoftLim': 300.0}
+                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 0.0, 'upperSoftLim': 300.0}
         self.Dict['GraniteSlab_1single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=114', 'TargetVariable': 'Q77', 'CurVariable': 'Q87'}
         self.Dict['GraniteSlab_2single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=124', 'TargetVariable': 'Q78', 'CurVariable': 'Q88'}
         self.Dict['GraniteSlab_3single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=134', 'TargetVariable': 'Q79', 'CurVariable': 'Q89'}
@@ -372,8 +376,16 @@ class PMACdict():
             print("Response: ")
             print(_response)
         else:
-            print "Warning! Controller is not ready for command. Request ignored"
+            print("Warning! Controller is not ready for command. Request ignored")
             #QtGui.QMessageBox.warning(self, 'Warning', "Controller is not ready for command. Request ignored", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
+        return None
+
+    def StopPMACmoveC5(self):
+        self.Controller5.GetResponse('Q70 = 16')
+        return None
+
+    def ResetErrorsC5(self):
+        self.Controller5.GetResponse('Q70 = 16')
         return None
 
     def checkInit(self,controllerID):
@@ -382,7 +394,7 @@ class PMACdict():
         busy = True
         while busy:
             count += 1
-            print "Waiting!"
+            print("Waiting!")
             time.sleep(0.5)
             if controllerID.IsReady():
                 _response = controllerID.GetResponse(_input)

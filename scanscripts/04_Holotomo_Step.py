@@ -3,13 +3,16 @@
 ###########################################################
 print('hallo')
 
-import p05.devices, p05.nano, p05.tools  ################
-import numpy, time, os, PyTango  ################
+import numpy  # ###############
+import os
+import time
+
+import p05.tools  ################
+
 pmac = p05.devices.PMACdict()  ################
 currScript = os.path.abspath(__file__)  ################
-from sys import exit  ################
 from sys import argv
-import p05.tools.misc as misc
+
 ###########################################################
 #### end initialization ###################################
 ###########################################################
@@ -107,16 +110,16 @@ for i1 in range(num_dist):
 #    time.sleep(10)
     
     # Start Tomo
-    
-    for i2 in xrange(i1Array.size):
+
+    for i2 in range(i1Array.size):
         
         if numpy.mod(i2, 300) == 0:
             pmac.Move('SampleStage_x', rotCenter-sampleOut)
             nanoScript.SetCurrentName('ref_y'+ str(i1)+ '_' + str(i2), iNumber=i1, iNumber2=i2,imgNumber=0)    
             nanoScript.HamaTakeRef(num_img=num_flat)
             pmac.Move('SampleStage_x', rotCenter)
-            time.sleep(10)    
-        print p05.tools.GetTimeString() + ': Acquiring image no. %i' %i2               
+            time.sleep(10)
+        print(p05.tools.GetTimeString() + ': Acquiring image no. %i' % i2)
         pmac.Move('Sample_Rot', i1Array[i2])
         time.sleep(0.05)
         nanoScript.SetCurrentName('tomo_y'+ str(i1), iNumber=i2, iNumber2=i1, imgNumber=i2)

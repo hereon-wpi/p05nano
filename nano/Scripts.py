@@ -1,12 +1,15 @@
-import PyTango
-import time
-import p05.tools.misc as misc
-import p05.devices as dev
-import numpy
 import getpass
 import os
-import sys
 import pickle
+import sys
+import time
+
+import PyTango
+import numpy
+
+import p05.devices as dev
+import p05.tools.misc as misc
+
 
 class NanoPositions():
     def __init__(self, sampleOutDist = 0.2, writePosLog = True):
@@ -22,11 +25,11 @@ class NanoPositions():
 
 
         self.__SM_h = numpy.zeros(9, dtype = object)
-        self.__SM_h[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha12') # xr
-        self.__SM_h[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha0') # xl
-        self.__SM_h[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1') # zt
-        self.__SM_h[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha13') # zb
-        self.__SM_h[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3') # Teil
+        self.__SM_h[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')  # xr
+        self.__SM_h[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')  # xl
+        self.__SM_h[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha2')  # zt
+        self.__SM_h[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha5')  # zb
+        self.__SM_h[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1')  # Teil
 
         self.__SM_h[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.04') #  JJ xr
         self.__SM_h[6] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.03') # JJ xl
@@ -49,7 +52,8 @@ class NanoPositions():
         try:
             self.__sampleOutDist = float(sampleOutDist)
         except:
-            print misc.GetShortTimeString() + ': Warning - could not convert sampleOutDist = %s to a number.' %sampleOutDist
+            print(
+                misc.GetShortTimeString() + ': Warning - could not convert sampleOutDist = %s to a number.' % sampleOutDist)
             self.__sampleOutDist = 0.2
         
         self.__currDir = os.path.dirname(__file__).replace('\\', '/')
@@ -106,7 +110,7 @@ class NanoPositions():
             pass
         if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
             self.WritePosToIni()
-        print misc.GetShortTimeString() + ': Successfully set new working position.'
+        print(misc.GetShortTimeString() + ': Successfully set new working position.')
         return None
     #end SetWorkingPos
 
@@ -138,7 +142,7 @@ class NanoPositions():
             pass
         if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
             self.WritePosToIni()
-        print misc.GetShortTimeString() + ': Successfully set new working position.'
+        print(misc.GetShortTimeString() + ': Successfully set new working position.')
         return None
     #end SetWorkingPos
     
@@ -208,7 +212,7 @@ class NanoPositions():
             pass
         if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
             self.WritePosToIni()
-        print misc.GetShortTimeString() + ': Successfully set new installation position.'
+        print(misc.GetShortTimeString() + ': Successfully set new installation position.')
         return None
     #end SetAlignmentPos
 
@@ -241,7 +245,7 @@ class NanoPositions():
             pass
         if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
             self.WritePosToIni()
-        print misc.GetShortTimeString() + ': Successfully set new installation position.'
+        print(misc.GetShortTimeString() + ': Successfully set new installation position.')
         return None
     #end SetAlignmentPos
     
@@ -300,13 +304,13 @@ class NanoPositions():
             pass
         if self.__ap_ok and self.__wp_ok and self.__rc_ok and self.writePosLog:
             self.WritePosToIni()
-        print misc.GetShortTimeString() + ': Successfully set new rotation center.'
+        print(misc.GetShortTimeString() + ': Successfully set new rotation center.')
         return None
     #end SetRotationCenter
         
     def GotoWorkingPos(self,mode= "TXM"):
         if self.__wp_ok == False:
-            print misc.GetShortTimeString() + ': Warning - working position not set! Aborting ...'
+            print(misc.GetShortTimeString() + ': Warning - working position not set! Aborting ...')
             return None
         sys.stdout.write(misc.GetShortTimeString() + ': Do you want to move the setup to the working position? [Yes, no]: ')
         sys.stdout.flush()
@@ -345,13 +349,13 @@ class NanoPositions():
             time.sleep(1)
             self.__SM_h[8].write_attribute('Position', self.__wp_pos_h['JJ_zb'])
 
-        print misc.GetShortTimeString() + ': Successfully moved to working position.'
+        print(misc.GetShortTimeString() + ': Successfully moved to working position.')
         return None
     #end GotoWorkingPos
 
     def GotoAlignmentPos(self, mode ="TXM"):
         if self.__ap_ok == False:
-            print misc.GetShortTimeString() + ': Warning - alignment position not set! Aborting ...'
+            print(misc.GetShortTimeString() + ': Warning - alignment position not set! Aborting ...')
             return None
         sys.stdout.write(misc.GetShortTimeString() + ': Do you want to move the setup to the alignment position? [Yes, no]: ')
         sys.stdout.flush()
@@ -390,81 +394,82 @@ class NanoPositions():
             time.sleep(1)
             self.__SM_h[8].write_attribute('Position', self.__ap_pos_h['JJ_zb'])
 
-
-        print misc.GetShortTimeString() + ': Successfully moved to alignment position.'
+        print(misc.GetShortTimeString() + ': Successfully moved to alignment position.')
         return None
     #end GotoAlignmentPos
         
     def SampleIn(self):
         if not self.__rc_ok:
-            print misc.GetShortTimeString() + ': Warning - rotation center not set! Aborting ...'
+            print(misc.GetShortTimeString() + ': Warning - rotation center not set! Aborting ...')
             return None
         self.__pmac.Move('SampleStage_x', self.__pos_sin)
-        print misc.GetShortTimeString() + ': Successfully moved the sample in the beam.'
+        print(misc.GetShortTimeString() + ': Successfully moved the sample in the beam.')
         return None
     #end SampleIn
     
     def SampleOut(self):
         if not self.__rc_ok:
-            print misc.GetShortTimeString() + ': Warning - rotation center not set! Aborting ...'
+            print(misc.GetShortTimeString() + ': Warning - rotation center not set! Aborting ...')
             return None
         self.__pmac.Move('SampleStage_x', self.__pos_sin + self.__sampleOutDist)
-        print misc.GetShortTimeString() + ': Successfully moved the sample out of the beam.'
+        print(misc.GetShortTimeString() + ': Successfully moved the sample out of the beam.')
         return None
     #end SampleOut
     
     def GotoRot(self, value):
         if not (-180 <= value <= 180):
-            print misc.GetShortTimeString() + ': Warning - requested rotation position outside allowed limits.\nAborting...'
+            print(
+                misc.GetShortTimeString() + ': Warning - requested rotation position outside allowed limits.\nAborting...')
             return None
         self.__pmac.Move('Sample_Rot', value)
-        print misc.GetShortTimeString() + ': Rotation finished.'
+        print(misc.GetShortTimeString() + ': Rotation finished.')
         return None
     #end GotoRot
 
     def MvrRot(self, value):
         tmp = self.__pmac.ReadMotorPos('Sample_Rot')
         if not (-180 <= tmp + value <= 180):
-            print misc.GetShortTimeString() + ': Warning - requested rotation position outside allowed limits.\nAborting...'
+            print(
+                misc.GetShortTimeString() + ': Warning - requested rotation position outside allowed limits.\nAborting...')
             return None
         self.__pmac.MoveRel('Sample_Rot', value)
-        print misc.GetShortTimeString() + ': Rotation finished.'
+        print(misc.GetShortTimeString() + ': Rotation finished.')
         return None
     #end MvrRot
         
     def MvrSampleX(self, value): 
         if abs(value) > 0.5:
-            print misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)'
+            print(misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)')
             return None 
         self.__pmac.SampleSF_mvrX(value)
-        print misc.GetShortTimeString() + ': Move finished.'
+        print(misc.GetShortTimeString() + ': Move finished.')
         return None
     #end MvrSampleX
 
     def MvrSampleY(self, value): 
         if abs(value) > 2:
-            print misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)'
+            print(misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)')
             return None 
         self.__pmac.SampleSF_mvrY(value)
-        print misc.GetShortTimeString() + ': Move finished.'
+        print(misc.GetShortTimeString() + ': Move finished.')
         return None
     #end MvrSampleY
 
     def MvrSampleZ(self, value): 
         if abs(value) > 0.5:
-            print misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)'
+            print(misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)')
             return None 
         self.__pmac.MoveRel('Sample_z', value)
-        print misc.GetShortTimeString() + ': Move finished.'
+        print(misc.GetShortTimeString() + ': Move finished.')
         return None
     #end MvrSampleZ
 
     def MvrSampleStageZ(self, value): 
         if abs(value) > 0.5:
-            print misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)'
+            print(misc.GetShortTimeString() + ': Warning - large movement request will be ignored. (Delta max 0.5)')
             return None 
         self.__pmac.MoveRel('SampleStage_z', value)
-        print misc.GetShortTimeString() + ': Move finished.'
+        print(misc.GetShortTimeString() + ': Move finished.')
         return None
     #end MvrSampleZ
 
@@ -473,7 +478,7 @@ class NanoPositions():
             with open(self.__currDir + os.sep + 'nanoPositioning.ini', 'w') as f:
                 pickle.dump([self.__pos_sin, self.__ap_pos, self.__wp_pos], f)
         else:
-            print misc.GetShortTimeString() + ': Warning - Not all values are set! Aborting ...'
+            print(misc.GetShortTimeString() + ': Warning - Not all values are set! Aborting ...')
             return None
         return None
 
@@ -483,34 +488,36 @@ class NanoPositions():
             with eval(self.__fLogStr) as fLog:
                 fLog.write(misc.GetShortTimeString() + ': New sample out dist:\nSampleOut = %e\n' %(self.__sampleOutDist))
         except:
-            print misc.GetShortTimeString() + ': Warning - could not convert sampleOutDist = %s to a number.' %value
+            print(misc.GetShortTimeString() + ': Warning - could not convert sampleOutDist = %s to a number.' % value)
             self.__sampleOutDist = 0.2
 
     def ShowPositions(self):
-        print misc.GetShortTimeString() + ': Currently saved position values:'
-        print '\nAlignment Pos:\nOpticsSFx = %e\nSM cha. 0 = %e\nSM cha. 1 = %e\nSM cha. 3 = %e\nSM cha. 4 = %e\n' \
-                            %(self.__wp_pos['SF1_x'], self.__wp_pos['SM_xl'],self.__wp_pos['SM_zt'], self.__wp_pos['SM_xr'], self.__wp_pos['SM_zb'])
-        print 'Working Pos:\nOpticsSFx = %e\nSM cha. 0 = %e\nSM cha. 1 = %e\nSM cha. 3 = %e\nSM cha. 4 = %e\n' \
-                            %(self.__wp_pos['SF1_x'], self.__wp_pos['SM_xl'],self.__wp_pos['SM_zt'], self.__wp_pos['SM_xr'], self.__wp_pos['SM_zb'])
-        print 'Rotation center:\nSampleStage_x= %e\n' %(self.__pos_sin)
+        print(misc.GetShortTimeString() + ': Currently saved position values:')
+        print('\nAlignment Pos:\nOpticsSFx = %e\nSM cha. 0 = %e\nSM cha. 1 = %e\nSM cha. 3 = %e\nSM cha. 4 = %e\n' \
+              % (self.__wp_pos['SF1_x'], self.__wp_pos['SM_xl'], self.__wp_pos['SM_zt'], self.__wp_pos['SM_xr'],
+                 self.__wp_pos['SM_zb']))
+        print('Working Pos:\nOpticsSFx = %e\nSM cha. 0 = %e\nSM cha. 1 = %e\nSM cha. 3 = %e\nSM cha. 4 = %e\n' \
+              % (self.__wp_pos['SF1_x'], self.__wp_pos['SM_xl'], self.__wp_pos['SM_zt'], self.__wp_pos['SM_xr'],
+                 self.__wp_pos['SM_zb']))
+        print('Rotation center:\nSampleStage_x= %e\n' % (self.__pos_sin))
         
     # Delete after NGM Experiment    
     def MvrSampleX_NGM(self, value):
         __delta = float(value)
         __currentx = self.__SP[0].read_attribute('Position').value
-        print __currentx
+        print(__currentx)
         __currenty = self.__SP[1].read_attribute('Position').value
-        print __currenty
+        print(__currenty)
         __currentRot = self.__rotStage.read_attribute('Position').value
-        print __currentRot
+        print(__currentRot)
         #__currentRot += 180
-        print __currentRot
+        print(__currentRot)
         __valx = __currentx + numpy.cos(__currentRot * numpy.pi / 180) * __delta
         __valy = __currenty + numpy.sin(__currentRot * numpy.pi / 180) * __delta
-        print __valx
-        print __valy
+        print(__valx)
+        print(__valy)
         self.__SP[0].write_attribute('Position',__valx)
-        #print self.__SP[0].read_attribute('State')
+        # print (self.__SP[0].read_attribute('State'))
         #while self.__SP[0].read_attribute('State').value == 'MOVING':
         time.sleep(1)
         self.__SP[1].write_attribute('Position',__valy)

@@ -1,6 +1,9 @@
 import PyTango
-import numpy, time
+import numpy
+import time
+
 import p05.tools.misc as misc
+
 
 def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
     """
@@ -28,12 +31,12 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
     PitchResArr = numpy.zeros((NumPoints))
     while tPitch.state() == PyTango.DevState.MOVING:
         time.sleep(0.1)
-    for i in xrange(PitchPosArr.size):
+    for i in range(PitchPosArr.size):
         tPitch.write_attribute('Position', PitchPosArr[i])
         time.sleep(0.1)
         while tPitch.state() == PyTango.DevState.MOVING:
             time.sleep(0.1)
-        for ii in xrange(AvgPerPoint):
+        for ii in range(AvgPerPoint):
             PitchResArr[i] += 1.0 * tQBPM.read_attribute('PosAndAvgCurr').value[2] / AvgPerPoint
             time.sleep(0.05)
     inum = PitchResArr.argmax()
