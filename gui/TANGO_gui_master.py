@@ -3,9 +3,9 @@ import sys
 import time
 
 import numpy
-from PyQt4 import QtCore
-from PyQt4 import QtGui
-from PyQt4 import uic as QtUic
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import uic as QtUic
 
 import p05.tools.misc as misc
 from p05.gui.TANGO_deviceForm import cTANGOdevice

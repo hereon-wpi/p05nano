@@ -1,8 +1,5 @@
 import numpy
-from PyQt4 import QtGui
-from PyQt4 import uic as QtUic
-.QWidget as QtWidgets
-from PyQt4 import QtCore
+from PyQt5 import QtCore, QtGui, uic as QtUic
 import sys
 import os
 import pylab
@@ -55,7 +52,7 @@ def StringFill(_string, _len, fill_front = False, fill_spaces = False):
 #end Stringfill
 
 
-class cTXMCalculator(QtWidgets.QMainWindow):
+class cTXMCalculator(QtGui.QWidget.QMainWindow):
     def __init__(self, parent, name='TXM parameter calculator', path=None, screensize = [1920, 1200]):
         super(cTXMCalculator, self).__init__()
         if path == None:
@@ -452,7 +449,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.energy = numpy.asarray(eval(str(self.edit_energy.text())))
         except Exception as e:
             self.energy = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse energy value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse energy value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_energy.setText(str(self.energy))
             return None
         if self.energy.size > 1:     self.activeVar = 'energy'
@@ -466,7 +463,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.bandwidth = numpy.asarray(eval(str(self.edit_bandwidth.text())))
         except Exception as e:
             self.bandwidth = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse bandwidth value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse bandwidth value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_bandwidth.setText(str(self.bandwidth))
             return None
         if self.bandwidth.size > 1:     self.activeVar = 'bandwidth'
@@ -480,7 +477,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.FZP_dr = numpy.asarray(eval(str(self.edit_FZP_dr.text())) * 1e-9)
         except Exception as e:
             self.FZP_dr = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse FZP_dr value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse FZP_dr value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_FZP_dr.setText(str(self.FZP_dr))
             return None
         if self.FZP_dr.size > 1:     self.activeVar = 'FZP_dr'
@@ -495,7 +492,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.FZP_D = numpy.asarray(eval(str(self.edit_FZP_D.text())) * 1e-6)
         except Exception as e:
             self.FZP_D = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse FZP_D value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse FZP_D value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_FZP_D.setText(str(self.FZP_D))
             return None
         if self.FZP_D.size > 1:     self.activeVar = 'FZP_D'
@@ -509,7 +506,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.M_det = numpy.asarray(eval(str(self.edit_M_det.text())))
         except Exception as e:
             self.M_det = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse detector magnification value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse detector magnification value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_M_det.setText(str(self.M_det))
             return None
         if self.M_det.size > 1:     self.activeVar = 'M_det'
@@ -523,7 +520,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.det_PixSize = numpy.asarray(eval(str(self.edit_det_PixSize.text())) * 1e-6)
         except Exception as e:
             self.det_PixSize = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse detector pixel size value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse detector pixel size value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_det_PixSize.setText(str(self.det_PixSize))
             return None
         if self.det_PixSize.size > 1:     self.activeVar = 'det_PixSize'
@@ -537,7 +534,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.det_Nhor = numpy.asarray(eval(str(self.edit_det_Nhor.text())))
         except Exception as e:
             self.det_Nhor = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse number of pixels (hor.) value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse number of pixels (hor.) value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_det_Nhor.setText(str(self.det_Nhor))
             return None
         if self.det_Nhor.size > 1:     self.activeVar = 'det_Nhor'
@@ -551,7 +548,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.det_Nvert = numpy.asarray(eval(str(self.edit_det_Nvert.text())))
         except Exception as e:
             self.det_Nvert = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse number of pixels (vert.) value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse number of pixels (vert.) value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_det_Nvert.setText(str(self.det_Nvert))
             return None
         if self.det_Nvert.size > 1:     self.activeVar = 'det_Nvert'
@@ -565,7 +562,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.dist_sample_det = numpy.asarray(eval(str(self.edit_dist_sample_det.text())), dtype=numpy.float32)
         except Exception as e:
             self.dist_sample_det = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse distance sample-detector value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse distance sample-detector value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_dist_sample_det.setText(str(self.dist_sample_det))
             return None
         if self.dist_sample_det.size > 1:     self.activeVar = 'dist_sample_det'
@@ -579,7 +576,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.det_eff_pix = numpy.asarray(eval(str(self.edit_eff_pix.text())) * 1e-9)
         except Exception as e:
             self.det_eff_pix = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse object resolution value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse object resolution value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_eff_pix.setText(str(self.det_eff_pix))
             return None
         if self.det_eff_pix.size > 1:     self.activeVar = 'object_resolution'
@@ -593,7 +590,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.BSC_D = numpy.asarray(eval(str(self.edit_BSC_D.text())) * 1e-3)
         except Exception as e:
             self.BSC_D = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parseBSC diameter value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parseBSC diameter value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_BSC_D.setText(str(self.BSC_D))
             return None
         if self.BSC_D.size > 1:     self.activeVar = 'BSC_D'
@@ -607,7 +604,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.BSC_field = numpy.asarray(eval(str(self.edit_BSC_field.text())) * 1e-6)
         except Exception as e:
             self.BSC_field = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse BSC field size value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse BSC field size value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_BSC_field.setText(str(self.BSC_field))
             return None
         self.activeVar = 'BSC_field'
@@ -621,7 +618,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
             self.BSC_CS = numpy.asarray(eval(str(self.edit_BSC_CS.text())) * 1e-3)
         except Exception as e:
             self.BSC_CS = self.tmpval
-            QtWidgets.QMessageBox.critical(self, 'Error', 'Could not parse BSC central stop value or multiple input parameter arrays selected\n%s.' % e, buttons=QtWidgets.QMessageBox.Ok)
+            QtGui.QWidget.QMessageBox.critical(self, 'Error', 'Could not parse BSC central stop value or multiple input parameter arrays selected\n%s.' % e, buttons=QtGui.QWidget.QMessageBox.Ok)
             self.edit_BSC_CS.setText(str(self.BSC_CS))
             return None
         if self.BSC_CS.size > 1:     self.activeVar = 'BSC_CS'
@@ -805,9 +802,9 @@ class cTXMCalculator(QtWidgets.QMainWindow):
 
     def writeData(self):
         if self.zip_basedir == None:
-            self.zip_fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Name of logfile', '', "Zip files (*.zip)")[0]
+            self.zip_fname = QtGui.QWidget.QFileDialog.getSaveFileName(self, 'Name of logfile', '', "Zip files (*.zip)")[0]
         elif self.zip_basedir != None:
-            self.zip_fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Name of logfile', self.zip_basedir, "Zip files (*.zip)")[0]
+            self.zip_fname = QtGui.QWidget.QFileDialog.getSaveFileName(self, 'Name of logfile', self.zip_basedir, "Zip files (*.zip)")[0]
         self.zip_basedir = os.path.dirname(self.zip_fname)
         self.zip_filename = os.path.basename(self.zip_fname)
         if self.zip_fname not in ['', None]:
@@ -816,7 +813,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
                     self.zip_fobject = True
             except:
                 self.zip_fobject = None
-                QtWidgets.QMessageBox.critical(self, 'Error', "The selected file:\n\t%s\nis write-protected and cannot be opened." % (self.zip_fname), buttons=QtWidgets.QMessageBox.Ok)
+                QtGui.QWidget.QMessageBox.critical(self, 'Error', "The selected file:\n\t%s\nis write-protected and cannot be opened." % (self.zip_fname), buttons=QtGui.QWidget.QMessageBox.Ok)
                 return None
            
             if self.activeVar == None:
@@ -862,7 +859,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
                     os.remove(self.zip_basedir + os.sep + '_Input_Parameters.txt')
             except:
                 self.zip_fobject = None
-                QtWidgets.QMessageBox.critical(self, 'Error', "Error writing zip file\n\t%s." % (self.zip_fname), buttons=QtWidgets.QMessageBox.Ok)
+                QtGui.QWidget.QMessageBox.critical(self, 'Error', "Error writing zip file\n\t%s." % (self.zip_fname), buttons=QtGui.QWidget.QMessageBox.Ok)
                 return None
         return None
     # end writeData
@@ -870,8 +867,8 @@ class cTXMCalculator(QtWidgets.QMainWindow):
     def closeEvent(self, event, reply=None):
         """Safety check for closing of window."""
         if reply == None:
-            reply = QtWidgets.QMessageBox.question(self, 'Message', "Are you sure to quit?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
+            reply = QtGui.QWidget.QMessageBox.question(self, 'Message', "Are you sure to quit?", QtGui.QWidget.QMessageBox.Yes | QtGui.QWidget.QMessageBox.No, QtGui.QWidget.QMessageBox.No)
+        if reply == QtGui.QWidget.QMessageBox.Yes:
             event.accept()
         else:
             event.ignore()
@@ -882,7 +879,7 @@ class cTXMCalculator(QtWidgets.QMainWindow):
 
 
 def TXMCalculator(parent=None, name='TXM parameter calculator', fluxdata='c:/_data/I13-id-flux_newB.raw', path=None):
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QWidget.QApplication(sys.argv)
     screensize = app.desktop().screenGeometry()
     gui = cTXMCalculator((), name=name, path=path, screensize = [screensize.width(), screensize.height()])
     if sys.platform == 'win32' or sys.platform == 'win64':

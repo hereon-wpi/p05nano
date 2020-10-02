@@ -7,9 +7,7 @@ import PIL
 import PyTango
 import numpy
 import pyqtgraph
-from PyQt4 import QtCore
-from PyQt4 import QtGui
-from PyQt4 import uic as QtUic
+from PyQt5 import QtCore, QtGui, uic as QtUic
 
 import p05.nano
 import p05.tools.misc as misc
