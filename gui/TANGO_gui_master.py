@@ -35,8 +35,10 @@ class cTANGOgui(QtGui.QMainWindow):
         self._groups = groups
         self._initialize(devices, groups)
         
-        QtCore.QObject.connect(self.but_TANGO_pollingDelay, QtCore.SIGNAL('clicked()'), self.clickButtonPollingDelay)    
-        QtCore.QObject.connect(self.but_TANGO_polling, QtCore.SIGNAL('clicked()'), self.clickButtonSwitchPolling)
+        # QtCore.QObject.connect(self.but_TANGO_pollingDelay, QtCore.SIGNAL('clicked()'), self.clickButtonPollingDelay)
+        self.but_TANGO_pollingDelay.clicked.connect(self.clickButtonPollingDelay)
+        # QtCore.QObject.connect(self.but_TANGO_polling, QtCore.SIGNAL('clicked()'), self.clickButtonSwitchPolling)
+        self.but_TANGO_polling.clicked.connect(self.clickButtonSwitchPolling)
         return None
     
     def _initialize(self, devices, groups):
@@ -172,7 +174,8 @@ class cTANGOgui(QtGui.QMainWindow):
     # end _initialize
 
     def initPollingThread(self):
-        QtCore.QObject.connect(self.PollingThread, QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), self.NewUpdate)
+        # QtCore.QObject.connect(self.PollingThread, QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), self.NewUpdate)
+        self.PollingThread.finished.connect(self.NewUpdate)
         return None
 
     

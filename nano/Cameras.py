@@ -69,10 +69,10 @@ class PCO_nanoCam():
     def setROI(self, xlow, xhigh, ylow, yhigh):
         self.CAM_xlow, self.CAM_xhigh = xlow, xhigh
         self.CAM_ylow, self.CAM_yhigh = ylow, yhigh
-        self.tPCO.write_attribute('Roi_x_min', long(self.CAM_xlow))
-        self.tPCO.write_attribute('Roi_x_max', long(self.CAM_xhigh))
-        self.tPCO.write_attribute('Roi_y_min', long(self.CAM_ylow))
-        self.tPCO.write_attribute('Roi_y_max', long(self.CAM_yhigh))
+        self.tPCO.write_attribute('Roi_x_min', int(self.CAM_xlow))
+        self.tPCO.write_attribute('Roi_x_max', int(self.CAM_xhigh))
+        self.tPCO.write_attribute('Roi_y_min', int(self.CAM_ylow))
+        self.tPCO.write_attribute('Roi_y_max', int(self.CAM_yhigh))
         return None
     
     def readAttribute(self,attribute):
@@ -374,10 +374,10 @@ class Hamamatsu_nanoCam():
         self.CAM_xlow, self.CAM_xhigh = xlow, xhigh
         self.CAM_ylow, self.CAM_yhigh = ylow, yhigh
         self.tHama.write_attribute('SUBARRAY_MODE','ON')
-        self.tHama.write_attribute('SUBARRAY_HPOS', long(self.CAM_xlow))
-        self.tHama.write_attribute('SUBARRAY_HSIZE', long(self.CAM_xhigh-self.CAM_xlow))
-        self.tHama.write_attribute('SUBARRAY_VPOS', long(self.CAM_ylow))
-        self.tHama.write_attribute('SUBARRAY_VSIZE', long(self.CAM_yhigh-self.CAM_yhigh))
+        self.tHama.write_attribute('SUBARRAY_HPOS', int(self.CAM_xlow))
+        self.tHama.write_attribute('SUBARRAY_HSIZE', int(self.CAM_xhigh-self.CAM_xlow))
+        self.tHama.write_attribute('SUBARRAY_VPOS', int(self.CAM_ylow))
+        self.tHama.write_attribute('SUBARRAY_VSIZE', int(self.CAM_yhigh-self.CAM_yhigh))
         return None
     
     def setImageName(self,name):

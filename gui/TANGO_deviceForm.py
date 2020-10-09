@@ -87,21 +87,30 @@ class cTANGOdevice(QtCore.QObject):
             QtCore.QObject.connect(self.window.att_select_buttons[4], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo4)
         
         if not self.readonly:
-            QtCore.QObject.connect(self.window.att_set_buttons[0], QtCore.SIGNAL('clicked()'), self.clickButtonMove)
-            QtCore.QObject.connect(self.window.att_set_buttons[1], QtCore.SIGNAL('clicked()'), self.clickButton2)
+            # QtCore.QObject.connect(self.window.att_set_buttons[0], QtCore.SIGNAL('clicked()'), self.clickButtonMove)
+            self.window.att_set_buttons[0].clicked.connect(self.clickButtonMove)
+            # QtCore.QObject.connect(self.window.att_set_buttons[1], QtCore.SIGNAL('clicked()'), self.clickButton2)
+            self.window.att_set_buttons[1].clicked.connect(self.clickButton2)
             if self.numrows >= 3:
-                QtCore.QObject.connect(self.window.att_set_buttons[2], QtCore.SIGNAL('clicked()'), self.clickButton3)
+                # QtCore.QObject.connect(self.window.att_set_buttons[2], QtCore.SIGNAL('clicked()'), self.clickButton3)
+                self.window.att_set_buttons[2].clicked.connect(self.clickButton3)
             if self.numrows >= 4:
-                QtCore.QObject.connect(self.window.att_set_buttons[3], QtCore.SIGNAL('clicked()'), self.clickButton4)
+                # QtCore.QObject.connect(self.window.att_set_buttons[3], QtCore.SIGNAL('clicked()'), self.clickButton4)
+                self.window.att_set_buttons[3].clicked.connect(self.clickButton4)
             if self.numrows == 5:
-                QtCore.QObject.connect(self.window.att_set_buttons[4], QtCore.SIGNAL('clicked()'), self.clickButton5)
+                # QtCore.QObject.connect(self.window.att_set_buttons[4], QtCore.SIGNAL('clicked()'), self.clickButton5)
+                self.window.att_set_buttons[4].clicked.connect(self.clickButton5)
             if self.allowmvr:
-                QtCore.QObject.connect(self.window.but_moverel_pos, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelPos)
-                QtCore.QObject.connect(self.window.but_moverel_neg, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelNeg)
+                # QtCore.QObject.connect(self.window.but_moverel_pos, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelPos)
+                self.window.but_moverel_pos.clicked.connect(self.clickButtonMoveRelPos)
+                # QtCore.QObject.connect(self.window.but_moverel_neg, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelNeg)
+                self.window.but_moverel_neg.clicked.connect(self.clickButtonMoveRelNeg)
             if self.showcmds:
-                QtCore.QObject.connect(self.window.but_send_cmd, QtCore.SIGNAL('clicked()'), self.clickButtonSendCmd)
+                # QtCore.QObject.connect(self.window.but_send_cmd, QtCore.SIGNAL('clicked()'), self.clickButtonSendCmd)
+                self.window.but_send_cmd.clicked.connect(self.clickButtonSendCmd)
                 QtCore.QObject.connect(self.window.cmd_selector, QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCmd)
-                QtCore.QObject.connect(self.window.but_clear_cmd, QtCore.SIGNAL('clicked()'), self.clearCmdResponse)
+                # QtCore.QObject.connect(self.window.but_clear_cmd, QtCore.SIGNAL('clicked()'), self.clearCmdResponse)
+                self.window.but_clear_cmd.clicked.connect(self.clearCmdResponse)
                 for item in self.TangoCmdList: self.window.cmd_selector.addItem(item)
         return None
 

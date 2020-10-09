@@ -21,10 +21,14 @@ class cPMACmotor(QtCore.QObject):
         self.pos_window = cMotorPositionForm(self, self.parent.tab_positions, _xoffset = _xoffset, _yoffset = _yoffset, alias = alias, bgcolor = self.bgcolor)
         self.mvr_window = cMotorRelMoveForm(self, self.parent.tab_relativemovement, _xoffset = _xoffset, _yoffset = _yoffset, alias = alias, bgcolor = self.bgcolor)
         
-        QtCore.QObject.connect(self.pos_window.but_move, QtCore.SIGNAL('clicked()'), self.clickButtonMove)
-#        QtCore.QObject.connect(self.pos_window.but_setnewtarget, QtCore.SIGNAL('clicked()'), self.clickButtonSetNewTarget)
-        QtCore.QObject.connect(self.mvr_window.but_moverel_pos, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelPos)
-        QtCore.QObject.connect(self.mvr_window.but_moverel_neg, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelNeg)
+        # QtCore.QObject.connect(self.pos_window.but_move, QtCore.SIGNAL('clicked()'), self.clickButtonMove)
+        self.pos_window.but_move.clicked.connect(self.clickButtonMove)
+        #QtCore.QObject.connect(self.pos_window.but_setnewtarget, QtCore.SIGNAL('clicked()'), self.clickButtonSetNewTarget)
+        # QtCore.QObject.connect(self.mvr_window.but_moverel_pos, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelPos)
+        self.mvr_window.but_moverel_pos.clicked.connect(self.clickButtonMoveRelPos)
+        # QtCore.QObject.connect(self.mvr_window.but_moverel_neg, QtCore.SIGNAL('clicked()'), self.clickButtonMoveRelNeg)
+        self.mvr_window.but_moverel_neg.clicked.connect(self.clickButtonMoveRelNeg)
+
         self.ActivateMotor(False)
         return None
     #end __init__
