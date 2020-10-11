@@ -1,5 +1,5 @@
 import numpy
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class cPMACair(QtCore.QObject):
@@ -75,7 +75,7 @@ class cPMACair(QtCore.QObject):
 
 
         
-class cSliderAirForm(QtGui.QWidget):
+class cSliderAirForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', bgcolor='#ECECEC'):
         super(cSliderAirForm, self).__init__()
         
@@ -317,7 +317,7 @@ class cPMACslider(QtCore.QObject):
         return None
 
 
-class cSliderPositionForm(QtGui.QWidget):
+class cSliderPositionForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', controllerID=None, setCommand=None, \
                  setPosVar=None, isPosVar=None, bgcolor='#ECECEC'):
         super(cSliderPositionForm, self).__init__()
@@ -447,7 +447,7 @@ class cSliderPositionForm(QtGui.QWidget):
         return None
 
 
-class cSliderRelMoveForm(QtGui.QWidget):
+class cSliderRelMoveForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', controllerID=None, setCommand=None, \
                  setPosVar=None, isPosVar=None, bgcolor='#ECECEC'):
         super(cSliderRelMoveForm, self).__init__()

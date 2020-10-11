@@ -3,15 +3,18 @@ import sys
 import time
 
 import numpy
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import uic as QtUic
+from PyQt5.QtCore import pyqtSignal
 
 import p05.tools.misc as misc
 from p05.gui.TANGO_deviceForm import cTANGOdevice
 
 
-class cTANGOgui(QtGui.QMainWindow):
+class cTANGOgui(QtWidgets.QMainWindow):
+    jobFinished = pyqtSignal(object)#object is [self.attvalues, self.devicestates, self.zmxerrors]
+
     def __init__(self, parent, devices=[], groups=[], name='TANGO motor GUI', geometry=None):
         super(cTANGOgui, self).__init__()
         self.main = parent
@@ -173,11 +176,6 @@ class cTANGOgui(QtGui.QMainWindow):
         return None
     # end _initialize
 
-    def initPollingThread(self):
-        # QtCore.QObject.connect(self.PollingThread, QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), self.NewUpdate)
-        self.PollingThread.finished.connect(self.NewUpdate)
-        return None
-
     
     def clickButtonPollingDelay(self):
         """Set the self.global_delay variable (in ms) """
@@ -309,8 +307,8 @@ class ReadoutThread(TANGOpolling):
                         self.zmxerrors[i1] = self.devices[i1].ZMXtangoObject.read_attribute('Error').value
                         
                 time.sleep(max(0, self.cur_delay - (time.time() - self.t0)))
-                self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.attvalues, self.devicestates, self.zmxerrors])
-                
+                # self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.attvalues, self.devicestates, self.zmxerrors])
+                self.jobFinished.emit([self.attvalues, self.devicestates, self.zmxerrors])
             elif self.running == False:
                 time.sleep(1.0 * self.cur_delay)
             if self.terminate_signal:
@@ -322,10 +320,10 @@ class ReadoutThread(TANGOpolling):
     
 def TANGOgui(parent=None, devices=None, groups=None, name='TANGO motor GUI', geometry=None):
     app = QtGui.QApplication(sys.argv)
-    gui = cTANGOgui(parent=QtGui.QMainWindow(), devices=devices, groups=groups, name=name, geometry=geometry)
+    gui = cTANGOgui(parent=QtWidgets.QMainWindow(), devices=devices, groups=groups, name=name, geometry=geometry)
     gui.PollingThread = ReadoutThread(gui.main, gui.devices)
+    gui.PollingThread.jobFinished.connect(gui.NewUpdate)
     gui.PollingThread.start()
-    gui.initPollingThread()
     gui.show()
     if sys.platform == 'win32' or sys.platform == 'win64':
         sys.exit(app.exec_())

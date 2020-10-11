@@ -3,9 +3,11 @@ import sys
 import time
 
 import numpy
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtWidgets
 from PyQt5 import QtGui
 from PyQt5 import uic as QtUic
+from PyQt5 import QtCore, QtGui, uic as QtUic
+from PyQt5.QtCore import pyqtSignal
 
 import p05.tools.misc as misc
 from p05.devices.PMACcomm import PMACcomm
@@ -16,7 +18,9 @@ from p05.gui.PMAC_motorForm import cPMACmotor
 from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
 
 
-class cPMACgui(QtGui.QMainWindow):
+class cPMACgui(QtWidgets.QMainWindow):
+    jobFinished = pyqtSignal(object)  #object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
+
     def __init__(self, parent = None, blockdirectmovements=True, devices=[], groups=[], name='PMAC motor GUI',user=False):
         super(cPMACgui, self).__init__()
         try:
@@ -43,10 +47,8 @@ class cPMACgui(QtGui.QMainWindow):
         self.controllerFaultB[:] = False
         self.controllerStatus = numpy.zeros((8))
         
-        self.updater = QtCore.QTimer()
-        
         # QtCore.QObject.connect(self.updater, QtCore.SIGNAL("timeout()"), self.updatePMACs)
-
+        self.updater.timeout.connect(self.updatePMACs)
         # QtCore.QObject.connect(self.but_pmac_polling, QtCore.SIGNAL('clicked()'), self.clickButtonPolling)
         self.but_pmac_polling.clicked.connect(self.clickButtonPolling)
         # (self.but_pmac_connection, QtCore.SIGNAL('clicked()'), self.clickButtonConnectPMACs)
@@ -316,12 +318,6 @@ class cPMACgui(QtGui.QMainWindow):
         return None
     #end _initialize
 
-    def initializeUpdater(self):
-        # QtCore.QObject.connect(self.PollingThread, QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), self.NewUpdate)
-        self.PollingThread.finished.connect(self.NewUpdate)
-        return None
-    #end initializeUpdater
-
     
     def updatePMACs(self):
         # index = self.tabs.currentIndex()
@@ -583,8 +579,8 @@ class UpdateThread(PMACpolling):
                     self.setPos[i1] = self.controllers[motor.controllerID].ReadVariable(motor.setPosVar)
 
                 time.sleep(max(0, self.cur_delay - (time.time() - self.t0)))
-                self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals])
-            
+                # self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals])
+                self.jobFinished.emit([self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals])
             elif self.running == False:
                 time.sleep(1.0 * self.cur_delay)
             if self.terminate_signal:
@@ -597,10 +593,11 @@ class UpdateThread(PMACpolling):
 
 def PMACgui():
     app = QtGui.QApplication(sys.argv)
-    gui = cPMACgui(parent=QtGui.QMainWindow(), devices=getPMACmotorList(), groups=getPMACmotorGroups(),user=False)
+    gui = cPMACgui(parent=QtWidgets.QMainWindow(), devices=getPMACmotorList(), groups=getPMACmotorGroups(),user=False)
     gui.PollingThread = UpdateThread(gui.main, gui.controllers, gui.motors, gui.AirUpdater, cur_delay = 0.25)
+
+    gui.PollingThread.jobFinished.connect(gui.NewUpdate)
     gui.PollingThread.start()
-    gui.initializeUpdater()
     gui.show()
     if sys.platform == 'win32' or sys.platform == 'win64':
         sys.exit(app.exec_())
@@ -610,10 +607,10 @@ def PMACgui():
 
 def PMACUsergui():
     app = QtGui.QApplication(sys.argv)
-    gui = cPMACgui(parent=QtGui.QMainWindow(), devices=getPMACmotorUserList(), groups=getPMACmotorUserGroups(),user=True)
+    gui = cPMACgui(parent=QtWidgets.QMainWindow(), devices=getPMACmotorUserList(), groups=getPMACmotorUserGroups(),user=True)
     gui.PollingThread = UpdateThread(gui.main, gui.controllers, gui.motors, gui.AirUpdater, cur_delay = 0.25)
+    gui.PollingThread.jobFinished.connect(gui.NewUpdate)
     gui.PollingThread.start()
-    gui.initializeUpdater()
     gui.show()
     if sys.platform == 'win32' or sys.platform == 'win64':
         sys.exit(app.exec_())

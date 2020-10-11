@@ -1,6 +1,6 @@
 import PyTango
 import numpy
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class cTANGOdevice(QtCore.QObject):
@@ -72,19 +72,23 @@ class cTANGOdevice(QtCore.QObject):
         
         if self.attnames[0] == 'None':
             for att in self.TangoAttList: self.window.att_select_buttons[0].addItem(att)
-            QtCore.QObject.connect(self.window.att_select_buttons[0], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo0)
-        
+            # QtCore.QObject.connect(self.window.att_select_buttons[0], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo0)
+            self.window.att_select_buttons[0].currentIndexChanged.connect(self.changeCombo0)
         for att in self.TangoAttList: self.window.att_select_buttons[1].addItem(att)
-        QtCore.QObject.connect(self.window.att_select_buttons[1], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo1)
+        # QtCore.QObject.connect(self.window.att_select_buttons[1], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo1)
+        self.window.att_select_buttons[1].currentIndexChanged.connect(self.changeCombo1)
         if self.numrows >= 3:
             for att in self.TangoAttList: self.window.att_select_buttons[2].addItem(att)
-            QtCore.QObject.connect(self.window.att_select_buttons[2], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo2)
+            # QtCore.QObject.connect(self.window.att_select_buttons[2], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo2)
+            self.window.att_select_buttons[2].currentIndexChanged.connect(self.changeCombo2)
         if self.numrows >= 4:
             for att in self.TangoAttList: self.window.att_select_buttons[3].addItem(att)
-            QtCore.QObject.connect(self.window.att_select_buttons[3], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo3)
+            # QtCore.QObject.connect(self.window.att_select_buttons[3], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo3)
+            self.window.att_select_buttons[3].currentIndexChanged.connect(self.changeCombo3)
         if self.numrows >= 5:
             for att in self.TangoAttList: self.window.att_select_buttons[4].addItem(att)
-            QtCore.QObject.connect(self.window.att_select_buttons[4], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo4)
+            # QtCore.QObject.connect(self.window.att_select_buttons[4], QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCombo4)
+            self.window.att_select_buttons[4].currentIndexChanged.connect(self.changeCombo4)
         
         if not self.readonly:
             # QtCore.QObject.connect(self.window.att_set_buttons[0], QtCore.SIGNAL('clicked()'), self.clickButtonMove)
@@ -108,7 +112,8 @@ class cTANGOdevice(QtCore.QObject):
             if self.showcmds:
                 # QtCore.QObject.connect(self.window.but_send_cmd, QtCore.SIGNAL('clicked()'), self.clickButtonSendCmd)
                 self.window.but_send_cmd.clicked.connect(self.clickButtonSendCmd)
-                QtCore.QObject.connect(self.window.cmd_selector, QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCmd)
+                # QtCore.QObject.connect(self.window.cmd_selector, QtCore.SIGNAL('currentIndexChanged(int)'), self.changeCmd)
+                self.window.cmd_selector.currentIndexChanged.connect(self.changeCmd)
                 # QtCore.QObject.connect(self.window.but_clear_cmd, QtCore.SIGNAL('clicked()'), self.clearCmdResponse)
                 self.window.but_clear_cmd.clicked.connect(self.clearCmdResponse)
                 for item in self.TangoCmdList: self.window.cmd_selector.addItem(item)
@@ -281,7 +286,7 @@ class cTANGOdevice(QtCore.QObject):
 ### Olga: move above to another file
 ############
         
-class cTANGOdeviceForm(QtGui.QWidget):
+class cTANGOdeviceForm(QtWidgets.QWidget):
     def __init__(self, _parent_motor, _parent_widget, _xoffset=0, _yoffset=0, bgcolor='#ECECEC'):
         super(cTANGOdeviceForm, self).__init__()
         

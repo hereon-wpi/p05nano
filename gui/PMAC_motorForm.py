@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 import time
 import numpy
 
@@ -184,7 +184,7 @@ def commonInitialization(target):
     return target
 #end commonInitialization
 
-class cMotorPositionForm(QtGui.QWidget):
+class cMotorPositionForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset =0, _yoffset = 0, alias = 'unknown', bgcolor='#ECECEC'):
         super(cMotorPositionForm, self).__init__()
         
@@ -274,7 +274,7 @@ class cMotorPositionForm(QtGui.QWidget):
         return None
 
 
-class cMotorRelMoveForm(QtGui.QWidget):
+class cMotorRelMoveForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset =0, _yoffset = 0, alias = 'unknown', controllerID = None, setCommand = None, \
                  setPosVar = None, isPosVar = None, bgcolor='#ECECEC'):
         super(cMotorRelMoveForm, self).__init__()

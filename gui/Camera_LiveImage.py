@@ -7,7 +7,8 @@ import PIL
 import PyTango
 import numpy
 import pyqtgraph
-from PyQt5 import QtCore, QtGui, uic as QtUic
+from PyQt5 import QtCore, QtGui, uic as QtUic, QtWidgets
+from PyQt5.QtCore import pyqtSignal
 
 import p05.nano
 import p05.tools.misc as misc
@@ -16,7 +17,7 @@ from p05.devices.PMACdict import PMACdict
 gc.enable()
 
 
-class cCamera_LiveImage(QtGui.QMainWindow):
+class cCamera_LiveImage(QtWidgets.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
         super(cCamera_LiveImage, self).__init__()
         try:
@@ -174,7 +175,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         # QtCore.QObject.connect(self.but_SetFlat, QtCore.SIGNAL('clicked()'), self.clickButtonFlat)
         self.but_SetFlat.clicked.connect(self.clickButtonFlat)
         # QtCore.QObject.connect(self.cB_Cameras, QtCore.SIGNAL('currentIndexChanged(const QString&)'),self.selectCamera)
-
+        self.cB_Cameras.currentIndexChanged.connect(self.selectCamera)
         # QtCore.QObject.connect(self.but_SetCrossPos, QtCore.SIGNAL('clicked()'), self.clickButtonSetCrossPos)
         self.but_SetCrossPos.clicked.connect(self.clickButtonSetCrossPos)
         # QtCore.QObject.connect(self.but_Rotate, QtCore.SIGNAL('clicked()'), self.clickButtonRotate)
@@ -220,7 +221,7 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         # QtCore.QObject.connect(self.but_ResetScan, QtCore.SIGNAL('clicked()'), self.clickButtonResetScan)
         self.but_ResetScan.clicked.connect(self.clickButtonResetScan)
         # QtCore.QObject.connect(self.cB_Scan, QtCore.SIGNAL('currentIndexChanged(const QString&)'),self.selectScan)
-
+        self.cB_Scan.currentIndexChanged.connect(self.selectScan)
         # QtCore.QObject.connect(self.but_AddItem, QtCore.SIGNAL('clicked()'), self.clickButtonAddItem)
         self.but_AddItem.clicked.connect(self.clickButtonAddItem)
         # QtCore.QObject.connect(self.but_RemoveItem, QtCore.SIGNAL('clicked()'), self.clickButtonRemoveItem)
@@ -238,11 +239,11 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         # QtCore.QObject.connect(self.checkBox_speed, QtCore.SIGNAL('clicked()'), self.checkBoxSpeed)
         self.checkBox_speed.clicked.connect(self.checkBoxSpeed)
         # QtCore.QObject.connect(self.io_exptime2,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
-
+        self.io_exptime2.returnPressed.connect(self.updateParams)
         # QtCore.QObject.connect(self.io_speed,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
-
+        self.io_speed.returnPressed.connect(self.updateParams)
         # QtCore.QObject.connect(self.io_smearing,  QtCore.SIGNAL('returnPressed()'),self.updateParams)
-
+        self.io_smearing.returnPressed.connect(self.updateParams)
         
         self.show()
         return None
@@ -389,13 +390,6 @@ class cCamera_LiveImage(QtGui.QMainWindow):
         self.tBeamShutter = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/shutter/all')
         print(self.Camera)
         return None
-            
-            
-    def initializeUpdater(self):
-        # QtCore.QObject.connect(self.PollingThread, QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), self.NewUpdate)
-        self.PollingThread.finished.connect(self.NewUpdate)
-        return None
-    #end initializeUpdater
 
     # Buttons Tab 1
 
@@ -1456,6 +1450,8 @@ class  Camerapolling(QtCore.QThread):
 
 
 class UpdateThread(Camerapolling):
+    jobFinished = pyqtSignal(object)#object is [self.image, self.exptime, self.imagesize]
+
     def __init__(self, parentThread, Camera, trigger, cB_Cameras, cur_delay = 0.25):
         Camerapolling.__init__(self, parentThread, Camera, trigger, cB_Cameras, cur_delay = cur_delay)
         self.HamaHutch = 'eh2'
@@ -1572,7 +1568,8 @@ class UpdateThread(Camerapolling):
                 else:          
                     self.imagesize = self.image.shape #numpy.shape(self.tCamera.read_attribute(self.command_image).value) #(self.tCamera.read_attribute('IMAGE_WIDTH'), self.tCamera.read_attribute('IMAGE_WIDTH'))
                 #time.sleep(max(0, self.cur_delay - (time.time() - self.t0)))
-                self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.image, self.exptime, self.imagesize])
+                # self.emit(QtCore.SIGNAL("jobFinished( PyQt_PyObject )"), [self.image, self.exptime, self.imagesize])
+                self.jobFinished.emit([self.image, self.exptime, self.imagesize])
             elif self.running == False:
                 time.sleep(0.1)
             if self.terminate_signal:
@@ -1586,10 +1583,10 @@ class UpdateThread(Camerapolling):
 def Camera_LiveImage(parent=None, devices=None, groups=None, name='Camera live image'):
     app = QtGui.QApplication(sys.argv)
     
-    gui = cCamera_LiveImage(name=name, parent=QtGui.QMainWindow())
+    gui = cCamera_LiveImage(name=name, parent=QtWidgets.QMainWindow())
     gui.PollingThread = UpdateThread(gui.main, gui.tCamera, gui.tTrigger,gui.cB_Cameras)
+    gui.PollingThread.jobFinished.connect(gui.NewUpdate) #jobFinished is a future event and we subscribe (connect) to event before it may be emited.
     gui.PollingThread.start()
-    gui.initializeUpdater()
     gui.show()
     if sys.platform == 'win32' or sys.platform == 'win64':
         sys.exit(app.exec_())
