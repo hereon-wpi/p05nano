@@ -1,6 +1,5 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-import time
 import numpy
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class cPMACmotor(QtCore.QObject):
@@ -52,7 +51,9 @@ class cPMACmotor(QtCore.QObject):
         _txt= self.pos_window.io_newtarget.text().replace(',', '.')
         self.mvr_window.box_delta.setValue(0)
         if self.parent.controllerFaultB[self.controllerID] == True:
-            QtGui.QMessageBox.warning(self.parent, 'Warning', 'Cannot move the motor "%s" while PMAC in unacknowledged error state.' %self.alias, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                          'Cannot move the motor "%s" while PMAC in unacknowledged error state.' % self.alias,
+                                          QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
             return None
         if _txt not in ['', '.', ','] and self.parent.global_pmacsconnected:
             _val = float(_txt)
@@ -63,7 +64,10 @@ class cPMACmotor(QtCore.QObject):
                     self.parent.controllers[self.controllerID].WriteVariable(self.setPosVar, _val)
                     self.parent.controllers[self.controllerID].GetResponse(self.setCommand)
             else:
-                QtGui.QMessageBox.warning(self.parent, 'Warning', "The number %.4f is out of bounds of the accessible position range. (%f, %f)" %(_val, self.lowerlimit, self.upperlimit), QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                              "The number %.4f is out of bounds of the accessible position range. (%f, %f)" % (
+                                              _val, self.lowerlimit, self.upperlimit),
+                                              QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
                 self.pos_window.io_newtarget.setText('')
                 return None
         return None
@@ -79,7 +83,9 @@ class cPMACmotor(QtCore.QObject):
                 self.parent.controllers[self.controllerID].WriteVariable(self.setPosVar, _val)
                 self.pos_window.num_targetpos.setText('%.4f' %_val)
             else:
-                QtGui.QMessageBox.warning(self.parent, 'Warning', "The number %.4f is out of bounds of the accessible position range." %_val, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                              "The number %.4f is out of bounds of the accessible position range." % _val,
+                                              QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
                 self.pos_window.io_newtarget.setText('')
                 return None
         return None
@@ -99,7 +105,9 @@ class cPMACmotor(QtCore.QObject):
         The current position is rounded to 4 significant digits.
         """
         if self.parent.controllerFaultB[self.controllerID] == True:
-            QtGui.QMessageBox.warning(self.parent, 'Warning', 'Cannot move the motor "%s" while PMAC in unacknowledged error state.' %self.alias, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                          'Cannot move the motor "%s" while PMAC in unacknowledged error state.' % self.alias,
+                                          QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
             return None
         self.dpos = float(self.mvr_window.box_delta.text().replace(',', '.'))
         if self.parent.controllers[self.controllerID].IsReady():
@@ -154,8 +162,8 @@ def commonInitialization(target):
     target.stdfontbold.setPointSize(11)
     target.stdfontbold.setBold(True)
     target.stdfontbold.setWeight(75)
-    
-    target.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+    target.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
     target.stdsizePolicy.setHorizontalStretch(0)
     target.stdsizePolicy.setVerticalStretch(0)
     target.stdsizePolicy.setHeightForWidth(target.parent.parent.sizePolicy().hasHeightForWidth())
@@ -192,8 +200,8 @@ class cMotorPositionForm(QtWidgets.QWidget):
         self.parent_widget = _tab
         self.alias = alias
         self.bg_color = bgcolor
-        
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(self.parent.parent.sizePolicy().hasHeightForWidth())
@@ -236,21 +244,21 @@ class cMotorPositionForm(QtWidgets.QWidget):
                 
         for object in [self.label_targetpos, self.num_targetpos]:
             object.setStyleSheet("""QLabel{background-color:%s;}""" % self.bg_color)
-            object.setFont(self.parent.parent.stdfont)    
-        
-        self.io_newtarget = QtGui.QLineEdit(self.parent_widget)
+            object.setFont(self.parent.parent.stdfont)
+
+        self.io_newtarget = QtWidgets.QLineEdit(self.parent_widget)
         self.io_newtarget.setSizePolicy(self.stdsizePolicy)
         self.io_newtarget.setFont(self.parent.parent.stdfont)
         self.io_newtarget.setObjectName("io_newtarget")
         self.io_newtarget.setValidator(_parent.parent.floatValidator)
         self.io_newtarget.setStyleSheet(self.parent.parent.textbox_style)
-        
-        self.but_setnewtarget = QtGui.QPushButton(self.parent_widget)
+
+        self.but_setnewtarget = QtWidgets.QPushButton(self.parent_widget)
         self.but_setnewtarget.setObjectName("but_setnewtarget")
         self.but_setnewtarget.setText("Set new target")
         self.but_setnewtarget.hide()
 
-        self.but_move = QtGui.QPushButton(self.parent_widget)
+        self.but_move = QtWidgets.QPushButton(self.parent_widget)
         self.but_move.setObjectName("but_move")
         self.but_move.setText("Direct move to")
 
@@ -287,8 +295,8 @@ class cMotorRelMoveForm(QtWidgets.QWidget):
         self.setPosVar = setPosVar
         self.isPosVar = isPosVar
         self.bg_color = bgcolor
-                
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(self.parent.parent.sizePolicy().hasHeightForWidth())
@@ -321,7 +329,7 @@ class cMotorRelMoveForm(QtWidgets.QWidget):
         self.label_name.setFont(self.parent.parent.stdfontbold)
         self.label_controllerID.setFont(self.parent.parent.stdfontsmall)
 
-        self.box_delta = QtGui.QDoubleSpinBox(self.parent_widget)
+        self.box_delta = QtWidgets.QDoubleSpinBox(self.parent_widget)
         self.box_delta.setSizePolicy(self.stdsizePolicy)
         self.box_delta.setFont(self.parent.parent.stdfont)
         self.box_delta.setSuffix("")
@@ -337,14 +345,14 @@ class cMotorRelMoveForm(QtWidgets.QWidget):
         self.label_moverelby.setObjectName("label_moverelby")
         self.label_moverelby.setText("Move relative by:")
         self.label_moverelby.setStyleSheet("""QLabel{background-color:%s;}""" % self.bg_color)
-        
-        self.but_moverel_pos = QtGui.QPushButton(self.parent_widget)
+
+        self.but_moverel_pos = QtWidgets.QPushButton(self.parent_widget)
         self.but_moverel_pos.setFont(self.parent.parent.stdfont)
         self.but_moverel_pos.setObjectName("but_moverel_pos")
         self.but_moverel_pos.setText("positive")
         self.but_moverel_pos.setStyleSheet(self.parent.parent.button_style)
-        
-        self.but_moverel_neg = QtGui.QPushButton(self.parent_widget)
+
+        self.but_moverel_neg = QtWidgets.QPushButton(self.parent_widget)
         self.but_moverel_neg.setFont(self.parent.parent.stdfont)
         self.but_moverel_neg.setObjectName("but_moverel_neg")
         self.but_moverel_neg.setText("negative")

@@ -78,8 +78,8 @@ class cPMACair(QtCore.QObject):
 class cSliderAirForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', bgcolor='#ECECEC'):
         super(cSliderAirForm, self).__init__()
-        
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(_parent.parent.sizePolicy().hasHeightForWidth())
@@ -114,13 +114,13 @@ class cSliderAirForm(QtWidgets.QWidget):
             label.setFont(self.parent.parent.stdfont)
             label.setStyleSheet("""QLabel{background-color:%s;}""" % self.bg_color)
 
-        self.but_AirOn = QtGui.QPushButton(self.parent_widget)
+        self.but_AirOn = QtWidgets.QPushButton(self.parent_widget)
         self.but_AirOn.setFont(self.parent.parent.stdfont)
         self.but_AirOn.setObjectName("but_AirOn")
         self.but_AirOn.setText("activate global air supply")
         self.but_AirOn.setStyleSheet(self.parent.parent.button_style)
-        
-        self.but_AirOff = QtGui.QPushButton(self.parent_widget)
+
+        self.but_AirOff = QtWidgets.QPushButton(self.parent_widget)
         self.but_AirOff.setFont(self.parent.parent.stdfont)
         self.but_AirOff.setObjectName("but_AirOff")
         self.but_AirOff.setText("deactive global air supply")
@@ -128,7 +128,7 @@ class cSliderAirForm(QtWidgets.QWidget):
 
         # QtCore.QMetaObject.connectSlotsByName(self.parent_widget)
         # button for initializing the granite slabs
-#         self.but_Init = QtGui.QPushButton(self.parent_widget)
+        #         self.but_Init = QtWidgets.QPushButton(self.parent_widget)
 #         self.but_Init.setFont(self.parent.parent.stdfont)
 #         self.but_Init.setObjectName("but_Init")
 #         self.but_Init.setText("Initialize")
@@ -169,7 +169,8 @@ class cPMACslider(QtCore.QObject):
             self.airVar = ['M32', 'M33', 'M34', 'M35'][self.sliderID-1]
             self.vacVar = ['M40', 'M42', 'M44', 'M45'][self.sliderID-1]
         elif self.sliderID not in [1, 2, 3, 4]:
-            QtGui.QMessageBox.warning(self.parent, 'Warning', 'The slider number %i is unknown..' % self.sliderID, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self.parent, 'Warning', 'The slider number %i is unknown..' % self.sliderID,
+                                          QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
             return None
         
         self.lowerlimit = lowerlimit
@@ -225,7 +226,9 @@ class cPMACslider(QtCore.QObject):
         """Method to set the target variable from the input box and start the movement of the solo motor."""
         _txt= self.pos_window.io_newtarget.text()
         if self.parent.controllerFaultB[self.controllerID] == True:
-            QtGui.QMessageBox.warning(self.parent, 'Warning', 'Cannot move the motor "%s" while PMAC in unacknowledged error state.' %self.alias, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                          'Cannot move the motor "%s" while PMAC in unacknowledged error state.' % self.alias,
+                                          QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
             return None
         if _txt not in ['', '.', ','] and self.parent.global_pmacsconnected:
             _val = float(_txt)
@@ -235,7 +238,9 @@ class cPMACslider(QtCore.QObject):
                     self.parent.controllers[self.controllerID].WriteVariable(self.setPosVar, _val)
                     self.parent.controllers[self.controllerID].GetResponse(self.cmdMoveSolo, silent = True)
             else:
-                QtGui.QMessageBox.warning(self.parent, 'Warning', "The number %.4f is out of bounds of the accessible position range." %_val, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                              "The number %.4f is out of bounds of the accessible position range." % _val,
+                                              QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
                 self.pos_window.io_newtarget.setText('')
                 return None
         return None
@@ -254,7 +259,9 @@ class cPMACslider(QtCore.QObject):
                 self.parent.controllers[self.controllerID].WriteVariable(self.setPosVar, _val)
                 self.pos_window.num_targetpos.setText('%.4f' % _val)
             else:
-                QtGui.QMessageBox.warning(self.parent, 'Warning', "The number %.4f is out of bounds of the accessible position range." % _val, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                              "The number %.4f is out of bounds of the accessible position range." % _val,
+                                              QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
                 self.pos_window.io_newtarget.setText('')
                 return None
         return None
@@ -279,7 +286,9 @@ class cPMACslider(QtCore.QObject):
     
     def moveRel(self, factor):
         if self.parent.controllerFaultB[self.controllerID] == True:
-            QtGui.QMessageBox.warning(self.parent, 'Warning', 'Cannot move the motor "%s" while PMAC in unacknowledged error state.' % self.alias, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self.parent, 'Warning',
+                                          'Cannot move the motor "%s" while PMAC in unacknowledged error state.' % self.alias,
+                                          QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Ok)
             return None
         self.dpos = float(self.mvr_window.box_delta.text().replace(',', '.'))
         if self.parent.controllers[self.controllerID].IsReady():
@@ -321,8 +330,8 @@ class cSliderPositionForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', controllerID=None, setCommand=None, \
                  setPosVar=None, isPosVar=None, bgcolor='#ECECEC'):
         super(cSliderPositionForm, self).__init__()
-        
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(_parent.parent.sizePolicy().hasHeightForWidth())
@@ -388,31 +397,31 @@ class cSliderPositionForm(QtWidgets.QWidget):
         self.label_name.setFont(self.parent.parent.stdfontbold)
         self.label_controllerID.setFont(self.parent.parent.stdfontsmall)
 
-        self.io_newtarget = QtGui.QLineEdit(self.parent_widget)
+        self.io_newtarget = QtWidgets.QLineEdit(self.parent_widget)
         self.io_newtarget.setSizePolicy(self.stdsizePolicy)
         self.io_newtarget.setFont(self.parent.parent.stdfont)
         self.io_newtarget.setObjectName("io_newtarget")
         self.io_newtarget.setValidator(_parent.parent.floatValidator)
         self.io_newtarget.setStyleSheet(self.parent.parent.textbox_style)
-        
-        self.but_setnewtarget = QtGui.QPushButton(self.parent_widget)
+
+        self.but_setnewtarget = QtWidgets.QPushButton(self.parent_widget)
         self.but_setnewtarget.setObjectName("but_setnewtarget")
         self.but_setnewtarget.setText("Set target")
         self.but_setnewtarget.hide()
 
-        self.but_moveSolo = QtGui.QPushButton(self.parent_widget)
+        self.but_moveSolo = QtWidgets.QPushButton(self.parent_widget)
         self.but_moveSolo.setObjectName("but_moveSolo")
         self.but_moveSolo.setText("solo move")
 
-        self.but_moveAll = QtGui.QPushButton(self.parent_widget)
+        self.but_moveAll = QtWidgets.QPushButton(self.parent_widget)
         self.but_moveAll.setObjectName("but_moveAll")
         self.but_moveAll.setText("move all")
 
-        self.but_activateAir = QtGui.QPushButton(self.parent_widget)
+        self.but_activateAir = QtWidgets.QPushButton(self.parent_widget)
         self.but_activateAir.setObjectName("but_activateAir")
         self.but_activateAir.setText('activate air supply')
 
-        self.but_deactivateAir = QtGui.QPushButton(self.parent_widget)
+        self.but_deactivateAir = QtWidgets.QPushButton(self.parent_widget)
         self.but_deactivateAir.setObjectName("but_deactivateAir")
         self.but_deactivateAir.setText('deactivate air supply')
 
@@ -451,8 +460,8 @@ class cSliderRelMoveForm(QtWidgets.QWidget):
     def __init__(self, _parent, _tab, _xoffset=0, _yoffset=0, alias='unknown', controllerID=None, setCommand=None, \
                  setPosVar=None, isPosVar=None, bgcolor='#ECECEC'):
         super(cSliderRelMoveForm, self).__init__()
-        
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(_parent.parent.sizePolicy().hasHeightForWidth())
@@ -513,7 +522,7 @@ class cSliderRelMoveForm(QtWidgets.QWidget):
         self.label_name.setFont(self.parent.parent.stdfontbold)
         self.label_controllerID.setFont(self.parent.parent.stdfontsmall)
 
-        self.box_delta = QtGui.QDoubleSpinBox(self.parent_widget)
+        self.box_delta = QtWidgets.QDoubleSpinBox(self.parent_widget)
         self.box_delta.setSizePolicy(self.stdsizePolicy)
         self.box_delta.setFont(self.parent.parent.stdfont)
         self.box_delta.setSuffix("")
@@ -523,20 +532,20 @@ class cSliderRelMoveForm(QtWidgets.QWidget):
         self.box_delta.setObjectName("box_delta")
         self.box_delta.setToolTip('The maximum allowed step width is "1.0". Only numerical input is allowed.')
         self.box_delta.setStyleSheet(self.parent.parent.spin_style)
-        
-        self.but_moverel_pos = QtGui.QPushButton(self.parent_widget)
+
+        self.but_moverel_pos = QtWidgets.QPushButton(self.parent_widget)
         self.but_moverel_pos.setObjectName("but_moverel_pos")
         self.but_moverel_pos.setText("positive")
-        
-        self.but_moverel_neg = QtGui.QPushButton(self.parent_widget)
+
+        self.but_moverel_neg = QtWidgets.QPushButton(self.parent_widget)
         self.but_moverel_neg.setObjectName("but_moverel_neg")
         self.but_moverel_neg.setText("negative")
 
-        self.but_activateAir = QtGui.QPushButton(self.parent_widget)
+        self.but_activateAir = QtWidgets.QPushButton(self.parent_widget)
         self.but_activateAir.setObjectName("but_activateAir")
         self.but_activateAir.setText('activate air supply')
 
-        self.but_deactivateAir = QtGui.QPushButton(self.parent_widget)
+        self.but_deactivateAir = QtWidgets.QPushButton(self.parent_widget)
         self.but_deactivateAir.setObjectName("but_deactivateAir")
         self.but_deactivateAir.setText('deactivate air supply')
 

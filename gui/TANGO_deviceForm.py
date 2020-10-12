@@ -41,7 +41,9 @@ class cTANGOdevice(QtCore.QObject):
         self.zmxerrorstatus = ''
 
         if self.serveraddress == None:
-            QtGui.QMessageBox.critical(self, 'Error', 'No TANGO server address selected for the device "%s".' % self.alias, buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.critical(self, 'Error',
+                                           'No TANGO server address selected for the device "%s".' % self.alias,
+                                           buttons=QtWidgets.QMessageBox.Ok)
             return None
         self.TangoObject = PyTango.DeviceProxy(self.serveraddress)
         if self.attnames[0] != 'None':
@@ -134,7 +136,9 @@ class cTANGOdevice(QtCore.QObject):
             except Exception as e:
                 self.window.io_newvals[_index].setText('')
                 if _txt == '': _txt = '<None>'
-                QtGui.QMessageBox.critical(self.parent, 'Error', "The value '%s' could not be written to attribute '%s'. Error code:\n%s" %( _txt, self.attnames[_index], e), buttons = QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.critical(self.parent, 'Error',
+                                               "The value '%s' could not be written to attribute '%s'. Error code:\n%s" % (
+                                               _txt, self.attnames[_index], e), buttons=QtWidgets.QMessageBox.Ok)
         return None
 
     ############
@@ -193,7 +197,9 @@ class cTANGOdevice(QtCore.QObject):
                 tmp = self.TangoObject.read_attribute(self.attnames[0]).value + _factor * self.delta
                 self.TangoObject.write_attribute(self.attnames[0], tmp)
             except:
-                QtGui.QMessageBox.critical(self.parent, 'Error', "The %s could not be changed by %f." %(self.attnames[0], tmp), buttons = QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.critical(self.parent, 'Error',
+                                               "The %s could not be changed by %f." % (self.attnames[0], tmp),
+                                               buttons=QtWidgets.QMessageBox.Ok)
 
     def clickButtonMoveRelPos(self):
         self.MoveRel(1.0)
@@ -289,8 +295,8 @@ class cTANGOdevice(QtCore.QObject):
 class cTANGOdeviceForm(QtWidgets.QWidget):
     def __init__(self, _parent_motor, _parent_widget, _xoffset=0, _yoffset=0, bgcolor='#ECECEC'):
         super(cTANGOdeviceForm, self).__init__()
-        
-        self.stdsizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+
+        self.stdsizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         self.stdsizePolicy.setHorizontalStretch(0)
         self.stdsizePolicy.setVerticalStretch(0)
         self.stdsizePolicy.setHeightForWidth(_parent_motor.parent.sizePolicy().hasHeightForWidth())
@@ -360,7 +366,7 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
         if not self.parent_motor.readonly:
             self.io_newvals = numpy.zeros(self.parent_motor.numrows, dtype=object)
             for i1 in range(self.parent_motor.numrows):
-                self.io_newvals[i1] = QtGui.QLineEdit(self.parent_widget)
+                self.io_newvals[i1] = QtWidgets.QLineEdit(self.parent_widget)
                 self.io_newvals[i1].setSizePolicy(self.stdsizePolicy)
                 self.io_newvals[i1].setFont(self.parent_widget.stdfont)
                 self.io_newvals[i1].setObjectName("io_newtarget%1i" % i1)
@@ -370,7 +376,7 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
             
             self.att_set_buttons = numpy.zeros(self.parent_motor.numrows, dtype=object)
             for i1 in range(self.parent_motor.numrows):
-                self.att_set_buttons[i1] = QtGui.QPushButton(self.parent_widget)
+                self.att_set_buttons[i1] = QtWidgets.QPushButton(self.parent_widget)
                 self.att_set_buttons[i1].setFont(self.parent_widget.stdfont)
                 self.att_set_buttons[i1].setObjectName("but_setnewtarget%1i" % i1)
                 self.att_set_buttons[i1].setText("Set attribute")
@@ -383,11 +389,11 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
         else:
             i0 = 1
         for i1 in range(i0, self.parent_motor.numrows):
-            self.att_select_buttons[i1] = QtGui.QComboBox(self.parent_widget)
+            self.att_select_buttons[i1] = QtWidgets.QComboBox(self.parent_widget)
             self.att_select_buttons[i1].setStyleSheet(self.combo_style)
-            self.att_select_buttons[i1].setInsertPolicy(QtGui.QComboBox.InsertAtBottom)
+            self.att_select_buttons[i1].setInsertPolicy(QtWidgets.QComboBox.InsertAtBottom)
             self.att_select_buttons[i1].setMinimumContentsLength(20)
-            self.att_select_buttons[i1].setSizeAdjustPolicy(QtGui.QComboBox.AdjustToMinimumContentsLength)
+            self.att_select_buttons[i1].setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
             self.att_select_buttons[i1].setMaxVisibleItems(15)
             self.att_select_buttons[i1].setAutoCompletion(True)
             self.att_select_buttons[i1].setFont(self.parent_widget.stdfont)
@@ -399,8 +405,8 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
         else:
             self.label_position.setGeometry(QtCore.QRect(1 + _xoffset, 22 + _yoffset, 1, 21))
         
-        if self.parent_motor.allowmvr and not self.parent_motor.readonly:        
-            self.box_delta = QtGui.QDoubleSpinBox(self.parent_widget)
+        if self.parent_motor.allowmvr and not self.parent_motor.readonly:
+            self.box_delta = QtWidgets.QDoubleSpinBox(self.parent_widget)
             self.box_delta.setSizePolicy(self.stdsizePolicy)
             self.box_delta.setFont(self.parent_widget.stdfont)
             self.box_delta.setSuffix("")
@@ -410,12 +416,12 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
             self.box_delta.setObjectName("box_delta")
             self.box_delta.setStyleSheet(self.io_style)
 
-            self.but_moverel_pos = QtGui.QPushButton(self.parent_widget)
+            self.but_moverel_pos = QtWidgets.QPushButton(self.parent_widget)
             self.but_moverel_pos.setFont(self.parent_widget.stdfont)
             self.but_moverel_pos.setObjectName("but_moverel_pos")
             self.but_moverel_pos.setText("positive")
-            
-            self.but_moverel_neg = QtGui.QPushButton(self.parent_widget)
+
+            self.but_moverel_neg = QtWidgets.QPushButton(self.parent_widget)
             self.but_moverel_neg.setFont(self.parent_widget.stdfont)
             self.but_moverel_neg.setObjectName("but_moverel_neg")
             self.but_moverel_neg.setText("negative")        
@@ -435,17 +441,17 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
         #end if self.parent_motor.allowmvr and not self.parent_motor.readonly:        
         
         if self.parent_motor.showcmds and not self.parent_motor.readonly:
-            self.cmd_selector = QtGui.QComboBox(self.parent_widget)
+            self.cmd_selector = QtWidgets.QComboBox(self.parent_widget)
             self.cmd_selector.setStyleSheet(self.combo_style)
-            self.cmd_selector.setInsertPolicy(QtGui.QComboBox.InsertAtBottom)
+            self.cmd_selector.setInsertPolicy(QtWidgets.QComboBox.InsertAtBottom)
             self.cmd_selector.setMinimumContentsLength(20)
-            self.cmd_selector.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToMinimumContentsLength)
+            self.cmd_selector.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
             self.cmd_selector.setMaxVisibleItems(15)
             self.cmd_selector.setAutoCompletion(True)
             self.cmd_selector.setFont(self.parent_widget.stdfont)
             self.cmd_selector.setObjectName("cmd_selector")
-            
-            self.io_cmd = QtGui.QLineEdit(self.parent_widget)
+
+            self.io_cmd = QtWidgets.QLineEdit(self.parent_widget)
             self.io_cmd.setSizePolicy(self.stdsizePolicy)
             self.io_cmd.setFont(self.parent_widget.stdfont)
             self.io_cmd.setObjectName("io_cmd")
@@ -462,12 +468,12 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
             for obj in [self.label_cmd_response, self.cmd_response]:
                 obj.setFont(self.parent_widget.stdfont)
                 obj.setStyleSheet("""QLabel{background-color:%s;}""" % self.bg_color)
-        
-            self.but_send_cmd = QtGui.QPushButton(self.parent_widget)
+
+            self.but_send_cmd = QtWidgets.QPushButton(self.parent_widget)
             self.but_send_cmd.setObjectName("butsend_cmd")
             self.but_send_cmd.setText("Send cmd.")
-            
-            self.but_clear_cmd = QtGui.QPushButton(self.parent_widget)
+
+            self.but_clear_cmd = QtWidgets.QPushButton(self.parent_widget)
             self.but_clear_cmd.setObjectName("butsend_cmd")
             self.but_clear_cmd.setText("clear answer")
             

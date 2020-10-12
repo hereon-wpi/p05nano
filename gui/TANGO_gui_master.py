@@ -133,7 +133,7 @@ class cTANGOgui(QtWidgets.QMainWindow):
                     y0 += dy + 10
                     newgroup = False
 
-        self.groups = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(self.tmpgroups))]]
+        self.groups = numpy.r_[[QtWidgets.QGroupBox() for i1 in range(len(self.tmpgroups))]]
         self.group_stylesheet = numpy.empty(len(self.tmpgroups), dtype=object)
         
         x0, y0 = 5, 30
@@ -141,7 +141,7 @@ class cTANGOgui(QtWidgets.QMainWindow):
         for i1 in range(self.groups.size):
             group = self.tmpgroups[i1]
             group[1] = int(group[1])
-            self.groups[i1] = (QtGui.QGroupBox(self))
+            self.groups[i1] = (QtWidgets.QGroupBox(self))
             self.groups[i1].setFlat(True)
              
             dy = 16 + self.motor_heights[imotor:imotor + group[1]].sum() + group[1] * 5
@@ -186,7 +186,8 @@ class cTANGOgui(QtWidgets.QMainWindow):
             self.global_delay = _val
             self.PollingThread.set_delay(self.global_delay * 1e-3) 
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert the string "%s" to a number.' % _txt, buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert the string "%s" to a number.' % _txt,
+                                          buttons=QtWidgets.QMessageBox.Ok)
         return None
     
     def clickButtonSwitchPolling(self):
@@ -210,11 +211,11 @@ class cTANGOgui(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         """Safety check for closing of window."""
-        reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes | 
-            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-  
-        if reply == QtGui.QMessageBox.Yes:
+        reply = QtWidgets.QMessageBox.question(self, 'Message',
+                                               "Are you sure to quit?", QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+
+        if reply == QtWidgets.QMessageBox.Yes:
             self.PollingThread.terminate_signal = True
             event.accept()
             
@@ -298,7 +299,9 @@ class ReadoutThread(TANGOpolling):
                             try:
                                 self.attvalues[i1, i2] = self.devices[i1].TangoObject.read_attribute(str(attlist[i1][i2])).value
                             except Exception as e:
-                                QtGui.QMessageBox.critical(self.parent, 'Error', "TANGO exception. Error code:\n%s" % (e), buttons=QtGui.QMessageBox.Ok)
+                                QtWidgets.QMessageBox.critical(self.parent, 'Error',
+                                                               "TANGO exception. Error code:\n%s" % (e),
+                                                               buttons=QtWidgets.QMessageBox.Ok)
                                 attlist[i1][i2] = 'None'
                                 self.devices[i1].window.att_select_buttons[i2].setCurrentIndex(0)
                                 self.devices[i1].attnames[i2] = 'None'
@@ -319,7 +322,7 @@ class ReadoutThread(TANGOpolling):
 
     
 def TANGOgui(parent=None, devices=None, groups=None, name='TANGO motor GUI', geometry=None):
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = cTANGOgui(parent=QtWidgets.QMainWindow(), devices=devices, groups=groups, name=name, geometry=geometry)
     gui.PollingThread = ReadoutThread(gui.main, gui.devices)
     gui.PollingThread.jobFinished.connect(gui.NewUpdate)

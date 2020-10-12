@@ -1,10 +1,11 @@
-import numpy
-from PyQt5 import QtCore, QtGui, uic as QtUic, QtWidgets
-import sys
 import os
-import pylab
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import sys
 import zipfile
+
+import numpy
+import pylab
+from PyQt5 import QtCore, QtGui, uic as QtUic, QtWidgets
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 colors = ['#FFA500', '#1F45FC', '#4CC417', '#C11B17', '#4B0082', '#565051', '#43C6DB', '#43BFC7']
 pylab.rcParams['font.size'] = 15
@@ -802,9 +803,10 @@ class cTXMCalculator(QtWidgets.QWidget.QMainWindow):
 
     def writeData(self):
         if self.zip_basedir == None:
-            self.zip_fname = QtWidgets.QWidget.QFileDialog.getSaveFileName(self, 'Name of logfile', '', "Zip files (*.zip)")[0]
+            self.zip_fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Name of logfile', '', "Zip files (*.zip)")[0]
         elif self.zip_basedir != None:
-            self.zip_fname = QtWidgets.QWidget.QFileDialog.getSaveFileName(self, 'Name of logfile', self.zip_basedir, "Zip files (*.zip)")[0]
+            self.zip_fname = \
+            QtWidgets.QFileDialog.getSaveFileName(self, 'Name of logfile', self.zip_basedir, "Zip files (*.zip)")[0]
         self.zip_basedir = os.path.dirname(self.zip_fname)
         self.zip_filename = os.path.basename(self.zip_fname)
         if self.zip_fname not in ['', None]:

@@ -3,10 +3,8 @@ import sys
 import time
 
 import numpy
-from PyQt5 import QtCore, QtWidgets
-from PyQt5 import QtGui
-from PyQt5 import uic as QtUic
 from PyQt5 import QtCore, QtGui, uic as QtUic
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
 import p05.tools.misc as misc
@@ -207,8 +205,8 @@ class cPMACgui(QtWidgets.QMainWindow):
         self.pmacdict[-1] = self.pmacdict['GraniteSlab_4']
 
         self.groups = groups
-        self.groups_mvr = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(groups) + 1)]]
-        self.groups_pos = numpy.r_[[QtGui.QGroupBox() for i1 in range(len(groups) + 1)]]
+        self.groups_mvr = numpy.r_[[QtWidgets.QGroupBox() for i1 in range(len(groups) + 1)]]
+        self.groups_pos = numpy.r_[[QtWidgets.QGroupBox() for i1 in range(len(groups) + 1)]]
         self.group_stylesheet = numpy.empty(len(groups), dtype=object)
         self.status_labels = [None, self.label_pmac01_status, self.label_pmac02_status, self.label_pmac03_status, self.label_pmac04_status,
                            self.label_pmac05_status, self.label_pmac06_status, self.label_pmac07_status]
@@ -261,8 +259,8 @@ class cPMACgui(QtWidgets.QMainWindow):
             if y0 + dy >= 900: 
                 y0, x0 = 5, x0 + 430
             self.group_stylesheet[i1] = """QGroupBox{background-color:%s}""" % group[2]
-            self.groups_mvr[i1] = (QtGui.QGroupBox(self.tab_relativemovement))
-            self.groups_pos[i1] = (QtGui.QGroupBox(self.tab_positions))
+            self.groups_mvr[i1] = (QtWidgets.QGroupBox(self.tab_relativemovement))
+            self.groups_pos[i1] = (QtWidgets.QGroupBox(self.tab_positions))
                 
             for item in [self.groups_mvr[i1], self.groups_pos[i1]]:
                 item.setFlat(True)
@@ -281,8 +279,8 @@ class cPMACgui(QtWidgets.QMainWindow):
         if y0 + dy >= 900: 
             y0, x0 = 5, x0 + 430
         self.group_stylesheet[-1] = """QGroupBox{background-color:#CCEECC}"""
-        self.groups_mvr[-1] = (QtGui.QGroupBox(self.tab_relativemovement))
-        self.groups_pos[-1] = (QtGui.QGroupBox(self.tab_positions))
+        self.groups_mvr[-1] = (QtWidgets.QGroupBox(self.tab_relativemovement))
+        self.groups_pos[-1] = (QtWidgets.QGroupBox(self.tab_positions))
         for item in [self.groups_mvr[-1], self.groups_pos[-1]]:
                 item.setFlat(True)
                 item.setFont(self.stdfont)
@@ -360,7 +358,8 @@ class cPMACgui(QtWidgets.QMainWindow):
                 self.PollingThread.stop()
                 self.PollingThread.restart()
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert the string "%s" to a number.' % _txt, buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert the string "%s" to a number.' % _txt,
+                                          buttons=QtWidgets.QMessageBox.Ok)
         return None
     
     def clickButtonConnectPMACs(self):
@@ -473,7 +472,8 @@ class cPMACgui(QtWidgets.QMainWindow):
             _response = self.controllers[controllerID].GetResponse(_input)
             text_output.setText(_response)
         else:
-            QtGui.QMessageBox.warning(self, 'Warning', "Controller is not ready for command. Request ignored", QtGui.QMessageBox.Ok, QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', "Controller is not ready for command. Request ignored",
+                                          QtWidgets.QMessageBox.Ok, QtWidgets.QMessageBox.Ok)
         return None
 
     
@@ -497,11 +497,11 @@ class cPMACgui(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         """Safety check for closing of window."""
-        reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes | 
-            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-   
-        if reply == QtGui.QMessageBox.Yes:
+        reply = QtWidgets.QMessageBox.question(self, 'Message',
+                                               "Are you sure to quit?", QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+
+        if reply == QtWidgets.QMessageBox.Yes:
             self.PollingThread.terminate_signal = True
             event.accept()
         else:
@@ -592,7 +592,7 @@ class UpdateThread(PMACpolling):
 
 
 def PMACgui():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = cPMACgui(parent=QtWidgets.QMainWindow(), devices=getPMACmotorList(), groups=getPMACmotorGroups(),user=False)
     gui.PollingThread = UpdateThread(gui.main, gui.controllers, gui.motors, gui.AirUpdater, cur_delay = 0.25)
 
@@ -606,7 +606,7 @@ def PMACgui():
 
 
 def PMACUsergui():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     gui = cPMACgui(parent=QtWidgets.QMainWindow(), devices=getPMACmotorUserList(), groups=getPMACmotorUserGroups(),user=True)
     gui.PollingThread = UpdateThread(gui.main, gui.controllers, gui.motors, gui.AirUpdater, cur_delay = 0.25)
     gui.PollingThread.jobFinished.connect(gui.NewUpdate)

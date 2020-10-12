@@ -530,7 +530,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.tCamera.write_attribute(self.command_exptime, self.exptime)
             time.sleep(1)
             if self.tCamera.state() != PyTango.DevState.ON:
-                QtGui.QMessageBox.warning(self, 'Warning', 'Camera Tango server not in on state!', buttons=QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self, 'Warning', 'Camera Tango server not in on state!',
+                                              buttons=QtWidgets.QMessageBox.Ok)
                 return None
 
             print('Succsessfully set new exposure time: %.2f ms' % self.exptime * 1000)
@@ -562,7 +563,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = numpy.shape(self.tCamera.read_attribute(self.command_image).value)
             self.NewUpdate([self.image, self.exptime, self.imagesize])
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not acquire individual image.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not acquire individual image.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
         return None
     #end clickButtonGetImageData
     
@@ -622,7 +624,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = numpy.shape(self.tCamera.read_attribute(self.command_image).value)
             self.NewUpdate([self.image, self.exptime, self.imagesize])
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not acquire individual image.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not acquire individual image.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             raise
         return None
 
@@ -635,9 +638,11 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             roi_y2 = int(self.io_roiyhigh.text())
             roidy = roi_y2 - roi_y1
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
         if roidx > self.imagesize[0] or roidy > self.imagesize[1]:
-            QtGui.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             return None
         self.roi_x1 = roi_x1
         self.roi_x2 = roi_x2
@@ -679,10 +684,12 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             histmin = int(self.io_histmin.text())
             histmax = int(self.io_histmax.text())
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert histogram boundaries to numbers.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert histogram boundaries to numbers.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             return None
         if histmin < 0 or histmax > 65565:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Histogram values outside 16bit dynamic range..', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Histogram values outside 16bit dynamic range..',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             return None
         self.histmin = histmin
         self.histmax = histmax
@@ -712,9 +719,11 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             roi_y2 = int(self.io_roiyhigh.text())
             roidy = roi_y2 - roi_y1 + 1
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
         if roidx > self.imagesize[0] or roidy > self.imagesize[1]:
-            QtGui.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             return None
         self.roi_x1 = roi_x1
         self.roi_x2 = roi_x2
@@ -757,10 +766,12 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         if self.activeUpdate:
             self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtGui.QFileDialog.getSaveFileName(parent=None, caption='Save name for image file', filter = "Tiff Image (*.tiff);; Images (*.png *.jpg *.tif)")
+            fname = QtWidgets.QFileDialog.getSaveFileName(parent=None, caption='Save name for image file',
+                                                          filter="Tiff Image (*.tiff);; Images (*.png *.jpg *.tif)")
         elif self.currdir != None:
-            fname = QtGui.QFileDialog.getSaveFileName(parent=None, caption='Save name for image file', directory = self.currdir, \
-                                                      filter = "Tiff Image (*.tiff);; Images (*.png *.jpg *.tif)")
+            fname = QtWidgets.QFileDialog.getSaveFileName(parent=None, caption='Save name for image file',
+                                                          directory=self.currdir, \
+                                                          filter = "Tiff Image (*.tiff);; Images (*.png *.jpg *.tif)")
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         _filename = os.path.basename(fname)
@@ -827,7 +838,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
                 self.tCamera.command_inout(self.command_stop)
                 time.sleep(0.01)
             if self.tCamera.state() != PyTango.DevState.ON:
-                QtGui.QMessageBox.warning(self, 'Warning', 'Camera Tango server not in on state!', buttons=QtGui.QMessageBox.Ok)
+                QtWidgets.QMessageBox.warning(self, 'Warning', 'Camera Tango server not in on state!',
+                                              buttons=QtWidgets.QMessageBox.Ok)
                 return None
             if self.Camera == 'Hamamatsu':
                 while self.tCamera.state() != PyTango.DevState.ON:
@@ -982,9 +994,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtGui.QFileDialog.getExistingDirectory(parent=None, caption='Select folder')
+            fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder')
         elif self.currdir != None:
-            fname = QtGui.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',directory = self.currdir)
+            fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',
+                                                               directory=self.currdir)
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
@@ -996,10 +1009,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtGui.QFileDialog.getOpenFileName(parent=None, caption='Load file', filter = "Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load file', filter="Text (*.txt)")
         elif self.currdir != None:
-            fname = QtGui.QFileDialog.getOpenFileName(parent=None, caption='Load file', directory = self.currdir, \
-                                                      filter = "Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load file', directory=self.currdir, \
+                                                          filter = "Text (*.txt)")
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
@@ -1011,9 +1024,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtGui.QFileDialog.getExistingDirectory(parent=None, caption='Select folder')
+            fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder')
         elif self.currdir != None:
-            fname = QtGui.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',directory = self.currdir)
+            fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',
+                                                               directory=self.currdir)
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         print(fname)
@@ -1026,10 +1040,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtGui.QFileDialog.getOpenFileName(parent=None, caption='Load File', filter = "Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load File', filter="Text (*.txt)")
         elif self.currdir != None:
-            fname = QtGui.QFileDialog.getOpenFileName(parent=None, caption='Load File', directory = self.currdir, \
-                                                      filter = "Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load File', directory=self.currdir, \
+                                                          filter = "Text (*.txt)")
         fname = str(fname)
         self.currdir = os.path.dirname(fname)
         print(fname)
@@ -1284,9 +1298,11 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
                 roi_y2 = int(pos1.y())
             roidy = roi_y2 - roi_y1 + 1
         except:
-            QtGui.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'Could not convert ROI values to numbers.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
         if roidx > self.imagesize[0] or roidy > self.imagesize[1]:
-            QtGui.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.', buttons=QtGui.QMessageBox.Ok)
+            QtWidgets.QMessageBox.warning(self, 'Warning', 'ROI larger than image size. Please adapt.',
+                                          buttons=QtWidgets.QMessageBox.Ok)
             return None
 #         self.roi_x1 = roi_x1
 #         self.roi_x2 = roi_x2
@@ -1392,10 +1408,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
     
     def closeEvent(self, event):
         """Safety check for closing of window."""
-        reply = QtGui.QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QtGui.QMessageBox.Yes | 
-            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
-        if reply == QtGui.QMessageBox.Yes:
+        reply = QtWidgets.QMessageBox.question(self, 'Message',
+                                               "Are you sure to quit?", QtWidgets.QMessageBox.Yes |
+                                               QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
             if self.tCamera.state() == PyTango.DevState.EXTRACT:
                 self.tCamera.command_inout(self.command_stop)
             self.PollingThread.terminate_signal = True
@@ -1581,7 +1597,7 @@ class UpdateThread(Camerapolling):
 
 
 def Camera_LiveImage(parent=None, devices=None, groups=None, name='Camera live image'):
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     
     gui = cCamera_LiveImage(name=name, parent=QtWidgets.QMainWindow())
     gui.PollingThread = UpdateThread(gui.main, gui.tCamera, gui.tTrigger,gui.cB_Cameras)
