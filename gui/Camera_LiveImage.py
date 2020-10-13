@@ -104,6 +104,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.tCamera.write_attribute('saving_mode','MANUAL')
             self.imagesize = (2160,2560)
 
+        # TODO do we really need real value here?
         # self.exptime = self.tCamera.read_attribute(self.command_exptime).value
         self.exptime = 30
         self.label_currentexptime.setText('%i ms' %(self.exptime* 1e3))
