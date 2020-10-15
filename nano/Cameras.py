@@ -9,6 +9,9 @@ import p05.tools.misc as misc
 
 #import PIL
 
+# TODO split to cameras with common 1 file for all cameras
+# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
+
 class PCO_nanoCam():
     def __init__(self, tPCO=None, tTrigger=None, imageDir=None, exptime=None):
         if tPCO == None:

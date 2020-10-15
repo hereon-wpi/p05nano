@@ -12,6 +12,7 @@ import p05.tools.misc as misc
 #import time
 #import string
 
+# TODO it is OK with code
 class PMACcomm():
     """
     Class to manage the connection to the PMAC controller using
@@ -62,6 +63,7 @@ class PMACcomm():
         else:
             self.pmac_num = self.ControllerList.get(controller)[0]
             self.pmac_ip =  self.ControllerList.get(controller)[1]
+            # TODO replace direct dll load with dynamic load depending on environment
             self.io = ctypes.windll.LoadLibrary('PComm32W.dll')
             tmp = self.io.OpenPmacDevice(self.pmac_num)
             if tmp != 0:

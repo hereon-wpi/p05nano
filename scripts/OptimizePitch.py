@@ -1,10 +1,13 @@
+import time
+
 import PyTango
 import numpy
-import time
 
 import p05.tools.misc as misc
 
 
+# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
+# TODO PyTango.DeviceProxy - should be created outside and injected as an argument of function
 def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
     """
     return values:
@@ -13,6 +16,7 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
         <float arr>: Pitch scanning positions
         <float arr>: pitch current results
     """
+    # TODO remove if tPitch - make tQBPM be mandatory argument as it is used anyway
     if tPitch == None:
         print('%s: Error - no pitch motor selected' %misc.GetTimeString())
         return None

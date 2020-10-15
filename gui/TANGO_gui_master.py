@@ -12,6 +12,8 @@ import p05.tools.misc as misc
 from p05.gui.TANGO_deviceForm import cTANGOdevice
 
 
+# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
+
 class cTANGOgui(QtWidgets.QMainWindow):
     jobFinished = pyqtSignal(object)#object is [self.attvalues, self.devicestates, self.zmxerrors]
 
@@ -33,7 +35,7 @@ class cTANGOgui(QtWidgets.QMainWindow):
         else:
             self.setGeometry(15, 35, 1790, 1110)
             self.windowsize = [15, 35, 1790, 1110]
-        
+        # TODO _devices and _groups are NOT used
         self._devices = devices
         self._groups = groups
         self._initialize(devices, groups)

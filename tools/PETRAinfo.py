@@ -1,5 +1,7 @@
 import time
 
+
+# TODO Is it used?
 def GetPETRAinfoString(itype, infostr, inumber, time0, tTTTGW, tQBPM):
     """
     Layout: Petra Beam Current // Beam Lifetime // Orbit RMSx // Orbit RMSy // Topup status // QBPM current // QBPM pos x //QBPM pos  y

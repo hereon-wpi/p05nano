@@ -1,10 +1,12 @@
-import numpy
 import time
 from p05.common import TangoServerMap
 import re
-import datetime
+import time
+
+from p05.common import TangoServerMap
 
 
+# TODO not used, want to make it work
 class StatusServer():
     """
     The StatusServer class provides methods to interact with the p05 StatusServer.

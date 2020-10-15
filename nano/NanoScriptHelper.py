@@ -15,6 +15,8 @@ from p05.scripts.OptimizePitch import OptimizePitchDCM
 
 #from libtiff import TIFF
 
+# TODO very long, have to split, e.g. scanscripts, GetPETRA, Beam, Image
+
 class NanoScriptHelper():
     """Class to help scripting for nanotomography measurement.
     Class initialization parameters:
@@ -48,7 +50,7 @@ class NanoScriptHelper():
         self.sBeamtime = beamtime
         self.sPrefix = prefix
 
-
+        # TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
 
         if useASAP:
             #self.sPath = 't:/current/scratch_bl/%s/' %(self.sPrefix)
@@ -106,7 +108,8 @@ class NanoScriptHelper():
         if self.useEHD:
             self.camera = FLIeh2_nanoCam(imageDir = self.sPath, exptime = self.exptime)
 
-
+        # TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
+        # TODO reorganize if statements
         if self.useHamamatsu:
             self.camera = 'Hamamatsu'
             self.hamamatsu = Hamamatsu_nanoCam(imageDir = self.sPath, exptime = self.exptime)
@@ -317,7 +320,7 @@ class NanoScriptHelper():
         return None
     #end TakeDarkImages
 
-
+    # TODO iNumber with if-else is used in many plases
     def SetCurrentName(self, _identifier, iNumber = None, iNumber2 = None, currNum = None, imgNumber=None):
         """
         Method to set the current identifier and image number
@@ -477,7 +480,7 @@ class NanoScriptHelper():
          time.sleep(0.010)
          self.tTrigger.write_attribute('Value', 0)
 
-
+    # TODO split depending on cameras using polymorphism
     def TakeFastImage(self,writeLogs = True,inum=None,iname=None, WaitForCamera= False):
         if writeLogs:   _logdata = self.GetCurrentDataString(self.sIdentifier, 'start')
         ##### for PCO camera ####

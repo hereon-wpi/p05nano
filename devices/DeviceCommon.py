@@ -1,8 +1,11 @@
-import PyTango
 import time
+
+import PyTango
+
 import p05.common.TangoFailsaveComm as tfs
 
 
+# TODO (!check!) - not used. CODE: OK, may leave as it is
 class DeviceCommon(object):
     def __init__(self, devdict=None):
         self.__devdict = devdict

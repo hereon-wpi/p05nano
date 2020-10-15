@@ -21,6 +21,8 @@ WARNING:    Complex data structures in attributes (e.g. arrays, lists) are not s
     """
 
 
+# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
+
 def NanoTangoGUI(parent=None):
     name = 'EH1 TANGO device GUI'
     allMotors = []

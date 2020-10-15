@@ -16,6 +16,8 @@ from p05.gui.PMAC_motorForm import cPMACmotor
 from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
 
 
+# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
+
 class cPMACgui(QtWidgets.QMainWindow):
     jobFinished = pyqtSignal(object)  #object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
 
@@ -390,7 +392,8 @@ class cPMACgui(QtWidgets.QMainWindow):
             self.updater.start(self.global_delay)
             self.PollingThread.restart()
         return None
-    
+
+    # TODO a number of repeated lines - refactor
     def clickButtonStopMove01(self):
         self.EventStopPMACmovement(1)
         return None

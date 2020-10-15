@@ -17,6 +17,9 @@ from p05.devices.PMACdict import PMACdict
 gc.enable()
 
 
+# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
+# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
+# TODO Split file - too long
 class cCamera_LiveImage(QtWidgets.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
         super(cCamera_LiveImage, self).__init__()

@@ -52,6 +52,7 @@ def StringFill(_string, _len, fill_front = False, fill_spaces = False):
         return _string[:_len]
 #end Stringfill
 
+# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
 
 class cTXMCalculator(QtWidgets.QWidget.QMainWindow):
     def __init__(self, parent, name='TXM parameter calculator', path=None, screensize = [1920, 1200]):
@@ -127,7 +128,7 @@ class cTXMCalculator(QtWidgets.QWidget.QMainWindow):
         self.bandwidth = numpy.asarray(1e-3) 
         self.FZP_dr = numpy.asarray(50e-9)
         self.FZP_D = numpy.asarray(150e-6)
-
+        # TODO replace handler with factory method as there will be only 1 function - clickButton
         self.but_SetEnergy.clicked.connect(self.clickButtonSetEnergy)
         self.but_SetBandwidth.clicked.connect(self.clickButtonSetBandwidth)
         self.but_SetFZP_dr.clicked.connect(self.clickButtonSetFZP_dr)
@@ -443,7 +444,7 @@ class cTXMCalculator(QtWidgets.QWidget.QMainWindow):
         self._updateParameters2()
         return None
     # end selectParametersDet
-
+    # TODO make only 1 function clickButton with arguments
     def clickButtonSetEnergy(self):
         try:
             self.tmpval = self.energy.copy()
@@ -890,6 +891,7 @@ def TXMCalculator(parent=None, name='TXM parameter calculator', fluxdata='c:/_da
         app.exec_()
 
 
+# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
 
 if __name__ == '__main__':
 #     TXMCalculator(path = 'c:/_u_copy/_Programming_Code/Python/I13')

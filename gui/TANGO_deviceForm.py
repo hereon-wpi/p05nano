@@ -121,10 +121,7 @@ class cTANGOdevice(QtCore.QObject):
                 for item in self.TangoCmdList: self.window.cmd_selector.addItem(item)
         return None
 
-    ############
-    ### Olga: controller for a button, not a view thing - move to another file
-    ############
-
+    # TODO controller for a button, not a view thing - move to another file
     def SetAttribute(self, _index):
         _txt = self.window.io_newvals[_index].text()
         if self.TangoObject.state() == PyTango.DevState.ON:
@@ -141,9 +138,7 @@ class cTANGOdevice(QtCore.QObject):
                                                _txt, self.attnames[_index], e), buttons=QtWidgets.QMessageBox.Ok)
         return None
 
-    ############
-    ### Olga: controller for a button, not a view thing - move to another file
-    ############
+    # TODO controller for a button, not a view thing - move to another file
     def clickButtonSendCmd(self):
         self.cmd = self.TangoObject.command_query(self.cmd_name)
         if self.cmd.in_type in [PyTango.CmdArgType.DevShort, PyTango.CmdArgType.DevLong, PyTango.CmdArgType.DevUShort, \
@@ -224,9 +219,7 @@ class cTANGOdevice(QtCore.QObject):
             
         return None
 
-    ############
-    ### Olga: used only in TANGO_gui_master -> move to this file
-    ############
+    # TODO used only in TANGO_gui_master -> move to this file
     def enable(self, _value):
         if not self.readonly:
             for button in self.window.att_set_buttons:
@@ -288,10 +281,7 @@ class cTANGOdevice(QtCore.QObject):
         return None
 
 
-############
-### Olga: move above to another file
-############
-        
+# TODO move above to another file
 class cTANGOdeviceForm(QtWidgets.QWidget):
     def __init__(self, _parent_motor, _parent_widget, _xoffset=0, _yoffset=0, bgcolor='#ECECEC'):
         super(cTANGOdeviceForm, self).__init__()
