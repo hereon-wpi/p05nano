@@ -1,3 +1,4 @@
+import p05.common.PyTangoProxyConstants as proxies
 from p05.gui.TANGO_gui_master import TANGOgui
 
 """    motors dictionary structure:
@@ -26,136 +27,135 @@ WARNING:    Complex data structures in attributes (e.g. arrays, lists) are not s
 def NanoTangoGUI(parent=None):
     name = 'EH1 TANGO device GUI'
     allMotors = []
-#     allMotors.append({'DeviceName': 'Undulator',    'TangoAddress':'//hzgpp05vme0:10000/p05/undulator/1', \
+    #     allMotors.append({'DeviceName': 'Undulator',    'TangoAddress': proxies.tUndulator_1, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Gap', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM energy server',    'TangoAddress':'//hzgpp05vme0:10000/p05/dcmener/s01.01', \
+    #     allMotors.append({'DeviceName': 'DCM energy server',    'TangoAddress': proxies.dcmener_s01_01_tDCMenergy, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM Bragg axis',    'TangoAddress':'//hzgpp05vme0:10000/p05/dcmmotor/s01.01', \
+    #     allMotors.append({'DeviceName': 'DCM Bragg axis',    'TangoAddress': proxies.dcmmotor_s01_01, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM perpendicular',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.11', \
+    #     allMotors.append({'DeviceName': 'DCM perpendicular',    'TangoAddress': proxies.motor_mono_11, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM parallel',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.12', \
+    #     allMotors.append({'DeviceName': 'DCM parallel',    'TangoAddress': proxies.motor_mono_12, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM roll x1',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.05', \
+    #     allMotors.append({'DeviceName': 'DCM roll x1',    'TangoAddress': proxies.motor_mono_05, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM roll x2',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.02', \
+    #     allMotors.append({'DeviceName': 'DCM roll x2',    'TangoAddress': proxies.motor_mono_02_tRoll, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'DCM pitch x2',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.01', \
+    #     allMotors.append({'DeviceName': 'DCM pitch x2',    'TangoAddress': proxies.motor_mono_01_tPitch, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-#     allMotors.append({'DeviceName': 'Camera Ry',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.07', \
+    #     allMotors.append({'DeviceName': 'Camera Ry',    'TangoAddress': proxies.motor_eh1_07_tCamRot, \
 #                      'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#   allMotors.append({'DeviceName': 'Scintillator Y',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.05', \
+    #   allMotors.append({'DeviceName': 'Scintillator Y',    'TangoAddress': proxies.motor_eh1_05_tScintiY, \
 #                     'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                     'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#   allMotors.append({'DeviceName': 'Lens Y',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.06', \
+    #   allMotors.append({'DeviceName': 'Lens Y',    'TangoAddress': proxies.motor_eh1_06_tLensY, \
 #                     'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                     'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-#     allMotors.append({'DeviceName': 'Hamamatsu Trigger',    'TangoAddress':'//hzgpp05vme2:10000/p05/register/eh2.out01', \
+    #     allMotors.append({'DeviceName': 'Hamamatsu Trigger',    'TangoAddress': proxies.register_eh2_out01, \
 #                      'NumAttributes': 2,           'MainAttribute': 'Value', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
 ###########________________________________ZMX______________________##################################################################
-    
 
-    allMotors.append({'DeviceName': 'EH1 slit X right',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.04', \
+    allMotors.append({'DeviceName': 'EH1 slit X right', 'TangoAddress': proxies.motor_eh1_04, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit X left',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.03', \
+    allMotors.append({'DeviceName': 'EH1 slit X left', 'TangoAddress': proxies.motor_eh1_03, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit Z top',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.01', \
+    allMotors.append({'DeviceName': 'EH1 slit Z top', 'TangoAddress': proxies.motor_eh1_01, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit Z bottom',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.02', \
+    allMotors.append({'DeviceName': 'EH1 slit Z bottom', 'TangoAddress': proxies.motor_eh1_02, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-  
-    allMotors.append({'DeviceName': '2nd optics X',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.16', \
+
+    allMotors.append({'DeviceName': '2nd optics X', 'TangoAddress': proxies.motor_eh1_16_tPixLinkMotorX, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': '2nd optics Z',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.15', \
+    allMotors.append({'DeviceName': '2nd optics Z', 'TangoAddress': proxies.motor_eh1_15, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
 ##########_______________________SMARACT_______________________________________________###############################################################
     # Phase ring
-    allMotors.append({'DeviceName': 'Phase Ring X',    'TangoAddress':'//hzgpp05vme1:10000/p05/smaract/eh1.cha15', \
+    allMotors.append({'DeviceName': 'Phase Ring X', 'TangoAddress': proxies.smaract_eh1_cha15, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Phase Ring Z',    'TangoAddress':'//hzgpp05vme1:10000/p05/smaract/eh1.cha17', \
+    allMotors.append({'DeviceName': 'Phase Ring Z', 'TangoAddress': proxies.smaract_eh1_cha17, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Phase Ring Y',    'TangoAddress':'//hzgpp05vme1:10000/p05/smaract/eh1.cha16', \
+    allMotors.append({'DeviceName': 'Phase Ring Y', 'TangoAddress': proxies.smaract_eh1_cha16, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
     # Apertures
     allMotors.append(
-        {'DeviceName': 'Aperture X right (cha. 9)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha9', \
+        {'DeviceName': 'Aperture X right (cha. 9)', 'TangoAddress': proxies.smaract_eh1_cha9, \
          'NumAttributes': 2, 'MainAttribute': 'Position', \
          'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
     allMotors.append(
-        {'DeviceName': 'Aperture X left (cha. 6)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha6', \
+        {'DeviceName': 'Aperture X left (cha. 6)', 'TangoAddress': proxies.smaract_eh1_cha6, \
          'NumAttributes': 2, 'MainAttribute': 'Position', \
          'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
     allMotors.append(
-        {'DeviceName': 'Aperture Z top (cha. 7)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha10', \
+        {'DeviceName': 'Aperture Z top (cha. 7)', 'TangoAddress': proxies.smaract_eh1_cha10, \
          'NumAttributes': 2,           'MainAttribute': 'Position', \
                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
     allMotors.append(
-        {'DeviceName': 'Aperture Z bottom (cha. 10)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha7', \
+        {'DeviceName': 'Aperture Z bottom (cha. 10)', 'TangoAddress': proxies.smaract_eh1_cha7, \
          'NumAttributes': 2,           'MainAttribute': 'Position', \
                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
     ### Beamshaper
-    allMotors.append({'DeviceName': 'Beamshaper x (cha. 4)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha3', \
+    allMotors.append({'DeviceName': 'Beamshaper x (cha. 4)', 'TangoAddress': proxies.smaract_eh1_cha3, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Beamshaper z (cha. 5)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha2', \
+    allMotors.append({'DeviceName': 'Beamshaper z (cha. 5)', 'TangoAddress': proxies.smaract_eh1_cha2, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
     ## Beamstop
-    allMotors.append({'DeviceName': 'Beamstop x (cha. 0)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha4', \
+    allMotors.append({'DeviceName': 'Beamstop x (cha. 0)', 'TangoAddress': proxies.smaract_eh1_cha4, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                         'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Beamstop z (cha. 1)', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha5', \
+    allMotors.append({'DeviceName': 'Beamstop z (cha. 1)', 'TangoAddress': proxies.smaract_eh1_cha5, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                          'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 #
 
-    allMotors.append({'DeviceName': 'Decoherer',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.14', \
+    allMotors.append({'DeviceName': 'Decoherer', 'TangoAddress': proxies.motor_eh1_14, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', 'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
 
     ## Camera Tower
 
-    allMotors.append({'DeviceName': 'Aperture',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.06', \
-                         'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})    
-    allMotors.append({'DeviceName': 'Focus',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.05', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True}) 
-    allMotors.append({'DeviceName': 'Mirror',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.08', \
-                         'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Aperture', 'TangoAddress': proxies.motor_eh1_06_tLensY, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                         'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Tubus',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.07', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Focus', 'TangoAddress': proxies.motor_eh1_05_tScintiY, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Mirror', 'TangoAddress': proxies.motor_eh1_08, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Tubus', 'TangoAddress': proxies.motor_eh1_07_tCamRot, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                         'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
      
  
@@ -178,25 +178,23 @@ def ConeBeamTangoGUI(parent=None):
     name = 'ConeBeamTangoGUI'
     allMotors = []
 
-    
+    allMotors.append({'DeviceName': 'EH1 slit X right', 'TangoAddress': proxies.motor_eh1_04, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'EH1 slit X left', 'TangoAddress': proxies.motor_eh1_03, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'EH1 slit Z top', 'TangoAddress': proxies.motor_eh1_01, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'EH1 slit Z bottom', 'TangoAddress': proxies.motor_eh1_02, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'EH1 slit X right',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.04', \
+    allMotors.append({'DeviceName': '2nd optics X', 'TangoAddress': proxies.motor_eh1_16_tPixLinkMotorX, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit X left',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.03', \
-                      'NumAttributes': 2,           'MainAttribute': 'Position', \
-                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit Z top',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.01', \
-                      'NumAttributes': 2,           'MainAttribute': 'Position', \
-                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'EH1 slit Z bottom',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.02', \
-                      'NumAttributes': 2,           'MainAttribute': 'Position', \
-                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-  
-    allMotors.append({'DeviceName': '2nd optics X',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.16', \
-                      'NumAttributes': 2,           'MainAttribute': 'Position', \
-                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': '2nd optics Z',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.15', \
+    allMotors.append({'DeviceName': '2nd optics Z', 'TangoAddress': proxies.motor_eh1_15, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
     
@@ -204,35 +202,35 @@ def ConeBeamTangoGUI(parent=None):
 
  
 ########### TAKEN OUT 201803_Problems with SMARACT SERVER! ERROR MESSAGE: Unknown sensor power status....IG##################################################################
-    allMotors.append({'DeviceName': 'Teil x', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha0', \
+    allMotors.append({'DeviceName': 'Teil x', 'TangoAddress': proxies.smaract_eh1_cha0, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Teil z', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha1', \
+    allMotors.append({'DeviceName': 'Teil z', 'TangoAddress': proxies.smaract_eh1_cha1, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Aperture X right', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha3', \
+    allMotors.append({'DeviceName': 'Aperture X right', 'TangoAddress': proxies.smaract_eh1_cha3, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
     ##hzgpp05vme1:10000/p05/smaract/eh1.cha3
-    allMotors.append({'DeviceName': 'Aperture X left', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha4', \
+    allMotors.append({'DeviceName': 'Aperture X left', 'TangoAddress': proxies.smaract_eh1_cha4, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Aperture Z top', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha2', \
+    allMotors.append({'DeviceName': 'Aperture Z top', 'TangoAddress': proxies.smaract_eh1_cha2, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Aperture Z bottom', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha5', \
+    allMotors.append({'DeviceName': 'Aperture Z bottom', 'TangoAddress': proxies.smaract_eh1_cha5, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Lens x', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha12', \
+    allMotors.append({'DeviceName': 'Lens x', 'TangoAddress': proxies.smaract_eh1_cha12, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Lens z', 'TangoAddress': '//hzgpp05vme1:10000/p05/smaract/eh1.cha13', \
+    allMotors.append({'DeviceName': 'Lens z', 'TangoAddress': proxies.smaract_eh1_cha13, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Decoherer',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.14', \
+    allMotors.append({'DeviceName': 'Decoherer', 'TangoAddress': proxies.motor_eh1_14, \
                       'NumAttributes': 2, 'MainAttribute': 'Position', 'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
 
 
@@ -253,53 +251,53 @@ def ConeBeamTangoGUI(parent=None):
 def NanoGrainMappingGUI():
     name = 'Nanograinmapping GUI'
     allMotors = []
-    allMotors.append({'DeviceName': 'Hexapod X ',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/X', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod X ', 'TangoAddress': proxies.hexapodsmall_x, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hexapod Y ',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/Y', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod Y ', 'TangoAddress': proxies.hexapodsmall_y, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hexapod Z',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/Z', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod Z', 'TangoAddress': proxies.hexapodsmall_z, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-     
-    allMotors.append({'DeviceName': 'Hexapod Rot X ',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/U', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+
+    allMotors.append({'DeviceName': 'Hexapod Rot X ', 'TangoAddress': proxies.hexapodsmall_u, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hexapod Rot Y ',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/V', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod Rot Y ', 'TangoAddress': proxies.hexapodsmall_v, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hexapod Rot Z',    'TangoAddress':'//hzgpp07EH3:10000/p07/hexapodsmall/W', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod Rot Z', 'TangoAddress': proxies.hexapodsmall_w, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
 # Smarpod P03
-##allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.01', \ ## controller 2
+    ##allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress': proxies.smarpodmotor_p03nano_01_01, \ ## controller 2
 ##'NumAttributes': 2,           'MainAttribute': 'Position', \
 ##'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 ## controller 1 (smarpod 1):                 
 
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.01', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_01, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.02', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_02, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.03', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_03, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.04', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_04, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.05', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_05, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Smarpod X ',    'TangoAddress':'//haspp03nano:10000/p03/smarpodmotor/p03nano_01.06', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Smarpod X ', 'TangoAddress': proxies.smarpodmotor_p03nano_01_06, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'Rotation ',    'TangoAddress':'//haspp03nano:10000/p03nano/labmotion/exp.01', \
-                     'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Rotation ', 'TangoAddress': proxies.labmotion_exp01, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                      'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
 
@@ -321,7 +319,7 @@ def LightFieldGUI(parent=None):
  
     
 #                    ###Scinti helps optics taken out since port needed for phase rings#####
-#     allMotors.append({'DeviceName': '2nd optics scintillator Y',    'TangoAddress':'//hzgpp05vme1:10000/p05/smaract/eh1.cha2', \
+    #     allMotors.append({'DeviceName': '2nd optics scintillator Y',    'TangoAddress': proxies.smaract_eh1_cha2, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 #
@@ -331,39 +329,33 @@ def LightFieldGUI(parent=None):
 ########################### ###########################
 ## PI HEXA x,y,z 
 
-
-
-
-    allMotors.append({'DeviceName': 'Hexapod x (mc01.02)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.02', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})    
-    allMotors.append({'DeviceName': 'Hexapod y (mc01.01)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.01', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})       
-    allMotors.append({'DeviceName': 'Hexapod z (mc01.03)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.03', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
+    allMotors.append({'DeviceName': 'Hexapod x (mc01.02)', 'TangoAddress': proxies.hexapodmotor_mc01_02, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Hexapod y (mc01.01)', 'TangoAddress': proxies.hexapodmotor_mc01_01, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Hexapod z (mc01.03)', 'TangoAddress': proxies.hexapodmotor_mc01_03, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                         'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})    
     
 ############################# HEXA ROT Rx, Ry, Rz   
-    
-    
-   
-    allMotors.append({'DeviceName': 'Hexapod Rx (mc01.05)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.05', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})      
-    allMotors.append({'DeviceName': 'Hexapod Ry (mc01.04)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.04', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
-                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})      
-    allMotors.append({'DeviceName': 'Hexapod Rz (mc01.06)',    'TangoAddress':'//haspp06mc01:10000/p06/hexapodmotor/mc01.06', \
-                        'NumAttributes': 2,           'MainAttribute': 'Position', \
+
+    allMotors.append({'DeviceName': 'Hexapod Rx (mc01.05)', 'TangoAddress': proxies.hexapodmotor_mc01_05, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Hexapod Ry (mc01.04)', 'TangoAddress': proxies.hexapodmotor_mc01_04, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
+                        'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
+    allMotors.append({'DeviceName': 'Hexapod Rz (mc01.06)', 'TangoAddress': proxies.hexapodmotor_mc01_06, \
+                      'NumAttributes': 2,           'MainAttribute': 'Position', \
                         'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True}) 
 
  
 ########################### Focusser
 
-
-    allMotors.append({'DeviceName': 'OptPeters Foc',    'TangoAddress':'//hzgpp05vme1:10000/p05/motor/eh1.13', \
-                      'NumAttributes': 2, 'MainAttribute': 'Position', 'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})   
+    allMotors.append({'DeviceName': 'OptPeters Foc', 'TangoAddress': proxies.motor_eh1_13, \
+                      'NumAttributes': 2, 'MainAttribute': 'Position', 'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
     
 
     
@@ -397,54 +389,54 @@ def LightFieldGUI(parent=None):
 def BeamlineOpticsGUI():
     name = 'Beamline optics GUI'
     allMotors = []
-    allMotors.append({'DeviceName': 'Undulator',    'TangoAddress':'//hzgpp05vme0:10000/p05/undulator/1', \
+    allMotors.append({'DeviceName': 'Undulator', 'TangoAddress': proxies.tUndulator_1, \
                       'NumAttributes': 2,           'MainAttribute': 'Gap', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM energy server',    'TangoAddress':'//hzgpp05vme0:10000/p05/dcmener/s01.01', \
+    allMotors.append({'DeviceName': 'DCM energy server', 'TangoAddress': proxies.dcmener_s01_01_tDCMenergy, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM Bragg axis',    'TangoAddress':'//hzgpp05vme0:10000/p05/dcmmotor/s01.01', \
+    allMotors.append({'DeviceName': 'DCM Bragg axis', 'TangoAddress': proxies.dcmmotor_s01_01, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM perpendicular',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.11', \
+    allMotors.append({'DeviceName': 'DCM perpendicular', 'TangoAddress': proxies.motor_mono_11, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM parallel',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.12', \
+    allMotors.append({'DeviceName': 'DCM parallel', 'TangoAddress': proxies.motor_mono_12, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM roll x1',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.05', \
+    allMotors.append({'DeviceName': 'DCM roll x1', 'TangoAddress': proxies.motor_mono_05, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM roll x2',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.02', \
+    allMotors.append({'DeviceName': 'DCM roll x2', 'TangoAddress': proxies.motor_mono_02_tRoll, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'DCM pitch x2',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.01', \
+    allMotors.append({'DeviceName': 'DCM pitch x2', 'TangoAddress': proxies.motor_mono_01_tPitch, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-#     allMotors.append({'DeviceName': 'Frontend slits left',    'TangoAddress':'//hzgpp05vme0:10000/p05/slt/exp.01', \
+    #     allMotors.append({'DeviceName': 'Frontend slits left',    'TangoAddress': proxies.slt_exp_01, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'Frontend slits right',    'TangoAddress':'//hzgpp05vme0:10000/p05/slt/exp.02', \
+    #     allMotors.append({'DeviceName': 'Frontend slits right',    'TangoAddress': proxies.slt_exp_02, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'Frontend slits gap',    'TangoAddress':'//hzgpp05vme0:10000/p05/slt/exp.03', \
+    #     allMotors.append({'DeviceName': 'Frontend slits gap',    'TangoAddress': proxies.slt_exp_03, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-#     allMotors.append({'DeviceName': 'Frontend slits offset',  'TangoAddress':'//hzgpp05vme0:10000/p05/slt/exp.04', \
+    #     allMotors.append({'DeviceName': 'Frontend slits offset',  'TangoAddress': proxies.slt_exp_04, \
 #                       'NumAttributes': 2,           'MainAttribute': 'Position', \
 #                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-    allMotors.append({'DeviceName': 'OH slits x1',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.09', \
+    allMotors.append({'DeviceName': 'OH slits x1', 'TangoAddress': proxies.motor_mono_09, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'OH slits x2',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.13', \
+    allMotors.append({'DeviceName': 'OH slits x2', 'TangoAddress': proxies.motor_mono_13, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'OH slits z1',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.14', \
+    allMotors.append({'DeviceName': 'OH slits z1', 'TangoAddress': proxies.motor_mono_14, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'OH slits z2',  'TangoAddress':'//hzgpp05vme0:10000/p05/motor/mono.10', \
+    allMotors.append({'DeviceName': 'OH slits z2', 'TangoAddress': proxies.motor_mono_10, \
                       'NumAttributes': 2,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
@@ -461,27 +453,26 @@ def BeamlineOpticsGUI():
 def MicroCTgui():
     name = 'microCT GUI'
     allMotors = []
-    allMotors.append({'DeviceName': 'Aperture X left (x1)',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.01', \
+    allMotors.append({'DeviceName': 'Aperture X left (x1)', 'TangoAddress': proxies.motor_eh2_01, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Aperture X right (x2)',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.02', \
+    allMotors.append({'DeviceName': 'Aperture X right (x2)', 'TangoAddress': proxies.motor_eh2_02, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Aperture Z top (z2)',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.04', \
+    allMotors.append({'DeviceName': 'Aperture Z top (z2)', 'TangoAddress': proxies.motor_eh2_04, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Aperture Z bottom (z1)',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.03', \
+    allMotors.append({'DeviceName': 'Aperture Z bottom (z1)', 'TangoAddress': proxies.motor_eh2_03, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
-
-    allMotors.append({'DeviceName': 'Hama Rot',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.11', \
+    allMotors.append({'DeviceName': 'Hama Rot', 'TangoAddress': proxies.motor_eh2_11, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hama X',    'TangoAddress':'//hzgpp05vme2:10000/p05/motor/eh2.07', \
+    allMotors.append({'DeviceName': 'Hama X', 'TangoAddress': proxies.motor_eh2_07, \
                       'NumAttributes': 3,           'MainAttribute': 'Position', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
-    allMotors.append({'DeviceName': 'Hama Z', 'TangoAddress': '//hzgpp05vme2:10000/p05/micos/multipleaxis', \
+    allMotors.append({'DeviceName': 'Hama Z', 'TangoAddress': proxies.micos_multipleaxis, \
                       'NumAttributes': 3, 'MainAttribute': 'PosZ', \
                       'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True})
 
@@ -495,30 +486,38 @@ def MicroCTgui():
 def DMMgui():
     name = 'DMM GUI'
     allMotors = []
-    allMotors.append({'DeviceName': 'Bragg 1st crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.21', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.21'})
-    allMotors.append({'DeviceName': 'Roll 1st crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.17', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.17'})
-    allMotors.append({'DeviceName': 'x translation 1st crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.22', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.22'})
-    allMotors.append({'DeviceName': 'z translation 1st crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.19', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.19'})
-    allMotors.append({'DeviceName': 'Bragg 2nd crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.25', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.25'})
-    allMotors.append({'DeviceName': 'x translation 2nd crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.30', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.30'})
-    allMotors.append({'DeviceName': 'y translation 2nd crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.29', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.29'})
-    allMotors.append({'DeviceName': 'z translation 2nd crystal',    'TangoAddress':'//hzgpp05vme0:10000/p05/motor/multi.26', \
-                  'NumAttributes': 4,           'MainAttribute': 'Position', \
-                  'ShowRelMovementPanel': True, 'ReadOnly': False,  'ShowCommands': True, 'ZMXdevice': '//hzgpp05vme0:10000/p05/ZMX/multi.26'})
+    allMotors.append({'DeviceName': 'Bragg 1st crystal', 'TangoAddress': proxies.motor_multi_21, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_21})
+    allMotors.append({'DeviceName': 'Roll 1st crystal', 'TangoAddress': proxies.motor_multi_17, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_17})
+    allMotors.append({'DeviceName': 'x translation 1st crystal', 'TangoAddress': proxies.motor_multi_22, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_22})
+    allMotors.append({'DeviceName': 'z translation 1st crystal', 'TangoAddress': proxies.motor_multi_19, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_19})
+    allMotors.append({'DeviceName': 'Bragg 2nd crystal', 'TangoAddress': proxies.motor_multi_25_tPitch, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_25})
+    allMotors.append({'DeviceName': 'x translation 2nd crystal', 'TangoAddress': proxies.motor_multi_30, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_30})
+    allMotors.append({'DeviceName': 'y translation 2nd crystal', 'TangoAddress': proxies.motor_multi_29, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_29})
+    allMotors.append({'DeviceName': 'z translation 2nd crystal', 'TangoAddress': proxies.motor_multi_26, \
+                      'NumAttributes': 4,           'MainAttribute': 'Position', \
+                      'ShowRelMovementPanel': True, 'ReadOnly': False, 'ShowCommands': True,
+                      'ZMXdevice': proxies.zmx_multi_26})
 #    allMotors.append({'DeviceName': 'Temperature 1st Crystal',    'TangoAddress':'//hzgpp05vme0:10000/hzg_dmm/hzg_ticom_dmm/cantemp01', \
 #                  'NumAttributes': 4,           'MainAttribute': 'Temp1', \
 #                  'ShowRelMovementPanel': False, 'ReadOnly': False,  'ShowCommands': True})

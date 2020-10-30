@@ -10,6 +10,7 @@ import pyqtgraph
 from PyQt5 import QtCore, QtGui, uic as QtUic, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
+import p05.common.PyTangoProxyConstants as proxies
 import p05.nano
 import p05.tools.misc as misc
 from p05.devices.PMACdict import PMACdict
@@ -18,7 +19,6 @@ gc.enable()
 
 
 # TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
-# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
 # TODO Split file - too long
 class cCamera_LiveImage(QtWidgets.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
@@ -38,16 +38,15 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #self.Camera = 'PCO'
         self.pid = os.getpid()
 
-        self.tBeamShutter = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/shutter/all')
+        self.tBeamShutter = PyTango.DeviceProxy(proxies.tBeam_shutter)
         
         if self.Camera == 'Hamamatsu':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_hama)
             if self.HamaHutch == 'eh1':
-                self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
             elif self.HamaHutch == 'eh2':
                 print("eh2")
-                self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+                self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
             self.cB_Cameras.setCurrentIndex(0)
             self.command_exptime = 'EXPOSURE_TIME'
             self.command_start = 'StartAcq'
@@ -56,9 +55,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2048, 2048)
             
         if self.Camera == 'PCO':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_pco)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
 
             self.cB_Cameras.setCurrentIndex(1)
             self.command_exptime = 'ExposureTime'
@@ -69,9 +68,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.tCamera.write_attribute('TriggerMode',1)
             
         if self.Camera == 'PixelLink':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_pixlink)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
             self.cB_Cameras.setCurrentIndex(2)
             self.command_exptime = 'SHUTTER'
             self.command_start = 'StartAcq'
@@ -81,9 +80,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2208, 3000)
                 
         if self.Camera == 'Zyla':
-            self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/limaccds/ct09.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_zyla)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
             self.cB_Cameras.setCurrentIndex(3)
             self.command_exptime = 'acq_expo_time'
             self.command_start = 'startAcq'
@@ -95,9 +94,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
 
 
         if self.Camera == 'KIT':
-            self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.03')
+            self.tCamera = PyTango.DeviceProxy(proxies.tCamera_p05)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_03)
             self.cB_Cameras.setCurrentIndex(3)
             self.command_exptime = 'acq_expo_time'
             self.command_start = 'startAcq'
@@ -107,7 +106,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.tCamera.write_attribute('saving_mode','MANUAL')
             self.imagesize = (2160,2560)
 
-        # TODO do we really need real value here?
+        # TODO minor do we really need real value here?
         # self.exptime = self.tCamera.read_attribute(self.command_exptime).value
         self.exptime = 30
         self.label_currentexptime.setText('%i ms' %(self.exptime* 1e3))
@@ -127,7 +126,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.rotate = 0
         self.HistWidget = self.imageView.getHistogramWidget()
         self.HistWidget.setBackground('#eeeeee')
-        
+        #TODO remove path
         self.path_scanscripts = 'D:\BeamlineControllPython\programming_python\p05\scanscripts\\'
         # for some reason, a path in nanoXTM does not work
         self._initialize()
@@ -367,10 +366,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         
         try:
             self.SM = numpy.zeros(4, dtype = object)
-            self.SM[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha0')
-            self.SM[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1')
-            self.SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')
-            self.SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')
+            self.SM[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha0)
+            self.SM[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha1)
+            self.SM[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha3)
+            self.SM[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)
         except:
             self.SM = None
         try:
@@ -382,16 +381,16 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.nano = p05.nano.NanoPositions()
         except:
             self.nano = None
-        
-        self.tPitch =  PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/mono.01')
-        self.tRoll  =  PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/mono.02')
-        self.tUndulator = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/undulator/1')
-        self.tScintiY = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.05')
-        self.tLensY = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.06')
-        self.tCamRot = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.07')
-        self.tDCM = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/dcmener/s01.01')
-        self.tPixLinkMotorX = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.16')
-        self.tBeamShutter = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/shutter/all')
+
+        self.tPitch = PyTango.DeviceProxy(proxies.motor_mono_01_tPitch)
+        self.tRoll = PyTango.DeviceProxy(proxies.motor_mono_02_tRoll)
+        self.tUndulator = PyTango.DeviceProxy(proxies.tUndulator_1)
+        self.tScintiY = PyTango.DeviceProxy(proxies.motor_eh1_05_tScintiY)
+        self.tLensY = PyTango.DeviceProxy(proxies.motor_eh1_06_tLensY)
+        self.tCamRot = PyTango.DeviceProxy(proxies.motor_eh1_07_tCamRot)
+        self.tDCM = PyTango.DeviceProxy(proxies.dcmener_s01_01_tDCMenergy)
+        self.tPixLinkMotorX = PyTango.DeviceProxy(proxies.motor_eh1_16_tPixLinkMotorX)
+        self.tBeamShutter = PyTango.DeviceProxy(proxies.tBeam_shutter)
         print(self.Camera)
         return None
 
@@ -416,14 +415,13 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.Camera = self.cB_Cameras.currentText()
         print(self.Camera)
         if self.Camera == 'Hamamatsu':
-            #self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_hama)
+            #self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
             if self.HamaHutch == 'eh1':
-                self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
             elif self.HamaHutch == 'eh2':
                 print("eh2")
-                self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+                self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
             self.command_exptime = 'EXPOSURE_TIME'
             self.command_start = 'StartAcq'
             self.command_stop = 'AbortAcq'
@@ -434,8 +432,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.rotate = 0
             print('ok')
         if self.Camera == 'PCO':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_pco)
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
             self.command_exptime = 'ExposureTime'
             self.command_start = 'StartAcq'
             self.command_stop = 'StopAcq'
@@ -444,7 +442,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2048, 2048)
             print('Pco')
         if self.Camera == 'PixelLink':
-            self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_pixlink)
             self.command_exptime = 'SHUTTER'
             self.command_start = 'StartAcq'
             self.command_stop = 'AbortAcq'
@@ -454,9 +452,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             print('PixelLink')
             
         if self.Camera == 'Zyla':
-            self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/limaccds/ct09.01')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_zyla)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
             self.command_exptime = 'acq_expo_time'
             self.command_start = 'startAcq'
             self.command_stop = 'abortAcq'
@@ -467,9 +465,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2560, 2160)
 
         if self.Camera == 'KIT':
-            self.tCamera = PyTango.DeviceProxy('hzgpp05ctcam1:10000/p05/hzguca/kit')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.03')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_kit)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_03)
             self.command_exptime = 'exposure_time'
             self.command_start = 'Start'
             self.command_stop = 'Stop'
@@ -480,7 +478,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2560, 2160)
 
         if self.Camera == 'Lambda':
-            self.tCamera = PyTango.DeviceProxy('haslambda02:10000/petra3/lambda/01')
+            self.tCamera = PyTango.DeviceProxy(proxies.camera_lambda)
             self.command_exptime = 'ShutterTime'
             self.command_start = 'StartAcq'
             self.command_stop = 'StopAcq'
@@ -1486,13 +1484,12 @@ class UpdateThread(Camerapolling):
             self.CameraName = self.cB_Cameras.currentText()
             if self.running:
                 if self.CameraName == 'Hamamatsu' and self.cameraChanged:
-                    #self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
-                    self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_hama)
                     
                     if self.HamaHutch == 'eh1':
-                        self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                        self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
                     elif self.HamaHutch == 'eh2':
-                        self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+                        self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
                     self.command_exptime = 'EXPOSURE_TIME'
                     self.command_start = 'StartAcq'
                     self.command_stop = 'AbortAcq'
@@ -1501,8 +1498,8 @@ class UpdateThread(Camerapolling):
                     self.cameraChanged = False
                     #print ('ok')
                 if self.CameraName == 'PCO' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
-                    self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_pco)
+                    self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
                     self.command_exptime = 'ExposureTime'
                     self.command_start = 'StartAcq'
                     self.command_stop = 'StopAcq'
@@ -1510,8 +1507,8 @@ class UpdateThread(Camerapolling):
                     self.imagesize = (2048, 2048)
                     self.cameraChanged = False
                 if self.CameraName == 'PixelLink' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
-                    self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_pixlink)
+                    self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
                     self.command_exptime = 'SHUTTER'
                     self.command_start = 'StartAcq'
                     self.command_stop = 'AbortAcq'
@@ -1519,9 +1516,9 @@ class UpdateThread(Camerapolling):
                     self.imagesize = (2208, 3000)
                     self.cameraChanged = False
                 if self.CameraName == 'Zyla' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/limaccds/ct09.01')
-                    #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
-                    self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_zyla)
+                    # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
+                    self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
                     self.command_exptime = 'acq_expo_time'
                     self.command_start = 'startAcq'
                     self.command_stop = 'abortAcq'
@@ -1532,8 +1529,8 @@ class UpdateThread(Camerapolling):
                     self.cameraChanged = False
 
                 if self.CameraName == 'KIT' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('hzgpp05ctcam1:10000/p05/hzguca/kit')
-                    self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_kit)
+                    self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
                     self.command_exptime = 'exposure_time'
                     self.command_start = 'Start'
                     self.command_stop = 'Stop'
@@ -1544,7 +1541,7 @@ class UpdateThread(Camerapolling):
                     self.cameraChanged = False
 
                 if self.CameraName == 'Lambda' and self.cameraChanged:
-                    self.tCamera = PyTango.DeviceProxy('haslambda02:10000/petra3/lambda/01')
+                    self.tCamera = PyTango.DeviceProxy(proxies.camera_lambda)
                     self.command_exptime = 'ShutterTime'
                     self.command_start = 'StartAcq'
                     self.command_stop = 'StopAcq'

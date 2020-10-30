@@ -3,11 +3,10 @@ import time
 import PyTango
 import numpy
 
+import p05.common.PyTangoProxyConstants as proxies
 import p05.tools.misc as misc
 
 
-# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
-# TODO PyTango.DeviceProxy - should be created outside and injected as an argument of function
 def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
     """
     return values:
@@ -22,10 +21,10 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
         return None
 
     if tPitch == 'qbpm2' or tPitch == 'QBPM2':
-        tQBPM = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/i404/exp.02')
+        tQBPM = PyTango.DeviceProxy(proxies.tQBPM_i404_exp02)
     
     if tQBPM == None:
-        tQBPM = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/i404/exp.01')
+        tQBPM = PyTango.DeviceProxy(proxies.tQBPM_i404_exp01)
     
     Pitch0 = tPitch.read_attribute('Position').value
     if Detune != 0.0:
@@ -67,7 +66,7 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
 def OptimizePitchDCM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
     t0 = time.time()
     if tPitch == None:
-        tPitch = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/mono.01')
+        tPitch = PyTango.DeviceProxy(proxies.motor_mono_01_tPitch)
     while True:
         c0, c1, c2, c3 = ScanPitch(tPitch = tPitch, tQBPM = tQBPM, PitchPosArr = PitchPosArr, \
                                           DeltaRange = DeltaRange, NumPoints = NumPoints, AvgPerPoint = AvgPerPoint, Detune = Detune)
@@ -90,7 +89,7 @@ def OptimizePitchDCM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange
 def OptimizePitchDMM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
     t0 = time.time()
     if tPitch == None:
-        tPitch = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/multi.25')
+        tPitch = PyTango.DeviceProxy(proxies.motor_multi_25_tPitch)
     while True:
         c0, c1, c2, c3 = ScanPitch(tPitch = tPitch, tQBPM = tQBPM, PitchPosArr = PitchPosArr, \
                                           DeltaRange = DeltaRange, NumPoints = NumPoints, AvgPerPoint = AvgPerPoint, Detune = Detune)

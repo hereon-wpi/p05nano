@@ -3,6 +3,7 @@ import time
 import PyTango
 import numpy
 
+import p05.common.PyTangoProxyConstants as proxies
 import p05.common.TangoFailsaveComm as tcom
 import p05.tools.misc as misc
 
@@ -10,17 +11,16 @@ import p05.tools.misc as misc
 #import PIL
 
 # TODO split to cameras with common 1 file for all cameras
-# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
 
 class PCO_nanoCam():
     def __init__(self, tPCO=None, tTrigger=None, imageDir=None, exptime=None):
         if tPCO == None:
-            self.tPCO = PyTango.DeviceProxy('//hzgpp05ct09:10000/p05/pco/01')
+            self.tPCO = PyTango.DeviceProxy(proxies.camera_pco)
         else:
             self.tPCO = tPCO
         
         if tTrigger == None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
         else:
             self.tTrigger = tTrigger
             
@@ -149,7 +149,7 @@ class PCO_nanoCam():
 class FLIeh2_nanoCam():
     def __init__(self, tFLI=None, imageDir=None, exptime=None):
         if tFLI == None:
-            self.tFLI = PyTango.DeviceProxy('//hzgpp05ct1:10000/p05/eh2/smc0900')
+            self.tFLI = PyTango.DeviceProxy(proxies.eh2_smc0900_tFLI)
         else:
             self.tFLI = tFLI
         
@@ -240,11 +240,11 @@ class FLIeh2_nanoCam():
 class Hamamatsu_nanoCam():
     def __init__(self, tHama=None, tTrigger=None, imageDir=None, exptime=None):
         if tHama == None:
-            self.tHama = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/hama')
+            self.tHama = PyTango.DeviceProxy(proxies.camera_hama)
         else:
             self.tHama = tHama
         if tTrigger== None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
         else:
             self.tTrigger = tTrigger
         
@@ -404,12 +404,12 @@ class Hamamatsu_nanoCam():
 class PixelLink_nanoCam():
     def __init__(self, tPixelLink=None, tTrigger=None, imageDir=None, exptime=None):
         if tPixelLink == None:
-            self.tPixelLink = PyTango.DeviceProxy('//hzgpp05vme1.desy.de:10000/p05/camera/pixlink')
+            self.tPixelLink = PyTango.DeviceProxy(proxies.camera_pixlink)
         else:
             self.tPixelLink = tPixelLink
             
         if tTrigger== None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)
         else:
             self.tTrigger = tTrigger
         
@@ -517,12 +517,12 @@ class PixelLink_nanoCam():
 class Zyla_nanoCam():
     def __init__(self, tZyla=None, tTrigger=None, imageDir=None, exptime=None):
         if tZyla == None:
-            self.tZyla = PyTango.DeviceProxy('hzgpp05ct09:10000/p05/limaccds/ct09.01') # change Tango Server here!
+            self.tZyla = PyTango.DeviceProxy(proxies.camera_zyla)  # change Tango Server here!
         else:
             self.tZyla = tZyla
             
         if tTrigger== None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')   # Set Trigger here!
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)  # Set Trigger here!
         else:
             self.tTrigger = tTrigger
         
@@ -649,12 +649,12 @@ class Zyla_nanoCam():
 class KIT_nanoCam():
     def __init__(self, tKIT=None, tTrigger=None, imageDir=None, exptime=None):
         if tKIT == None:
-            self.tKIT = PyTango.DeviceProxy('//hzgpp05ctcam1:10000/p05/hzguca/kit')
+            self.tKIT = PyTango.DeviceProxy(proxies.camera_kit)
         else:
             self.tKIT = tKIT
 
         if tTrigger == None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/register/eh1.out01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh1_out01)
         else:
             self.tTrigger = tTrigger
 
@@ -749,11 +749,11 @@ class KIT_nanoCam():
 class Lambda_nanoCam():
     def __init__(self, tDet=None, tTrigger=None, imageDir=None, exptime=None):
         if tDet == None:
-            self.tDet = PyTango.DeviceProxy('haslambda02:10000/petra3/lambda/01')
+            self.tDet = PyTango.DeviceProxy(proxies.camera_lambda)
         else:
             self.tDet = tDet
         if tTrigger == None:
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
         else:
             self.tTrigger = tTrigger
 

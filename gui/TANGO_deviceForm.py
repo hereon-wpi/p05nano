@@ -3,6 +3,7 @@ import numpy
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
+# TODO OK - don't change (meeting 21.10)
 class cTANGOdevice(QtCore.QObject):
     def __init__(self, _parent, _xoffset=0, _yoffset=0, alias='unknown', serveraddress=None, \
                  numrows=3, allowmvr=True, readonly=False, showcmds = False, bgcolor='#ECECEC', \
@@ -259,7 +260,8 @@ class cTANGOdevice(QtCore.QObject):
     def clearCmdResponse(self):
         self.window.cmd_response.setText('')
         return None
-    
+
+    # TODO
     def changeCombo0(self):
         self.ChanceAttSelection(0)
         return None

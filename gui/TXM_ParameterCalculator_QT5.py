@@ -11,6 +11,8 @@ colors = ['#FFA500', '#1F45FC', '#4CC417', '#C11B17', '#4B0082', '#565051', '#43
 pylab.rcParams['font.size'] = 15
 
 
+# TODO not that important, meeting 21.10
+
 def GetPath(_file):
     """Function to get the path of the p05.gui module."""
     #t0 = time.time()

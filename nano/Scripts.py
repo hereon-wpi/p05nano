@@ -7,6 +7,7 @@ import time
 import PyTango
 import numpy
 
+import p05.common.PyTangoProxyConstants as proxies
 import p05.devices as dev
 import p05.tools.misc as misc
 
@@ -17,25 +18,25 @@ class NanoPositions():
         self.__pmac = dev.PMACdict()
 
         self.__SM = numpy.zeros(6, dtype = object)
-        self.__SM[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha6') #
-        self.__SM[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha7') #
-        self.__SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha9') #
-        self.__SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha10') #
-        self.__SM[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4') # BS x
-        self.__SM[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha5') # BS Z
+        self.__SM[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha6)  #
+        self.__SM[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha7)  #
+        self.__SM[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha9)  #
+        self.__SM[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha10)  #
+        self.__SM[4] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)  # BS x
+        self.__SM[5] = PyTango.DeviceProxy(proxies.smaract_eh1_cha5)  # BS Z
 
 
         self.__SM_h = numpy.zeros(9, dtype = object)
-        self.__SM_h[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')  # xr
-        self.__SM_h[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')  # xl
-        self.__SM_h[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha2')  # zt
-        self.__SM_h[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha5')  # zb
-        self.__SM_h[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1')  # Teil
+        self.__SM_h[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha3)  # xr
+        self.__SM_h[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)  # xl
+        self.__SM_h[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha2)  # zt
+        self.__SM_h[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha5)  # zb
+        self.__SM_h[4] = PyTango.DeviceProxy(proxies.smaract_eh1_cha1)  # Teil
 
-        self.__SM_h[5] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.04') #  JJ xr
-        self.__SM_h[6] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.03') # JJ xl
-        self.__SM_h[7] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.01') # JJ zt
-        self.__SM_h[8] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.02') # JJ zb
+        self.__SM_h[5] = PyTango.DeviceProxy(proxies.motor_eh1_04)  # JJ xr
+        self.__SM_h[6] = PyTango.DeviceProxy(proxies.motor_eh1_03)  # JJ xl
+        self.__SM_h[7] = PyTango.DeviceProxy(proxies.motor_eh1_01)  # JJ zt
+        self.__SM_h[8] = PyTango.DeviceProxy(proxies.motor_eh1_02)  # JJ zb
 
 
 

@@ -7,6 +7,7 @@ import time
 import PyTango
 import numpy
 
+import p05.common.PyTangoProxyConstants as proxies
 import p05.tools.misc as misc
 from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam, \
     KIT_nanoCam, Lambda_nanoCam
@@ -113,9 +114,9 @@ class NanoScriptHelper():
         if self.useHamamatsu:
             self.camera = 'Hamamatsu'
             self.hamamatsu = Hamamatsu_nanoCam(imageDir = self.sPath, exptime = self.exptime)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03') #  '//hzgpp05vme1:10000/p05/dac/eh1.02')
-            self.tTriggerOut = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.in08')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)  # proxies.dac_eh1_02
+            self.tTriggerOut = PyTango.DeviceProxy(proxies.register_eh2_in08)
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
             self.currimage = None
             #self.hamamatsu.sendCommand('StartVideoAcq')
             #Hamamatsu_nanoCam(exptime=self.exptime)
@@ -125,63 +126,63 @@ class NanoScriptHelper():
                 #print('Aborting...')
                 #sys.exit()
         if self.useHamaTrigger:
-            self.tTrigger =  PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')#('//hzgpp05vme1:10000/p05/dac/eh1.01')
-            self.tTriggerOut = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.in08')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)  # (proxies.dac_eh1_01)
+            self.tTriggerOut = PyTango.DeviceProxy(proxies.register_eh2_in08)
 
         if self.usePixelLink:
             self.camera = 'PixelLink'
             self.hamamatsu = PixelLink_nanoCam(imageDir = self.sPath, exptime = 1.0)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01') #  '//hzgpp05vme1:10000/p05/dac/eh1.02')
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)  #  proxies.dac_eh1_02
             self.currimage = None
 
         if self.useZyla:
             self.camera = 'Zyla'
             self.hamamatsu = Zyla_nanoCam(imageDir = self.sPath, exptime = self.exptime)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03') #  '//hzgpp05vme1:10000/p05/dac/eh1.02')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)  # proxies.dac_eh1_02
+            #self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
             self.currimage = None
 
         if self.useKIT:
             self.camera = 'KIT'
             self.hamamatsu = KIT_nanoCam(imageDir = self.sPath_Cam, exptime = self.exptime)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/register/eh1.out01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh1_out01)
             self.currimage = None
 
         if self.useLambda:
             self.camera = 'Lambda'
             self.hamamatsu = Lambda_nanoCam(imageDir=self.sPath_Cam, exptime=self.exptime)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out03')
+            self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out03)
             self.currimage = None
 
         if self.usePCO:
             self.camera = 'PCO'
             self.hamamatsu = PCO_nanoCam(imageDir = self.sPath_Cam, exptime = self.exptime)
-            self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/dac/eh1.01')#  '//hzgpp05vme1:10000/p05/dac/eh1.02')
-            #self.tTrigger = PyTango.DeviceProxy('//hzgpp05vme2:10000/p05/register/eh2.out01')
+            self.tTrigger = PyTango.DeviceProxy(proxies.dac_eh1_01)  # proxies.dac_eh1_02
+            # self.tTrigger = PyTango.DeviceProxy(proxies.register_eh2_out01)
             self.currimage = None
         
         # for Hergens rotations stage
         if self.useNGM:
-            self.rot_Stage_NGM = PyTango.DeviceProxy('//haspp03nano:10000/p03nano/labmotion/exp.01')
+            self.rot_Stage_NGM = PyTango.DeviceProxy(proxies.labmotion_exp01)
         
         #########################################
         ######## initialize TANGO ###############
         #########################################
         self.tPMAC = pmac
-        self.tQBPM = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/i404/exp.02')
-        self.tPETRAinfo = PyTango.DeviceProxy('//hzgpp05vme1:10000/PETRA/GLOBALS/keyword')
-        self.tPETRAcell4 = PyTango.DeviceProxy('//hzgpp05vme0:10000/PETRA/UNDBPOS/Zelle4')
-        self.tPETRAnbCleaning = PyTango.DeviceProxy('//hzgpp05vme1:10000/linac2/umschaltmanager/umschaltmanager')
-        self.tBeamShutter = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/shutter/all')
-        self.tPitch =  PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/mono.01')
-        self.tRoll  =  PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/motor/mono.02')
-        self.tUndulator = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/undulator/1')
-        self.tScintiY = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.05')
-        self.tLensY = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.06')
-        self.tCamRot = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/motor/eh1.07')
-        self.tDCMenergy = PyTango.DeviceProxy('//hzgpp05vme0:10000/p05/dcmener/s01.01')
+        self.tQBPM = PyTango.DeviceProxy(proxies.tQBPM_i404_exp02)
+        self.tPETRAinfo = PyTango.DeviceProxy(proxies.tPETRA_globals)
+        self.tPETRAcell4 = PyTango.DeviceProxy(proxies.tPETRA_undbpos_cell4)
+        self.tPETRAnbCleaning = PyTango.DeviceProxy(proxies.tPETRAnbCleaning_umschaltmanager)
+        self.tBeamShutter = PyTango.DeviceProxy(proxies.tBeam_shutter)
+        self.tPitch = PyTango.DeviceProxy(proxies.motor_mono_01_tPitch)
+        self.tRoll = PyTango.DeviceProxy(proxies.motor_mono_02_tRoll)
+        self.tUndulator = PyTango.DeviceProxy(proxies.tUndulator_1)
+        self.tScintiY = PyTango.DeviceProxy(proxies.motor_eh1_05_tScintiY)
+        self.tLensY = PyTango.DeviceProxy(proxies.motor_eh1_06_tLensY)
+        self.tCamRot = PyTango.DeviceProxy(proxies.motor_eh1_07_tCamRot)
+        self.tDCMenergy = PyTango.DeviceProxy(proxies.dcmener_s01_01_tDCMenergy)
         if self.useStatusServer:
-            self.tStatusServer = PyTango.DeviceProxy('//hzgpp05ct1:10000/p05/status_server/p05ct')
+            self.tStatusServer = PyTango.DeviceProxy(proxies.tStatusServer_p05ct)
             #self.tStatusServer = PyTango.DeviceProxy('//hzgpp05ct1:10000/p05/status_server/p05beamline') #gives wrong values for current?
 
             #self.tStatusServer.command_inout('createAttributesGroup',['beamcurrent','/PETRA/Idc/Buffer-0/I.SCH'])
@@ -194,16 +195,17 @@ class NanoScriptHelper():
             #self.StatusServerSendCommand('startCollectData') 
         if self.useSmarAct:
             self.SM = numpy.zeros(4, dtype = object)
-            self.SM[0] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha0')
-            self.SM[1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha1')
-            self.SM[2] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha3')
-            self.SM[3] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha4')
-#           self.SM[4] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/smaract/eh1.cha2')
+            self.SM[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha0)
+            self.SM[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha1)
+            self.SM[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha3)
+            self.SM[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)
+        #           self.SM[4] = PyTango.DeviceProxy(proxies.smaract_eh1_cha2)
         if useDiode:
-            self.tDiode = PyTango.DeviceProxy('//hzgpp05eh1vme1:10000/p05/adc/eh1.01')
+            self.tDiode = PyTango.DeviceProxy(proxies.tDiode_adc_eh1_01)
         if self.useEnviroLog:
             self.Environ = numpy.zeros(6, dtype = object)
             for i1 in range(6):
+                # TODO move PyTango.DeviceProxy into dedicated file. %(i1+1)
                 self.Environ[i1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/adc/eh1.%02i' %(i1+1))
 
         #########################################
