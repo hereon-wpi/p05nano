@@ -12,7 +12,6 @@ import p05.devices as dev
 import p05.tools.misc as misc
 
 
-# TODO move all PyTango.DeviceProxy into dedicated file. Here use only links to that file
 class NanoPositions():
     def __init__(self, sampleOutDist = 0.2, writePosLog = True):
         self.__pmac = dev.PMACdict()

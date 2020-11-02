@@ -2,8 +2,6 @@ import os
 import sys
 import time
 
-
-# TODO rename file as there is no such misc - utils
 def StringFill(_string, _len, fill_front = False, fill_spaces = False):
     """Function to fill the string _string up to length _len
     with dots. If len(_string) > _len, the string is cropped.

@@ -16,28 +16,22 @@ from p05.gui.PMAC_motorForm import cPMACmotor
 from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
 
 
-# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
-
 class cPMACgui(QtWidgets.QMainWindow):
     jobFinished = pyqtSignal(object)  #object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
 
     def __init__(self, parent = None, blockdirectmovements=True, devices=[], groups=[], name='PMAC motor GUI',user=False):
         super(cPMACgui, self).__init__()
-        try:
-            QtUic.loadUi('h:/_data/programming_python/p05/gui/PMAC_ui.ui', self)
-            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/gear.png'))
-        except:
-            _path = misc.GetPath('PMAC_ui.ui')
-            QtUic.loadUi(_path, self)
-            self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'gear.png'))
+        _path = misc.GetPath('PMAC_ui.ui')
+        QtUic.loadUi(_path, self)
+        self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'images/gear.png'))
         self.setWindowTitle(name)
         # self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/gear.png'))
         self.groupBox_PMAC.raise_()
         self.setGeometry(10, 25, 1825, 1110)
-        
+
         self.main = parent
-        self._initialize(devices, groups,user)
-        
+        self._initialize(devices, groups, user)
+
         self.io_pmac_polling.setValidator(self.floatValidator)
         self.controllers = numpy.empty(8, dtype=object)
         self.controllers[1:8] = [PMACcomm(controller=i1, ioconsole=False, silentmode=True) for i1 in range(1, 8)]

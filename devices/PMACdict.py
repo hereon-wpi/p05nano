@@ -6,7 +6,6 @@ import p05.tools.misc as misc
 from p05.devices.PMACcomm import PMACcomm
 
 
-# TODO it is GUI, OK
 class PMACdict():
     def __init__(self, dummy=False):
         if dummy == True:

@@ -7,9 +7,6 @@ __date__ = '$Date: 2015 / 08 / 21'
 
 __all__ = []
 
-from p05.common.Beamline import defineBeamline
-__all__ += ['defineBeamline']
-
 from p05.common.TangoServerMap import CTangoServerMap
 TangoServerMap = CTangoServerMap()
 __all__ += ['TangoServerMap']

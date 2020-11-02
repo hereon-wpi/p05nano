@@ -12,22 +12,17 @@ import p05.tools.misc as misc
 from p05.gui.TANGO_deviceForm import cTANGOdevice
 
 
-# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
-
 class cTANGOgui(QtWidgets.QMainWindow):
     jobFinished = pyqtSignal(object)#object is [self.attvalues, self.devicestates, self.zmxerrors]
 
     def __init__(self, parent, devices=[], groups=[], name='TANGO motor GUI', geometry=None):
         super(cTANGOgui, self).__init__()
         self.main = parent
-        try:
-            QtUic.loadUi('h:/_data/programming_python/p05/gui/TANGO_ui.ui', self)
-            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/tango.png'))
-        except:
-            _path = misc.GetPath('TANGO_ui.ui')
-            print(_path)
-            QtUic.loadUi(_path, self)
-            self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'tango.png'))
+
+        _path = misc.GetPath('TANGO_ui.ui')
+        print(_path)
+        QtUic.loadUi(_path, self)
+        self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'tango.png'))
         self.setWindowTitle(name)
         if geometry != None:
             self.setGeometry(geometry[0], geometry[1], geometry[2], geometry[3])
@@ -35,9 +30,7 @@ class cTANGOgui(QtWidgets.QMainWindow):
         else:
             self.setGeometry(15, 35, 1790, 1110)
             self.windowsize = [15, 35, 1790, 1110]
-        # TODO _devices and _groups are NOT used
-        self._devices = devices
-        self._groups = groups
+
         self._initialize(devices, groups)
         
         # QtCore.QObject.connect(self.but_TANGO_pollingDelay, QtCore.SIGNAL('clicked()'), self.clickButtonPollingDelay)

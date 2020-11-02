@@ -12,7 +12,6 @@ import p05.tools.misc as misc
 #import time
 #import string
 
-# TODO it is OK with code
 class PMACcomm():
     """
     Class to manage the connection to the PMAC controller using

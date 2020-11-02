@@ -1,12 +1,9 @@
 import PyTango
 
-from p05.common.Beamline import defineBeamline
-
-
 # TODO used only in StatusServer, list of ports for p05 and p07
 class CTangoServerMap():
     def __init__(self):
-        self.beamline = defineBeamline()
+        self.beamline = 'p05'
         self.tInstances = {}
         self.tServers = {
             # Statusserver

@@ -17,25 +17,20 @@ from p05.devices.PMACdict import PMACdict
 
 gc.enable()
 
-
-# TODO remove all hardcoded lins (e.g.t:/current/ or d:/hzg/) and set all links in one place at the beginning, then use only aliases
 # TODO Split file - too long
 class cCamera_LiveImage(QtWidgets.QMainWindow):
     def __init__(self, parent=None, name='Camera live image'):
         super(cCamera_LiveImage, self).__init__()
-        try:
-            QtUic.loadUi('h:/_data/programming_python/p05/gui/Cameralive_ui_tab_NewDesign_2.ui', self)
-            self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/images.jpg'))
-        except:
-            _path = misc.GetPath('Cameralive_ui_tab_NewDesign_2.ui')
-            QtUic.loadUi(_path, self)
-            self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'images.jpg'))
+
+        _path = misc.GetPath('Cameralive_ui_tab_NewDesign_2.ui')
+        QtUic.loadUi(_path, self)
+        self.setWindowIcon(QtGui.QIcon(os.path.split(_path)[0] + os.sep + 'images/images.jpg'))
         self.setWindowTitle(name)
         # self.setWindowIcon(QtGui.QIcon('h:/_data/programming_python/p05/gui/images/images.jpg'))
         self.setGeometry(10, 25, 1500, 965)
         self.HamaHutch = 'eh2'  # ALSO CHANGE BELOW if HAMA!!!For hama trigger in eh2 or eh1!
-        self.Camera = 'PixelLink' # !!!GUI ONLY STARTS WHEN THIS KAMERA IS ON!!! CHANGE IF NEEDED!
-        #self.Camera = 'PCO'
+        self.Camera = 'PixelLink'  # !!!GUI ONLY STARTS WHEN THIS KAMERA IS ON!!! CHANGE IF NEEDED!
+        # self.Camera = 'PCO'
         self.pid = os.getpid()
 
         self.tBeamShutter = PyTango.DeviceProxy(proxies.tBeam_shutter)
@@ -102,38 +97,40 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.command_start = 'startAcq'
             self.command_stop = 'abortAcq'
             self.command_image = 'IMAGE'
-            self.tCamera.write_attribute('acq_trigger_mode','INTERNAL_TRIGGER')
-            self.tCamera.write_attribute('saving_mode','MANUAL')
-            self.imagesize = (2160,2560)
+            self.tCamera.write_attribute('acq_trigger_mode', 'INTERNAL_TRIGGER')
+            self.tCamera.write_attribute('saving_mode', 'MANUAL')
+            self.imagesize = (2160, 2560)
 
         # TODO minor do we really need real value here?
+        # if self.tCamera.read_attribute(self.command_exptime).value == None
+        #   self.exptime = 30
+
         # self.exptime = self.tCamera.read_attribute(self.command_exptime).value
         self.exptime = 30
-        self.label_currentexptime.setText('%i ms' %(self.exptime* 1e3))
-            
+        self.label_currentexptime.setText('%i ms' % (self.exptime * 1e3))
+
         self.main = parent
-        
+
         self.bgcolor = '#0097d4'
         self.imageView.ui.graphicsView.setBackground(self.bgcolor)
-        
-        self.rulery = pyqtgraph.ROI((0,0), size=(2048, 1))
-        self.rulerx = pyqtgraph.ROI((0,0), size=(1, 2048))
+
+        self.rulery = pyqtgraph.ROI((0, 0), size=(2048, 1))
+        self.rulerx = pyqtgraph.ROI((0, 0), size=(1, 2048))
         self.imageView.getView().addItem(self.rulery)
         self.imageView.getView().addItem(self.rulerx)
-        
+
         self.upper_right_corner_x = 0
         self.upper_right_corner_y = 0
         self.rotate = 0
         self.HistWidget = self.imageView.getHistogramWidget()
         self.HistWidget.setBackground('#eeeeee')
-        #TODO remove path
-        self.path_scanscripts = 'D:\BeamlineControllPython\programming_python\p05\scanscripts\\'
+        # TODO !!! check if Correct
+        self.path_scanscripts = 'scanscripts\\'
         # for some reason, a path in nanoXTM does not work
         self._initialize()
         self.activeUpdate = False
         self.global_delay = 30
-        
-        
+
         self.roi_x1 = 0
         self.roi_x2 = self.imagesize[0]
         self.roidx = self.imagesize[0]

@@ -3,7 +3,6 @@ import time
 import PyTango
 
 
-# TODO list of functions, may leave as it is
 def tSaveCommCommand(tObject, Command, Argument=None, silent = False,
                      deadtime = 300, wait=True, waitforstate='ON'):
     """
