@@ -16,21 +16,23 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
         <float arr>: pitch current results
     """
     # TODO remove if tPitch - make tQBPM be mandatory argument as it is used anyway
+    # If you define tPitch as PyTango.DeviceProxy it will be never None
     if tPitch == None:
-        print('%s: Error - no pitch motor selected' %misc.GetTimeString())
+        print('%s: Error - no pitch motor selected' % misc.GetTimeString())
         return None
-
+    # If you define tPitch only as PyTango.DeviceProxy it will be never 'qbpm2' or 'QBPM2'
     if tPitch == 'qbpm2' or tPitch == 'QBPM2':
         tQBPM = PyTango.DeviceProxy(proxies.tQBPM_i404_exp02)
-    
+    # OptimizePitch is used only in NanoScriptHelper were tQBPM is defined as the in the following if.
+    # Why not to use already defined tQBPM form NanoScriptHelper?
     if tQBPM == None:
         tQBPM = PyTango.DeviceProxy(proxies.tQBPM_i404_exp01)
-    
+
     Pitch0 = tPitch.read_attribute('Position').value
     if Detune != 0.0:
         Pitch0 -= Detune
     if PitchPosArr == None:
-        PitchPosArr = numpy.linspace(Pitch0+DeltaRange, Pitch0-DeltaRange, num =NumPoints, endpoint = True)
+        PitchPosArr = numpy.linspace(Pitch0 + DeltaRange, Pitch0 - DeltaRange, num=NumPoints, endpoint=True)
     PitchResArr = numpy.zeros((NumPoints))
     while tPitch.state() == PyTango.DevState.MOVING:
         time.sleep(0.1)

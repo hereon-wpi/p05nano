@@ -770,6 +770,7 @@ class NanoScriptHelper():
         except:
             print(misc.GetTimeString()+': TINE connection error')
         if __retval:
+            # TODO Do you ever pass tPitch as 'qbpm2' or 'QBPM2'?
             tPitch = PyTango.DeviceProxy(
                 proxies.motor_mono_01_tPitch)  # tPitch = PyTango.DeviceProxy(proxies.motor_multi_25_tPitch) for DMM
             OptimizePitch(tPitch, Detune=self.DCMdetune)
