@@ -11,7 +11,7 @@ import p05.common.PyTangoProxyConstants as proxies
 import p05.tools.misc as misc
 from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam, \
     KIT_nanoCam, Lambda_nanoCam
-from p05.scripts.OptimizePitch import OptimizePitchDCM
+from p05.scripts.OptimizePitch import OptimizePitch
 
 
 #from libtiff import TIFF
@@ -770,7 +770,9 @@ class NanoScriptHelper():
         except:
             print(misc.GetTimeString()+': TINE connection error')
         if __retval:
-            OptimizePitchDCM(Detune = self.DCMdetune)
+            tPitch = PyTango.DeviceProxy(
+                proxies.motor_mono_01_tPitch)  # tPitch = PyTango.DeviceProxy(proxies.motor_multi_25_tPitch) for DMM
+            OptimizePitch(tPitch, Detune=self.DCMdetune)
             time.sleep(300)
         if valreturn:
             return __retval

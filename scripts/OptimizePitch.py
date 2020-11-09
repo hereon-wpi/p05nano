@@ -63,15 +63,13 @@ def ScanPitch(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.00
             time.sleep(0.1)
     return FitSuccessful, PitchMaxPos, PitchPosArr, PitchResArr
 
-def OptimizePitchDCM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
+def OptimizePitch(tPitch, tQBPM=None, PitchPosArr=None, DeltaRange=0.0004, NumPoints=31, AvgPerPoint=4, Detune=0.0):
     t0 = time.time()
-    if tPitch == None:
-        tPitch = PyTango.DeviceProxy(proxies.motor_mono_01_tPitch)
     while True:
-        c0, c1, c2, c3 = ScanPitch(tPitch = tPitch, tQBPM = tQBPM, PitchPosArr = PitchPosArr, \
-                                          DeltaRange = DeltaRange, NumPoints = NumPoints, AvgPerPoint = AvgPerPoint, Detune = Detune)
-        if c0 == True: 
-            print('%s: Fit of pitch position succeeded.' %misc.GetTimeString())
+        c0, c1, c2, c3 = ScanPitch(tPitch=tPitch, tQBPM=tQBPM, PitchPosArr=PitchPosArr, \
+                                   DeltaRange=DeltaRange, NumPoints=NumPoints, AvgPerPoint=AvgPerPoint, Detune=Detune)
+        if c0 == True:
+            print('%s: Fit of pitch position succeeded.' % misc.GetTimeString())
             break
         elif c0 == False:
             if abs(c2[0] - c1) < abs(c2[-1] - c1):
@@ -83,28 +81,3 @@ def OptimizePitchDCM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange
             print('%s: Warning: Iteration timeout. Retry.' %misc.GetTimeString())
             break
     return None
-
-
-
-def OptimizePitchDMM(tPitch = None, tQBPM = None, PitchPosArr = None, DeltaRange = 0.0004, NumPoints = 31, AvgPerPoint = 4, Detune = 0.0):
-    t0 = time.time()
-    if tPitch == None:
-        tPitch = PyTango.DeviceProxy(proxies.motor_multi_25_tPitch)
-    while True:
-        c0, c1, c2, c3 = ScanPitch(tPitch = tPitch, tQBPM = tQBPM, PitchPosArr = PitchPosArr, \
-                                          DeltaRange = DeltaRange, NumPoints = NumPoints, AvgPerPoint = AvgPerPoint, Detune = Detune)
-        if c0 == True: 
-            print('%s: Fit of pitch position succeeded.' %misc.GetTimeString())
-            break
-        elif c0 == False:
-            if abs(c2[0] - c1) < abs(c2[-1] - c1):
-                delta = 0.8 * DeltaRange
-            else:
-                delta = -0.8 * DeltaRange
-            tPitch.write_attribute('Position', c1 + delta)
-        if time.time() - t0 > 300:
-            print('%s: Warning: Iteration timeout. Retry.' %misc.GetTimeString())
-            break
-    return None
-
-
