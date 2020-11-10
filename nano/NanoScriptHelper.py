@@ -203,10 +203,13 @@ class NanoScriptHelper():
         if useDiode:
             self.tDiode = PyTango.DeviceProxy(proxies.tDiode_adc_eh1_01)
         if self.useEnviroLog:
-            self.Environ = numpy.zeros(6, dtype = object)
-            for i1 in range(6):
-                # TODO move PyTango.DeviceProxy into dedicated file. %(i1+1)
-                self.Environ[i1] = PyTango.DeviceProxy('//hzgpp05vme1:10000/p05/adc/eh1.%02i' %(i1+1))
+            self.Environ = numpy.zeros(6, dtype=object)
+            self.Environ[0] = PyTango.DeviceProxy(proxies.adc_eh1_01)
+            self.Environ[1] = PyTango.DeviceProxy(proxies.adc_eh1_02)
+            self.Environ[2] = PyTango.DeviceProxy(proxies.adc_eh1_03)
+            self.Environ[3] = PyTango.DeviceProxy(proxies.adc_eh1_04)
+            self.Environ[4] = PyTango.DeviceProxy(proxies.adc_eh1_05)
+            self.Environ[5] = PyTango.DeviceProxy(proxies.adc_eh1_06)
 
         #########################################
         ######## initialize logging #############
@@ -322,7 +325,7 @@ class NanoScriptHelper():
         return None
     #end TakeDarkImages
 
-    # TODO iNumber with if-else is used in many plases
+    # TODO iNumber with if-else is used in many places
     def SetCurrentName(self, _identifier, iNumber = None, iNumber2 = None, currNum = None, imgNumber=None):
         """
         Method to set the current identifier and image number
