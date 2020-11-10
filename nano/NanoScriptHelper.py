@@ -9,12 +9,10 @@ import numpy
 
 import p05.common.PyTangoProxyConstants as proxies
 import p05.tools.misc as misc
-from p05.nano.Cameras import PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, PixelLink_nanoCam, Zyla_nanoCam, \
-    KIT_nanoCam, Lambda_nanoCam
+from p05.nanoCameras import FLIeh2_nanoCam, Hamamatsu_nanoCam, KIT_nanoCam, Lambda_nanoCam, PCO_nanoCam, \
+    PixelLink_nanoCam, Zyla_nanoCam
 from p05.scripts.OptimizePitch import OptimizePitch
 
-
-#from libtiff import TIFF
 
 # TODO very long, have to split, e.g. scanscripts, GetPETRA, Beam, Image
 
