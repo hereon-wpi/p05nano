@@ -17,7 +17,6 @@ from p05.gui.PMAC_sliderForm import cPMACair, cPMACslider
 
 
 class cPMACgui(QtWidgets.QMainWindow):
-    jobFinished = pyqtSignal(object)  #object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
 
     def __init__(self, parent = None, blockdirectmovements=True, devices=[], groups=[], name='PMAC motor GUI',user=False):
         super(cPMACgui, self).__init__()
@@ -31,7 +30,7 @@ class cPMACgui(QtWidgets.QMainWindow):
 
         self.main = parent
         self._initialize(devices, groups, user)
-
+        self.updater = QtCore.QTimer()
         self.io_pmac_polling.setValidator(self.floatValidator)
         self.controllers = numpy.empty(8, dtype=object)
         self.controllers[1:8] = [PMACcomm(controller=i1, ioconsole=False, silentmode=True) for i1 in range(1, 8)]
@@ -550,10 +549,13 @@ class  PMACpolling(QtCore.QThread):
 
 
 class UpdateThread(PMACpolling):
-    def __init__(self, parentThread, controllers, motors, airstatus, cur_delay = 0.25):
-        PMACpolling.__init__(self, parentThread, controllers, motors, airstatus, cur_delay = cur_delay)
+    jobFinished = pyqtSignal(
+        object)  # object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
+
+    def __init__(self, parentThread, controllers, motors, airstatus, cur_delay=0.25):
+        PMACpolling.__init__(self, parentThread, controllers, motors, airstatus, cur_delay=cur_delay)
         return None
-            
+
     def updateControllers(self):
         while True:
             if self.running:

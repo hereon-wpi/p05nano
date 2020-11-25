@@ -13,7 +13,6 @@ from p05.gui.TANGO_deviceForm import cTANGOdevice
 
 
 class cTANGOgui(QtWidgets.QMainWindow):
-    jobFinished = pyqtSignal(object)#object is [self.attvalues, self.devicestates, self.zmxerrors]
 
     def __init__(self, parent, devices=[], groups=[], name='TANGO motor GUI', geometry=None):
         super(cTANGOgui, self).__init__()
@@ -274,10 +273,12 @@ class  TANGOpolling(QtCore.QThread):
         return True
 
 class ReadoutThread(TANGOpolling):
+    jobFinished = pyqtSignal(object)  # object is [self.attvalues, self.devicestates, self.zmxerrors]
+
     def __init__(self, parentThread, devices):
         TANGOpolling.__init__(self, parentThread, devices)
         return None
-    
+
     def readAttributes(self):
         while True:
             if self.running:

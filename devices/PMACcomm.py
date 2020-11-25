@@ -60,11 +60,15 @@ class PMACcomm():
             if self.ioconsole and not self.silentmode: print(misc.GetTimeString() + ': Error. Please choose a controller from 1 to 6')
             self.error = True
         else:
+            print("Opening PMacDevice...")
             self.pmac_num = self.ControllerList.get(controller)[0]
-            self.pmac_ip =  self.ControllerList.get(controller)[1]
+            self.pmac_ip = self.ControllerList.get(controller)[1]
             # TODO replace direct dll load with dynamic load depending on environment
             self.io = ctypes.windll.LoadLibrary('PComm32W.dll')
+            # TODO same as OpenConnection? extract and replace
             tmp = self.io.OpenPmacDevice(self.pmac_num)
+            print('Done. Result:')
+            print(tmp)
             if tmp != 0:
                 self.io.PmacGetVariableDouble.restype = ctypes.c_double
                 self.connection_active = True
@@ -104,7 +108,8 @@ class PMACcomm():
                 print(misc.GetTimeString() + ': Error. the specified variable \'%s\' is unknown.' %variable)
                 return None
             if not self.var_syntaxerror:
-                tmp = self.io.PmacGetVariableDouble(self.pmac_num, ctypes.c_char(_type), ctypes.c_uint(count), ctypes.c_double(-12345))
+                tmp = self.io.PmacGetVariableDouble(self.pmac_num, ctypes.c_char(_type.encode()), ctypes.c_uint(count),
+                                                    ctypes.c_double(-12345))
                 if tmp != -12345:
                     self.var_value = tmp
                     self.var_name = variable.upper()
@@ -136,7 +141,11 @@ class PMACcomm():
             self.var_value = None
             self.var_name = None
             _type = variable[0].upper()
-            tmp = self.io.PmacGetVariableDouble(self.pmac_num, ctypes.c_char(variable[0].upper()), ctypes.c_uint(int(variable[1:])), ctypes.c_double(-12345))
+            tmp = self.io.PmacGetVariableDouble(
+                self.pmac_num,
+                ctypes.c_char(variable.upper()[0].encode()),
+                ctypes.c_uint(int(variable[1:])),
+                ctypes.c_double(-12345))
             if tmp != -12345:
                 self.var_value = tmp
                 self.var_name = variable.upper()
@@ -191,8 +200,9 @@ class PMACcomm():
         WriteVariable('q123', '12')
         """
         self.string_buffer.value = ''
-        instruction = '%s = %s' %(var, value)
-        tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600), ctypes.c_char_p(instruction))
+        instruction = '%s = %s' % (var, value)
+        tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600),
+                                         ctypes.c_char_p(instruction.encode()))
         return None
     #end WriteVariable
             
@@ -202,7 +212,8 @@ class PMACcomm():
         """
         if self.connection_active:
             self.string_buffer.value = ''
-            tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600), ctypes.c_char_p(instruction))
+            tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600),
+                                             ctypes.c_char_p(instruction.encode()))
             if self.silentmode or silent:
                 return self.string_buffer.value
             else:
