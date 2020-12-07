@@ -199,7 +199,7 @@ class PMACcomm():
         Usage example:
         WriteVariable('q123', '12')
         """
-        self.string_buffer.value = ''
+        self.string_buffer.value = b''
         instruction = '%s = %s' % (var, value)
         tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600),
                                          ctypes.c_char_p(instruction.encode()))
@@ -211,7 +211,7 @@ class PMACcomm():
         Method to get a response from the PMAC
         """
         if self.connection_active:
-            self.string_buffer.value = ''
+            self.string_buffer.value = b''
             tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600),
                                              ctypes.c_char_p(instruction.encode()))
             if self.silentmode or silent:

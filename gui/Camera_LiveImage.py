@@ -102,11 +102,8 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.imagesize = (2160, 2560)
 
         # TODO minor do we really need real value here?
-        # if self.tCamera.read_attribute(self.command_exptime).value == None
-        #   self.exptime = 30
-
-        # self.exptime = self.tCamera.read_attribute(self.command_exptime).value
-        self.exptime = 30
+        self.exptime = self.tCamera.read_attribute(self.command_exptime).value
+        # self.exptime = 30
         self.label_currentexptime.setText('%i ms' % (self.exptime * 1e3))
 
         self.main = parent

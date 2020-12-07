@@ -387,8 +387,6 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
             self.att_select_buttons[i1].setMinimumContentsLength(20)
             self.att_select_buttons[i1].setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
             self.att_select_buttons[i1].setMaxVisibleItems(15)
-            # TODO replace obsolete setAutoCompletion with setCompleter but we have to know which list of words to set in QCompleter
-            self.att_select_buttons[i1].setAutoCompletion(True)
             self.att_select_buttons[i1].setFont(self.parent_widget.stdfont)
             self.att_select_buttons[i1].setObjectName("but_selectattribute%1i" % i1)
             self.att_select_buttons[i1].setGeometry(QtCore.QRect(2 + _xoffset, 23 * (i1 + 1)  + _yoffset, 201, 20))
@@ -440,8 +438,6 @@ class cTANGOdeviceForm(QtWidgets.QWidget):
             self.cmd_selector.setMinimumContentsLength(20)
             self.cmd_selector.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLength)
             self.cmd_selector.setMaxVisibleItems(15)
-            # TODO replace obsolete setAutoCompletion with setCompleter(QCompleter *) but we have to know which list of words to set in QCompleter
-            self.cmd_selector.setAutoCompletion(True)
             self.cmd_selector.setFont(self.parent_widget.stdfont)
             self.cmd_selector.setObjectName("cmd_selector")
 

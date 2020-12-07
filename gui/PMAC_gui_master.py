@@ -549,8 +549,7 @@ class  PMACpolling(QtCore.QThread):
 
 
 class UpdateThread(PMACpolling):
-    jobFinished = pyqtSignal(
-        object)  # object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
+    jobFinished = pyqtSignal(object)  # object is [self.p80, self.p89, self.p91, self.p92, self.isPos, self.setPos, self.airsignals]
 
     def __init__(self, parentThread, controllers, motors, airstatus, cur_delay=0.25):
         PMACpolling.__init__(self, parentThread, controllers, motors, airstatus, cur_delay=cur_delay)

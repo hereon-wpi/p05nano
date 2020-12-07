@@ -9,9 +9,6 @@ __version__ = '1.0'
 __date__ = '$Date: 2015 / 08 / 22'
 __all__ = []
 
-from p05.nano.Cameras import *#  PCO_nanoCam, FLIeh2_nanoCam, Hamamatsu_nanoCam, Zyla_nanoCam
-__all__ += ['KIT_nanoCam']
-
 from p05.nano.NanoScriptHelper import NanoScriptHelper
 __all__ += ['NanoScriptHelper']
 
