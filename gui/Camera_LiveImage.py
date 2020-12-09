@@ -121,8 +121,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.rotate = 0
         self.HistWidget = self.imageView.getHistogramWidget()
         self.HistWidget.setBackground('#eeeeee')
-        # TODO !!! check if Correct
-        self.path_scanscripts = 'scanscripts\\'
+        self.path_scanscripts = os.path.join(os.getenv('SOURCE_ROOT'), os.path.join("p05", "scanscripts"))
         # for some reason, a path in nanoXTM does not work
         self._initialize()
         self.activeUpdate = False
@@ -1170,17 +1169,17 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         smearing = self.io_smearing.text()
         CS = self.checkBox_CloseShutter.isChecked()
         if self.Scan == 'Holotomo Fly Ref':
-            os.system('python ' + self.path_scanscripts + '05_Holotomo_Fly_RefInBetween.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
+            os.system('python ' + self.path_scanscripts + '\\05_Holotomo_Fly_RefInBetween.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
         if self.Scan == 'Holotomo Step':
-            os.system('python ' + self.path_scanscripts + '04_Holotomo_Step.py %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  num_images, stepsize,num_dist,num_flat,CS))
+            os.system('python ' + self.path_scanscripts + '\\04_Holotomo_Step.py %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  num_images, stepsize,num_dist,num_flat,CS))
         if self.Scan == 'Holotomo Fly':
-            os.system('python ' + self.path_scanscripts + '03_Holotomo_Fly.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
+            os.system('python ' + self.path_scanscripts + '\\03_Holotomo_Fly.py %s %s %s %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime,  speed, smearing, stepsize,num_dist,num_flat,CS))
         if self.Scan == 'Take Image Series':
-            os.system('python ' + self.path_scanscripts + '02_ImageSeries.py %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime, num_images, num_flat, CS))
+            os.system('python ' + self.path_scanscripts + '\\02_ImageSeries.py %s %s %s %s %s %s %s %s' %(beamtime, prefix, rotcenter,sampleout, exptime, num_images, num_flat, CS))
         if self.Scan == 'Fly Scan':
-            os.system('python ' + self.path_scanscripts + '01_standard_flyScan.py %s %s %s %s %s %s %s %s %s' % (beamtime, prefix, rotcenter,sampleout, exptime, speed, smearing, num_flat, CS))
+            os.system('python ' + self.path_scanscripts + '\\01_standard_flyScan.py %s %s %s %s %s %s %s %s %s' % (beamtime, prefix, rotcenter,sampleout, exptime, speed, smearing, num_flat, CS))
         if self.Scan == 'Fly Scan 360':
-            os.system('python ' + self.path_scanscripts + '07_flyScan_360.py %s %s %s %s %s %s %s %s %s' % (
+            os.system('python ' + self.path_scanscripts + '\\07_flyScan_360.py %s %s %s %s %s %s %s %s %s' % (
             beamtime, prefix, rotcenter, sampleout, exptime, speed, smearing, num_flat, CS))
 
     def clickButtonResetScan(self):
