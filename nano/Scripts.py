@@ -6,6 +6,7 @@ import time
 
 import PyTango
 import numpy
+import json
 
 import p05.common.PyTangoProxyConstants as proxies
 import p05.devices as dev
@@ -146,16 +147,19 @@ class NanoPositions():
         print(misc.GetShortTimeString() + ': Successfully set new working position.')
         return None
     #end SetWorkingPos
-    
-    def SaveWorkingPos(self,path,mode='TXM'):
+
+    def getWorkingPos(self):
+        return self.__wp_pos
+
+    def getWorkingPosHolo(self):
+        return self.__wp_pos_h
+
+    def SaveWorkingPos(self,path,workingPos,mode='TXM'):
         timestr = time.strftime("%Y%m%d-%H%M")
-        if mode == 'TXM':
-            workingPos = self.__wp_pos
-            f = open(path+'\working_pos_TXM_'+ timestr +'.txt','w')
-        elif mode =='holo':
-            workingPos = self.__wp_pos_h
-            f = open(path+'\working_pos_holo_'+ timestr +'.txt','w')
-        f.write(str(workingPos))
+        output_fname = "working_pos_{0}_{1}.json".format(mode,timestr)
+        path = os.path.join(path, output_fname)
+        f = open(path, 'w')
+        f.write(json.dumps(workingPos))
         f.close()
         
     def LoadWorkingPos(self,filename,mode='TXM'):
@@ -166,7 +170,7 @@ class NanoPositions():
                 f = open(filename,'r')
                 data=f.read()
                 f.close()
-                self.__wp_pos = eval(data)
+                self.__wp_pos = json.loads(data)
             else:
                 print ('Warning! Wrong File! Please choose Working Position File.')
         if mode == 'holo':
@@ -176,11 +180,10 @@ class NanoPositions():
                 f = open(filename,'r')
                 data=f.read()
                 f.close()
-                self.__wp_pos_h = eval(data)
+                self.__wp_pos_h = json.loads(data)
             else:
                 print ('Warning! Wrong File! Please choose Working Position File.')
         return None
-
 
     def SetAlignmentPos_h(self):
         sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the sample installation position with the current values? [Yes, no]: ')
@@ -249,17 +252,19 @@ class NanoPositions():
         print(misc.GetShortTimeString() + ': Successfully set new installation position.')
         return None
     #end SetAlignmentPos
-    
-    
-    def SaveAlignmentPos(self,path,mode="TXM"):
+
+    def getAligmentPos(self):
+        return self.__ap_pos
+
+    def getAligmentPosHolo(self):
+        return self.__ap_pos_h
+
+    def SaveAlignmentPos(self,path,aligmentPos,mode="TXM"):
         timestr = time.strftime("%Y%m%d-%H%M")
-        if mode == 'TXM':
-            aligmentPos = self.__ap_pos
-            f = open(path+'\lignment_pos_TXM_'+ timestr +'.txt','w')
-        elif mode =='holo':
-            aligmentPos = self.__ap_pos_h
-            f = open(path+'\lignment_pos_holo_'+ timestr +'.txt','w')
-        f.write(str(aligmentPos))
+        output_fname = "Alignment_pos_{0}_{1}.json".format(mode, timestr)
+        path = os.path.join(path, output_fname)
+        f = open(path, 'w')
+        f.write(json.dumps(aligmentPos))
         f.close()
         return None
         
@@ -271,7 +276,7 @@ class NanoPositions():
                 f = open(filename,'r')
                 data=f.read()
                 f.close()
-                self.__ap_pos = eval(data)
+                self.__ap_pos = json.loads(data)
             else:
                 print ('Warning! Wrong File! Please choose Alignment Position File.')
         elif mode =="holo":
@@ -280,7 +285,7 @@ class NanoPositions():
                 f = open(filename,'r')
                 data=f.read()
                 f.close()
-                self.__ap_pos_h = eval(data)
+                self.__ap_pos_h = json.loads(data)
             else:
                 print ('Warning! Wrong File! Please choose Alignment Position File.')
         return None

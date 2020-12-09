@@ -768,7 +768,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             fname = QtWidgets.QFileDialog.getSaveFileName(parent=None, caption='Save name for image file',
                                                           directory=self.currdir, \
                                                           filter = "Tiff Image (*.tiff);; Images (*.png *.jpg *.tif)")
-        fname = str(fname)
+        fname = fname[0]
         self.currdir = os.path.dirname(fname)
         _filename = os.path.basename(fname)
         _ftype = _filename.split('.')[1]
@@ -994,22 +994,23 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         elif self.currdir != None:
             fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',
                                                                directory=self.currdir)
-        fname = str(fname)
         self.currdir = os.path.dirname(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SaveAlignmentPos(fname, mode ="TXM")
+            aligmentPos = self.nano.getAligmentPos()
+            self.nano.SaveAlignmentPos(fname, aligmentPos, mode ="TXM")
         elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SaveAlignmentPos(fname, mode ="holo")
+            aligmentPos = self.nano.getAligmentPosHolo()
+            self.nano.SaveAlignmentPos(fname, aligmentPos, mode ="holo")
 
     def clickButtonLoadAlignmentPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load file', filter="Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load file', filter="Text (*.json)")
         elif self.currdir != None:
             fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load file', directory=self.currdir, \
-                                                          filter = "Text (*.txt)")
-        fname = str(fname)
+                                                          filter = "Text (*.json)")
+        fname = fname[0]
         self.currdir = os.path.dirname(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
             self.nano.LoadAlignmentPos(fname, mode ="TXM")
@@ -1024,23 +1025,24 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         elif self.currdir != None:
             fname = QtWidgets.QFileDialog.getExistingDirectory(parent=None, caption='Select folder',
                                                                directory=self.currdir)
-        fname = str(fname)
         self.currdir = os.path.dirname(fname)
         print(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
-            self.nano.SaveWorkingPos(fname, mode ="TXM")
+            working_pos = self.nano.getWorkingPos()
+            self.nano.SaveWorkingPos(fname, working_pos, mode ="TXM")
         elif self.cb_Mode.currentText() == 'Holotomo Mode':
-            self.nano.SaveWorkingPos(fname, mode ="holo")
+            working_pos = self.nano.getWorkingPosHolo()
+            self.nano.SaveWorkingPos(fname, working_pos,mode ="holo")
         
     def clickButtonLoadWorkingPos(self):
         #if self.activeUpdate:
         #    self.PollingThread.stop()
         if self.currdir == None:
-            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load File', filter="Text (*.txt)")
+            fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load File', filter="Text (*.json)")
         elif self.currdir != None:
             fname = QtWidgets.QFileDialog.getOpenFileName(parent=None, caption='Load File', directory=self.currdir, \
-                                                          filter = "Text (*.txt)")
-        fname = str(fname)
+                                                          filter = "Text (*.json)")
+        fname = fname[0]
         self.currdir = os.path.dirname(fname)
         print(fname)
         if self.cb_Mode.currentText() == 'TXM Mode':
