@@ -215,10 +215,10 @@ class PMACcomm():
             tmp = self.io.PmacGetResponseExA(self.pmac_num, self.string_buffer, ctypes.c_uint(600),
                                              ctypes.c_char_p(instruction.encode()))
             if self.silentmode or silent:
-                return self.string_buffer.value
+                return self.string_buffer.value.decode()
             else:
                 print('Query: %s' %instruction)
-                print('Response: %s' %self.string_buffer.value)
+                print('Response: %s' %self.string_buffer.value.decode())
         else:
             if self.ioconsole and not self.silentmode:
                 print(misc.GetTimeString() + ': Warning. Connection to PMAC not active. Request ignored.')
