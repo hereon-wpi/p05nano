@@ -18,12 +18,12 @@ class NanoPositions():
         self.__pmac = dev.PMACdict()
 
         self.__SM = numpy.zeros(6, dtype = object)
-        self.__SM[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha6)  #
-        self.__SM[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha7)  #
-        self.__SM[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha9)  #
-        self.__SM[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha10)  #
-        self.__SM[4] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)  # BS x
-        self.__SM[5] = PyTango.DeviceProxy(proxies.smaract_eh1_cha5)  # BS Z
+        self.__SM[0] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaRight)  #
+        self.__SM[1] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaLeft)  #
+        self.__SM[2] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaTop)  #
+        self.__SM[3] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaBottom)  #
+        self.__SM[4] = PyTango.DeviceProxy(proxies.smaract_eh1_BStopX)  # BS x
+        self.__SM[5] = PyTango.DeviceProxy(proxies.smaract_eh1_BStopZ)  # BS Z
 
 
         self.__SM_h = numpy.zeros(9, dtype = object)
@@ -129,9 +129,9 @@ class NanoPositions():
             return None
         #self.__wp_pos['SF1_x'] = self.__pmac.ReadMotorPos('OpticsSF1_x')
         #self.__wp_pos['BStop'] = self.__pmac.ReadMotorPos('Aperture_z')
-        self.__wp_pos['SM_xr'] = self.__SM[2].read_attribute('Position').value
-        self.__wp_pos['SM_xl'] = self.__SM[0].read_attribute('Position').value
-        self.__wp_pos['SM_zt'] = self.__SM[1].read_attribute('Position').value
+        self.__wp_pos['SM_xr'] = self.__SM[0].read_attribute('Position').value
+        self.__wp_pos['SM_xl'] = self.__SM[1].read_attribute('Position').value
+        self.__wp_pos['SM_zt'] = self.__SM[2].read_attribute('Position').value
         self.__wp_pos['SM_zb'] = self.__SM[3].read_attribute('Position').value
         self.__wp_pos['BStop_x'] = self.__SM[4].read_attribute('Position').value
         self.__wp_pos['BStop_z'] = self.__SM[5].read_attribute('Position').value
@@ -236,9 +236,9 @@ class NanoPositions():
         self.__ap_pos['BStop_x'] = self.__SM[4].read_attribute('Position').value
         self.__ap_pos['BStop_z'] = self.__SM[5].read_attribute('Position').value
         #self.__ap_pos['BStop'] = self.__pmac.ReadMotorPos('Aperture_z') Old BS 
-        self.__ap_pos['SM_xr'] = self.__SM[2].read_attribute('Position').value
-        self.__ap_pos['SM_xl'] = self.__SM[0].read_attribute('Position').value
-        self.__ap_pos['SM_zt'] = self.__SM[1].read_attribute('Position').value
+        self.__ap_pos['SM_xr'] = self.__SM[0].read_attribute('Position').value
+        self.__ap_pos['SM_xl'] = self.__SM[1].read_attribute('Position').value
+        self.__ap_pos['SM_zt'] = self.__SM[2].read_attribute('Position').value
         self.__ap_pos['SM_zb'] = self.__SM[3].read_attribute('Position').value
         self.__ap_ok = True
         try:
@@ -325,11 +325,11 @@ class NanoPositions():
             print('Aborting...')
             return None
         if mode == "TXM":
-            self.__SM[0].write_attribute('Position', self.__wp_pos['SM_xl'])
+            self.__SM[0].write_attribute('Position', self.__wp_pos['SM_xr'])
             time.sleep(1)
-            self.__SM[1].write_attribute('Position', self.__wp_pos['SM_zt'])
+            self.__SM[1].write_attribute('Position', self.__wp_pos['SM_xl'])
             time.sleep(1)
-            self.__SM[2].write_attribute('Position', self.__wp_pos['SM_xr'])
+            self.__SM[2].write_attribute('Position', self.__wp_pos['SM_zt'])
             time.sleep(1)
             self.__SM[3].write_attribute('Position', self.__wp_pos['SM_zb'])
             time.sleep(1)
@@ -370,11 +370,11 @@ class NanoPositions():
             print('Aborting...')
             return None
         if mode == "TXM":
-            self.__SM[0].write_attribute('Position', self.__ap_pos['SM_xl'])
+            self.__SM[0].write_attribute('Position', self.__ap_pos['SM_xr'])
             time.sleep(1)
-            self.__SM[1].write_attribute('Position', self.__ap_pos['SM_zt'])
+            self.__SM[1].write_attribute('Position', self.__ap_pos['SM_xl'])
             time.sleep(1)
-            self.__SM[2].write_attribute('Position', self.__ap_pos['SM_xr'])
+            self.__SM[2].write_attribute('Position', self.__ap_pos['SM_zt'])
             time.sleep(1)
             self.__SM[3].write_attribute('Position', self.__ap_pos['SM_zb'])
             time.sleep(1)

@@ -4,6 +4,7 @@ import sys
 import time
 
 import PIL
+import tifffile
 import PyTango
 import numpy
 import pyqtgraph
@@ -778,8 +779,9 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
             self.image = numpy.float32(self.image)
             #pylab.matplotlib.image.imsave(fname, self.image.transpose(), cmap = 'gray')
             #print (numpy.dtype(self.image.transpose()))
-            im = PIL.Image.fromarray(self.image.transpose(), mode="F" ) # float32
-            im.save(fname, "TIFF")
+            tifffile.imsave(fname,self.image)
+            #im = PIL.Image.fromarray(self.image.transpose(), mode="F" ) # float32
+            #im.save(fname, "TIFF")
         
         if self.activeUpdate:
             self.PollingThread.restart()
@@ -794,14 +796,13 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         _log += 'Scinillator y =\t%e\n' %self.tScintiY.read_attribute('Position').value
         _log += 'Lens y        =\t%e\n' %self.tLensY.read_attribute('Position').value
         _log += 'Camera rot    =\t%e\n' %self.tCamRot.read_attribute('Position').value
-        if self.SM != None:
-            try:
-                _log += 'SmarAct Ch. 0 (x left) =\t%e\n' %self.SM[0].read_attribute('Position').value
-                _log += 'SmarAct Ch. 1 (z top)=\t%e\n' %self.SM[1].read_attribute('Position').value
-                _log += 'SmarAct Ch. 3 (x right) =\t%e\n' %self.SM[2].read_attribute('Position').value
-                _log += 'SmarAct Ch. 4 (z bottom)=\t%e\n' %self.SM[3].read_attribute('Position').value
-            except:
-                _log += 'SmarAct communication error'
+        try:
+            _log += 'SmarAct Ch. 0 (x left) =\t%e\n' %self.SM[0].read_attribute('Position').value
+            _log += 'SmarAct Ch. 1 (z top)=\t%e\n' %self.SM[1].read_attribute('Position').value
+            _log += 'SmarAct Ch. 3 (x right) =\t%e\n' %self.SM[2].read_attribute('Position').value
+            _log += 'SmarAct Ch. 4 (z bottom)=\t%e\n' %self.SM[3].read_attribute('Position').value
+        except:
+            _log += 'SmarAct communication error'
             
         with open(fname+'.log', 'w') as f:
             f.write(_log)
@@ -913,7 +914,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.label_PixLinkInOut.setText('PixelLink Out')
         
     def clickButtonMovePiXLinkIn(self):
-        self.PixelLinkIn = 86.4
+        self.PixelLinkIn = 88.5
         self.tPixLinkMotorX.write_attribute('Position', self.PixelLinkIn )
 #         if posin < 0:
 #             print("Warning, In position should be > 0")
@@ -1559,6 +1560,8 @@ class UpdateThread(Camerapolling):
                 # Start Aquisition
                 self.tCamera.command_inout(self.command_start)
                 # Wait for finishing Aquisition
+                if self.CameraName == 'PCO':
+                    self.tCamera.command_inout(self.command_stop)
                 while not self.tCamera.state() == PyTango.DevState.ON:
                     time.sleep(0.02)
                 # Read exptime and image from Tango server

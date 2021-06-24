@@ -1,6 +1,0 @@
-numpy
-pyqtgraph
-PyQt5
-Pillow
-matplotlib
-PyTango==9.3.1

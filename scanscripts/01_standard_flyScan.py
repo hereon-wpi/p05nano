@@ -71,21 +71,21 @@ target_pos = 91
 
 
 
-nanoScript = p05.nano.NanoScriptHelper(pmac, currScript, 'hzg', str(beamtime), str(prefix), exptime, \
-                                  closeShutter=CS, \
+nanoScript = p05.nano.NanoScriptHelper(pmac, currScript, 'hzg', str(beamtime), str(prefix), exptime,\
+                                  closeShutter=True, \
                                   useSmarAct=False, \
                                   useStatusServer=False, \
                                   usePCO=False, \
-                                  useASAP=False, \
+                                  useASAP=True, \
                                   useASAPcomm=False, \
                                   useHamamatsu=True, \
                                   disableSideBunchReacquisition = True,\
                                   logRotPos = True,\
                                   useHamaTrigger =False)
 
-#fScanParamLogFile = open("T:/current/raw/%s/%s__ScanParam.txt" %(prefix,prefix), 'w')
-#fScanParamLogFile.writelines("Scriptname: %s \n Beamtime: %s \n Prefix: %s \n RotCenter: %s \n SampleOut: %s \n Exposure Time: %s \n Speed: %s \n Smearing: %s \n Number of Flats: %s \n CloseShutter %s" %(scriptname, beamtime, prefix, rotCenter,sampleOut, exptime, speed, smearing,num_flat,CS))
-#fScanParamLogFile.close()
+fScanParamLogFile = open("T:/current/raw/%s/%s__ScanParam.txt" %(prefix,prefix), 'w')
+fScanParamLogFile.writelines("Scriptname: %s \n Beamtime: %s \n Prefix: %s \n RotCenter: %s \n SampleOut: %s \n Exposure Time: %s \n Speed: %s \n Smearing: %s \n Number of Flats: %s \n CloseShutter %s" %(scriptname, beamtime, prefix, rotCenter,sampleOut, exptime, speed, smearing,num_flat,CS))
+fScanParamLogFile.close()
 
 # Move to start position
 pmac.SetRotSpeed(30)
@@ -131,4 +131,4 @@ pmac.SetRotSpeed(30)
 time.sleep(0.1)
 pmac.Move('Sample_Rot',0, WaitForMove=True) 
 
-nanoScript.FinishScan()    
+nanoScript.FinishScan()

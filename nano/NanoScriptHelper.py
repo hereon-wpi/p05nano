@@ -214,7 +214,7 @@ class NanoScriptHelper():
         #########################################
         if os.path.exists(self.sLogfile):
             print('~~~~~~~~~ !!!! ~~~~~~~~~ Warning: Logfile exists')
-            tmp = input('~~~~~~~~~ !!!! ~~~~~~~~~ Continue? y / n: ')
+            tmp = input(r'~~~~~~~~~ !!!! ~~~~~~~~~ Continue? y / n: ')
             if tmp not in ['yes', 'Y', 'y']:
                 print('Aborting...')
                 sys.exit()
@@ -409,8 +409,13 @@ class NanoScriptHelper():
 #                 break
         return tmp
     #end StatusServerReadData
-    
-    
+
+    def PrepareCamera(self):
+        self.hamamatsu.startLive()
+
+    def StopCamera(self):
+        self.hamamatsu.finishScan()
+
     def TakeImage(self, verbose = False, writeLogs = True,inum=None,iname=None):
         """Method to take and image and write beam parameters to logfile."""
         if verbose:  print('%s: Acquiring image %s'% (misc.GetTimeString(),'bla'))#, self.curname
