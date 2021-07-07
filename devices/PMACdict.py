@@ -107,7 +107,7 @@ class PMACdict():
         self.Dict['OpticsSF1_Rz'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=4', 'TargetVariable': 'Q73', 'CurVariable': 'Q83', \
                                        'lowerLim':-2.5, 'upperLim': 2.5, 'lowerSoftLim':-2.5, 'upperSoftLim': 2.5}
         self.Dict['OpticsStage1_y'] = {'Controller': self.Controller7, 'SetCommand':  'Q70=8', 'TargetVariable': 'P71', 'CurVariable': 'P81', \
-                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 0.0, 'upperSoftLim': 300.0}
+                                       'lowerLim': 0.0, 'upperLim': 300.0, 'lowerSoftLim': 120.0, 'upperSoftLim': 300.0}
         self.Dict['GraniteSlab_1single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=114', 'TargetVariable': 'Q77', 'CurVariable': 'Q87'}
         self.Dict['GraniteSlab_2single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=124', 'TargetVariable': 'Q78', 'CurVariable': 'Q88'}
         self.Dict['GraniteSlab_3single'] = {'Controller': self.Controller3, 'SetCommand':  'Q70=134', 'TargetVariable': 'Q79', 'CurVariable': 'Q89'}

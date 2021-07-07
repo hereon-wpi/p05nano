@@ -27,16 +27,16 @@ class NanoPositions():
 
 
         self.__SM_h = numpy.zeros(9, dtype = object)
-        self.__SM_h[0] = PyTango.DeviceProxy(proxies.smaract_eh1_cha3)  # xr
-        self.__SM_h[1] = PyTango.DeviceProxy(proxies.smaract_eh1_cha4)  # xl
-        self.__SM_h[2] = PyTango.DeviceProxy(proxies.smaract_eh1_cha2)  # zt
-        self.__SM_h[3] = PyTango.DeviceProxy(proxies.smaract_eh1_cha5)  # zb
-        self.__SM_h[4] = PyTango.DeviceProxy(proxies.smaract_eh1_cha1)  # Teil
+        self.__SM_h[0] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaRight)  # xr
+        self.__SM_h[1] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaLeft)  # xl
+        self.__SM_h[2] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaTop)  # zt
+        self.__SM_h[3] = PyTango.DeviceProxy(proxies.smaract_eh1_OsaBottom)  # zb
+        self.__SM_h[4] = PyTango.DeviceProxy(proxies.smaract_eh1_TeilZ)  # Teil
 
-        self.__SM_h[5] = PyTango.DeviceProxy(proxies.motor_eh1_04)  # JJ xr
-        self.__SM_h[6] = PyTango.DeviceProxy(proxies.motor_eh1_03)  # JJ xl
-        self.__SM_h[7] = PyTango.DeviceProxy(proxies.motor_eh1_01)  # JJ zt
-        self.__SM_h[8] = PyTango.DeviceProxy(proxies.motor_eh1_02)  # JJ zb
+        self.__SM_h[5] = PyTango.DeviceProxy(proxies.motor_eh1_JJRight)  # JJ xr
+        self.__SM_h[6] = PyTango.DeviceProxy(proxies.motor_eh1_JJLeft)  # JJ xl
+        self.__SM_h[7] = PyTango.DeviceProxy(proxies.motor_eh1_JJTop)  # JJ zt
+        self.__SM_h[8] = PyTango.DeviceProxy(proxies.motor_eh1_JJBottom)  # JJ zb
 
 
 
@@ -81,7 +81,7 @@ class NanoPositions():
         return None
     #end __init__
     
-    def SetWorkingPos_h(self,mode="TXM"):
+    def SetWorkingPos_h(self):
         sys.stdout.write(misc.GetShortTimeString() + ': Do you really want to replace the working position with the current values? [Yes, no]: ')
         sys.stdout.flush()
         tmp = sys.stdin.readline()[:-1]

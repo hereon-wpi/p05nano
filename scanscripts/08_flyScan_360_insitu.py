@@ -2,21 +2,25 @@
 #### Initialization --- do not change #####################
 ###########################################################
 print('hallo')
-
-import p05.tools  ################
-import numpy, time, os  ################
+import sys
+import p05.devices, p05.nano, p05.tools  ################
+import numpy, time, os, PyTango  ################
 pmac = p05.devices.PMACdict()  ################
 currScript = os.path.abspath(__file__)  ################
+from sys import exit  ################
 from sys import argv
-
+import p05.tools.misc as misc
 ###########################################################
 #### end initialization ###################################
 ###########################################################
 
 
 
-scriptname, beamtime, prefix, rotCenter,sampleOut, exptime, speed, smearing,num_flat,CS = argv
+scriptname, beamtime, prefix, rotCenter,sampleOut, exptime, speed, smearing,num_flat,offset,CS = argv
 
+
+rot_offset = float(offset)  # Overlap for 360 deg scan
+ # Overlap for 360 deg scan
 
 
 rotCenter = float(rotCenter)
@@ -55,24 +59,23 @@ if speed == None:
 elif exptime == None:
     exptime = smearing * 180./ (numpy.pi *det_size/2*speed) # exptime for maximal 1 pixel smearing, caculated from speed
 
-num_images = int(180/speed /(exptime+ overhead))  -1
+num_images = int(360/speed /(exptime+ overhead))  -1
 print('speed: ' + str(speed))
-print('total scan time (s): ' + str(180/speed))
-print('total scan time (min): ' + str(180/speed/60))
+print('total scan time (s): ' + str(360/speed))
+print('total scan time (min): ' + str(360/speed/60))
 print('overhead: ' + str(overhead))
 print('detector size: ' + str(det_size))
 print('exposure time: ' + str(exptime))
 print('expected number of images: ' + str(num_images))
-print('Efficency: ' + str(num_images*exptime/(180/speed )))
+print('Efficency: ' + str(num_images*exptime/(360/speed )))
 
 #num_flat = 20
 startangle = -91
 target_pos = 91
 
 
-
-nanoScript = p05.nano.NanoScriptHelper(pmac, currScript, 'hzg', str(beamtime), str(prefix), exptime,\
-                                  closeShutter=True, \
+nanoScript = p05.nano.NanoScriptHelper(pmac, currScript, 'hzg', str(beamtime), str(prefix), exptime, \
+                                  closeShutter=CS, \
                                   useSmarAct=False, \
                                   useStatusServer=False, \
                                   usePCO=False, \
@@ -92,44 +95,64 @@ pmac.SetRotSpeed(30)
 time.sleep(0.1)
 
 pmac.Move('Sample_Rot',startangle, WaitForMove=True) 
-#time.sleep(120)
 time.sleep(0.5)
-
+#time.sleep(120)
 # Take reference images
 pmac.Move('SampleStage_x', rotCenter+sampleOut)
 i1=1
 #nanoScript.SetCurrentName('ref_y'+ str(i1)+"_1", iNumber=i1, imgNumber=0)
 nanoScript.SetCurrentName('ref',iNumber2 =0, imgNumber=0)
 time.sleep(1)
-
 nanoScript.HamaTakeRef(num_img=num_flat)
 
-pmac.Move('SampleStage_x', rotCenter)
-time.sleep(10)
-#time.sleep(120)
-# Start Tomo
+# Start Tomo 1
 pmac.SetRotSpeed(speed)
 time.sleep(0.1)
 
-nanoScript.SetCurrentName('img',iNumber = 0,imgNumber=0)
+# Move rotation axis to offset for 360deg scan - right
+pmac.Move('SampleStage_x', rotCenter+rot_offset)
+time.sleep(120)
+nanoScript.SetCurrentName('img_right',iNumber = 0,imgNumber=0)
 time.sleep(1)
-
-nanoScript.HamaTakeTomo(target_pos)
+nanoScript.HamaTakeTomo(target_pos,rot="pos")
 time.sleep(1 + 1/speed)
 time.sleep(0.5)
 
-# Take reference images at the end
+# Take reference images between two scans
 pmac.Move('SampleStage_x', rotCenter+sampleOut)
-
 nanoScript.SetCurrentName('ref',iNumber2 =0, imgNumber=num_flat)
 time.sleep(1)
-
 nanoScript.HamaTakeRef(num_img=num_flat)
 
-pmac.Move('SampleStage_x', rotCenter)
 
+# Move to start position
+pmac.SetRotSpeed(30)
+time.sleep(0.1)
+pmac.Move('Sample_Rot',target_pos, WaitForMove=True)
+time.sleep(0.5)
+time.sleep(120)
+pmac.SetRotSpeed(speed)
+time.sleep(0.1)
+
+# Move rotation axis to offset for 360deg scan - left
+pmac.Move('SampleStage_x', rotCenter-rot_offset)
+time.sleep(120)
+nanoScript.SetCurrentName('img_left',iNumber = 0,imgNumber=0)
+time.sleep(1)
+nanoScript.HamaTakeTomo(startangle,rot="neg")
+time.sleep(1 + 1/speed)
+time.sleep(0.5)
+
+# Take reference images at end
+pmac.Move('SampleStage_x', rotCenter+sampleOut)
+nanoScript.SetCurrentName('ref',iNumber2 =0, imgNumber=2*num_flat)
+time.sleep(1)
+nanoScript.HamaTakeRef(num_img=num_flat)
+
+# Finished scan, set rotation axis back to initial values
+pmac.Move('SampleStage_x', rotCenter)
 pmac.SetRotSpeed(30)
 time.sleep(0.1)
 pmac.Move('Sample_Rot',0, WaitForMove=True) 
 
-nanoScript.FinishScan()
+nanoScript.FinishScan()    

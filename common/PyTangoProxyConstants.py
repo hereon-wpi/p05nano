@@ -82,12 +82,18 @@ motor_eh1_18 = '//hzgpp05vme1:10000/p05/motor/eh1.18'
 ##### Decoherer
 motor_eh1_DecoherX = '//hzgpp05vme1:10000/p05/motor/eh1.18'
 
-
+### JJs
 
 motor_eh1_20 = '//hzgpp05vme1:10000/p05/motor/eh1.20'
 motor_eh1_22 = '//hzgpp05vme1:10000/p05/motor/eh1.22'
 motor_eh1_23 = '//hzgpp05vme1:10000/p05/motor/eh1.23'
 motor_eh1_24 = '//hzgpp05vme1:10000/p05/motor/eh1.24'
+
+motor_eh1_JJRight = '//hzgpp05vme1:10000/p05/motor/eh1.20'
+motor_eh1_JJLeft = '//hzgpp05vme1:10000/p05/motor/eh1.22'
+motor_eh1_JJTop = '//hzgpp05vme1:10000/p05/motor/eh1.23'
+motor_eh1_JJBottom = '//hzgpp05vme1:10000/p05/motor/eh1.24'
+
 
 motor_eh2_01 = '//hzgpp05vme2:10000/p05/motor/eh2.01'
 motor_eh2_02 = '//hzgpp05vme2:10000/p05/motor/eh2.02'
@@ -139,6 +145,9 @@ smaract_eh1_OsaBottom = '//hzgpp05vme1:10000/p05/smaract/eh1.cha0'
 
 smaract_eh1_BShaperX = '//hzgpp05vme1:10000/p05/smaract/eh1.cha3'
 smaract_eh1_BShaperZ = '//hzgpp05vme1:10000/p05/smaract/eh1.cha2'
+
+smaract_eh1_TeilX = '//hzgpp05vme1:10000/p05/smaract/eh1.cha13'
+smaract_eh1_TeilZ = '//hzgpp05vme1:10000/p05/smaract/eh1.cha12'
 
 smaract_eh1_BStopX = '//hzgpp05vme1:10000/p05/smaract/eh1.cha13'
 smaract_eh1_BStopZ = '//hzgpp05vme1:10000/p05/smaract/eh1.cha12'

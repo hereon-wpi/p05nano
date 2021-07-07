@@ -145,6 +145,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.viewModeXRM = False
         #self.box1 = None
         self.PixelLinkIn = None
+        self.working_pos = None
 
         self.currdir = None
         self.updater = QtCore.QTimer()
@@ -818,7 +819,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         if self.activeUpdate:  # Stop Live Aquisition
             self.label_currentpolling.setPalette(self.palette_red)
             self.label_currentpolling.setText('inactive')
-            self.but_SetPolling.setText('Start live acquisition')
+            self.but_SetPolling.setText('Hereon')
             self.activeUpdate = False
             self.PollingThread.stop()
             if self.tCamera.state() == PyTango.DevState.EXTRACT:
@@ -828,7 +829,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         else:  # Start Live Aquisition
             self.label_currentpolling.setPalette(self.palette_green)
             self.label_currentpolling.setText('active')
-            self.but_SetPolling.setText('Stop live acquisition')
+            self.but_SetPolling.setText('Hereoff')
             
             if self.tCamera.state() == PyTango.DevState.EXTRACT:
                 self.tCamera.command_inout(self.command_stop)
@@ -914,7 +915,7 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         self.label_PixLinkInOut.setText('PixelLink Out')
         
     def clickButtonMovePiXLinkIn(self):
-        self.PixelLinkIn = 88.5
+        self.PixelLinkIn = 87.5
         self.tPixLinkMotorX.write_attribute('Position', self.PixelLinkIn )
 #         if posin < 0:
 #             print("Warning, In position should be > 0")
@@ -927,8 +928,10 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         #    self.PollingThread.stop()
         if self.cb_Mode.currentText() == 'TXM Mode':
             self.nano.GotoWorkingPos(mode ="TXM")
+            self.working_pos=True
         elif self.cb_Mode.currentText() == 'Holotomo Mode':
             self.nano.GotoWorkingPos(mode ="holo")
+            self.working_pos = True
         self.label_workingalignment.setText('Working Position')
         return None
     
@@ -947,19 +950,22 @@ class cCamera_LiveImage(QtWidgets.QMainWindow):
         elif self.cb_Mode.currentText() == 'Holotomo Mode':
             self.nano.GotoAlignmentPos(mode ="holo")
         self.label_workingalignment.setText('Alignment Position')
+        self.working_pos = False
         return None
     
     def clickButtonOpenShutter1(self):
         self.tBeamShutter.command_inout('CloseOpen_BS_1', 1)
 
     def clickButtonOpenShutter2(self):
-        sys.stdout.write(misc.GetShortTimeString() + ': ATTENTION!!! Are you in working position? Open Shutter 2? [open, no]: ')
-        sys.stdout.flush()
-        tmp = sys.stdin.readline()[:-1]
-        if tmp not in ['open', 'Open']:
-            print('Aborting...')
-            return None
-        self.tBeamShutter.command_inout('CloseOpen_BS_2', 1)
+        if self.working_pos:
+            sys.stdout.write(misc.GetShortTimeString() + ': ATTENTION!!! Are you in working position? Open Shutter 2? [open, no]: ')
+            sys.stdout.flush()
+            tmp = sys.stdin.readline()[:-1]
+            if tmp not in ['open', 'Open']:
+                print('Aborting...')
+                return None
+            self.tBeamShutter.command_inout('CloseOpen_BS_2', 1)
+        else: print("Attention! You are in alignment position!")
 
     def clickButtonCloseShutter2(self):
         self.tBeamShutter.command_inout('CloseOpen_BS_2', 0)

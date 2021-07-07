@@ -621,7 +621,7 @@ class NanoScriptHelper():
         i=-1
         self.hamamatsu.startLive()
         time.sleep(0.1)
-        #self.TakeOneDummyImage()
+        self.TakeOneDummyImage()
         for i2 in range(num_img):
             i = i + 1
             time.sleep(0.01)
@@ -635,16 +635,22 @@ class NanoScriptHelper():
         self.hamamatsu.finishScan()
         return None
 
-    def HamaTakeTomo(self,target_pos):
+    def HamaTakeTomo(self,target_pos,rot="pos"):
         self.tPMAC.Move('Sample_Rot',target_pos, WaitForMove=False)
         i=-1
         self.hamamatsu.startLive()
         time.sleep(0.1)
-        #nanoScript.TakeOneDummyImage()
-        while self.tPMAC.ReadMotorPos('Sample_Rot') <= target_pos-1:
-            i = i + 1
-            self.TakeFastImage()
-            print(i)
+        self.TakeOneDummyImage()
+        if rot == "pos":    # Move from negative to positive rotation angle
+            while self.tPMAC.ReadMotorPos('Sample_Rot') <= target_pos-1:
+                i = i + 1
+                self.TakeFastImage()
+                print(i)
+        elif rot == "neg": # Move from positive to negative rotation angle
+            while self.tPMAC.ReadMotorPos('Sample_Rot') >= target_pos+1:
+                i = i + 1
+                self.TakeFastImage()
+                print(i)
         out = self.tTriggerOut.read_attribute('Value')
         while out.value != 1:
             out = self.tTriggerOut.read_attribute('Value')

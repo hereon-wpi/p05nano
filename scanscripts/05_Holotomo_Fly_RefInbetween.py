@@ -127,7 +127,7 @@ for i1 in range(num_dist):
     pmac.Move('SampleStage_x', rotCenter)
     time.sleep(10)
     
-    # Start Tomo First Half
+    # Start Tomo First third
     pmac.SetRotSpeed(speed)
     time.sleep(0.1)
     nanoScript.SetCurrentName('img_y' + str(i1) +"_1",iNumber =i1,imgNumber=0)
